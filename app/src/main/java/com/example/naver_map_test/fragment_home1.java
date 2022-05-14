@@ -26,6 +26,8 @@ import android.widget.Button;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.naver.maps.geometry.LatLng;
 import com.naver.maps.map.CameraPosition;
 import com.naver.maps.map.LocationTrackingMode;
@@ -42,10 +44,13 @@ import com.naver.maps.map.util.FusedLocationSource;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -62,11 +67,8 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
 
     Button conv;
     Button cafe;
-    Button pizza;
+    Button meal;
     Button oil;
-
-    // 임시로 넣어준 좌표
-    Send_request send_request = new Send_request(36.833654477157914, 127.13431388502335);
 
     // 지도상에 현재 위치를 받아오는 변수
     private FusedLocationSource locationSource;
@@ -84,7 +86,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
         View v = inflater.inflate(R.layout.fragment_home1, container, false);
         conv = v.findViewById(R.id.conv);
         cafe = v.findViewById(R.id.cafe);
-        pizza = v.findViewById(R.id.pizza);
+        meal = v.findViewById(R.id.meal);
         oil = v.findViewById(R.id.oil);
 
 
@@ -101,54 +103,10 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
         // 현재 위치를 받아오는 함수
         locationSource = new FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE);
 
-        double latitude = 36.833654477157914;
-        double longitude = 127.13431388502335;
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        APIInterface apiInterface = retrofit.create(APIInterface.class);
-        Call<DataModel_response> call = apiInterface.getData(latitude, longitude);
-
-        Timer timer = new Timer("Timer");
-        long delay = 30000L;
-        long period = 10000L;
-
-        TimerTask task = new TimerTask() {
-            @Override
-            public void run() {
-                call.clone().enqueue(new Callback<DataModel_response>() {
-                    @Override
-                    public void onResponse(@NonNull Call<DataModel_response> call, @NonNull Response<DataModel_response> response) {
-                        if(response.isSuccessful()) {
-                            DataModel_response result = response.body();
-                            System.out.println("Response 성공!");
-                            assert result != null;
-                            System.out.println("Branch: " + Arrays.toString(result.Branch));
-                            System.out.println("Location: " +Arrays.toString(result.Location));
-                            System.out.println("Latitude: " +Arrays.toString(result.Latitude));
-                            System.out.println("Longitude: " +Arrays.toString(result.Longitude));
-
-
-                            Log.d("successful response", "onResponse 성공, 결과: " + result.toString());
-                        } else {
-                            Log.d("fail response", "onResponse 실패 : " + response.body());
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<DataModel_response> call, Throwable t) {
-                        Log.d("fail response", "onFailure " + t.getMessage());
-                    }
-                });
-
-            }
-        };
-        System.out.println(LocalDateTime.now() + "Scheduling....");
-        timer.scheduleAtFixedRate(task, delay, period);
-
+        // 편의점 버튼이 클릭되면 마커가 찍힌다. 색상별로
         conv.setOnClickListener(view -> {
+
 
         });
 
@@ -156,7 +114,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
 
         });
 
-        pizza.setOnClickListener(view -> {
+        meal.setOnClickListener(view -> {
 
         });
         oil.setOnClickListener(view -> {
@@ -165,20 +123,6 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
 
 //        return inflater.inflate(R.layout.fragment_home1, container, false);
         return v;
-    }
-
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.toolbar_menu, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.map_search) {
-            Toast.makeText(getContext(), "아직 구현되지 않은 기능입니다.", Toast.LENGTH_SHORT).show();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @UiThread
@@ -305,7 +249,84 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setHasOptionsMenu(true);
+        double latitude = 36.833654477157914;
+        double longitude = 127.13431388502335;
+        String[] category = {"CONV", "MEAL", "CAFE"};
 
+        Send_request[] test_body_send_request = new Send_request[3];
+
+        for(int i = 0; i < test_body_send_request.length; i++) {
+            // carrier, rate는 임시로 준 등급 -> 팝업창 구현되면 사용
+           test_body_send_request[i] = new Send_request(latitude, longitude, category[i], "LG", "DIAMOND");
+        }
+
+
+        // Connect REST API
+        try {
+            Gson gson = new GsonBuilder()
+                    .setLenient()
+                    .create();
+            OkHttpClient okHttpClient = new OkHttpClient().newBuilder()
+                    .connectTimeout(5, TimeUnit.SECONDS)   // call 할 경우 연결되는 시간
+                    .readTimeout(5, TimeUnit.SECONDS)   // 받은 데이터 읽는 역할
+                    .writeTimeout(1, TimeUnit.SECONDS)   // 보내는 역할
+                    .build();
+
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .client(okHttpClient)
+                    .addConverterFactory(GsonConverterFactory.create(gson))
+                    .build();
+            APIInterface apiInterface = retrofit.create(APIInterface.class);
+            Call<DataModel_response> call_request = apiInterface.call_request(test_body_send_request);
+
+            Timer timer = new Timer("Timer");
+            // 1s = 1000L
+            // 30s = 30000L
+            long delay = 10000L; // 10s
+            long period = 15000L;  // 15s
+
+            TimerTask task = new TimerTask() {
+                @Override
+                public void run() {
+                    call_request.clone().enqueue(new Callback<DataModel_response>() {
+                        @Override
+                        public void onResponse(@NonNull Call<DataModel_response> call, @NonNull Response<DataModel_response> response) {
+                            if(response.isSuccessful()) {
+                                DataModel_response result = response.body();
+                                System.out.println("Response 성공!");
+                                assert result != null;
+                                System.out.println("Branch: " + Arrays.toString(result.Branch));
+                                System.out.println("Location: " +Arrays.toString(result.Location));
+                                System.out.println("Latitude: " +Arrays.toString(result.Latitude));
+                                System.out.println("Longitude: " +Arrays.toString(result.Longitude));
+
+
+                                Log.d("successful response", "onResponse 성공, 결과: " + result.toString());
+                            } else {
+                                Log.d("fail response", "onResponse 실패 : " + response.body());
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<DataModel_response> call, Throwable t) {
+                            Log.d("fail response", "onFailure ->" + t.getMessage());
+                            timer.cancel();
+                        }
+                    });
+
+                }
+            };
+            System.out.println(LocalDateTime.now() + "Scheduling....");
+            timer.scheduleAtFixedRate(task, delay, period);
+
+        } catch(Exception e) {
+            Log.e("Connect Fail REST ->", e.toString());
+
+        }
+
+
+        // 햄버거 메뉴
+        setHasOptionsMenu(true);
     }
 }
