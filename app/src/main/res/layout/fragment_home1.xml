@@ -71,12 +71,12 @@
 
 
       <androidx.appcompat.widget.AppCompatButton
-          android:id="@+id/pizza"
+          android:id="@+id/meal"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginStart="10sp"
           android:layout_marginEnd="10sp"
-          android:text="외식&amp;피자"
+          android:text="식사"
           android:background="@drawable/round_button"
           android:minWidth="0dp"
           android:minHeight="0dp"
