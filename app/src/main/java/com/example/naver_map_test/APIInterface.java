@@ -1,5 +1,7 @@
 package com.example.naver_map_test;
 
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -12,7 +14,7 @@ public interface APIInterface {
     Call<DataModel_response> Test(@Query("latitude") double latitude, @Query("longitude") double longitude);
 
     @POST("/capstone/capstone_router")
-    Call<DataModel_response> call_request(@Body Send_request[] send_request);
+    Call<DataModel_response> call_request(@Body Send_request send_request);
 
 //    @POST("/meal/meal_router")
 //    Call<DataModel_response> getMEALData(@Body Send_request send_request);
