@@ -17,7 +17,6 @@ public class Send_request {
     public Send_request(double latitude, double longitude, String category, String carrier, String rate) {
         this.latitude = latitude;
         this.longitude = longitude;
-
         this.category = category;
         this.carrier = carrier;
         this.rate = rate;

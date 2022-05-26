@@ -14,7 +14,7 @@ public interface APIInterface {
     Call<DataModel_response> Test(@Query("latitude") double latitude, @Query("longitude") double longitude);
 
     @POST("/capstone/capstone_router")
-    Call<DataModel_response> call_request(@Body Send_request send_request);
+    Call<List<DataModel_response>> call_request(@Body Send_request send_request);
 
 //    @POST("/meal/meal_router")
 //    Call<DataModel_response> getMEALData(@Body Send_request send_request);

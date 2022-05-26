@@ -13,7 +13,6 @@
         android:layout_height="wrap_content"
         android:layout_margin="80dp"
         android:hint="통신사"
-
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -33,7 +32,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="80dp"
         android:hint="등급"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/confirm"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout">
@@ -51,6 +50,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/confirm"
         android:text="확인"
+        android:layout_margin="50dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

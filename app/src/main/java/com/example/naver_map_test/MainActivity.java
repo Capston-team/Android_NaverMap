@@ -1,21 +1,34 @@
 package com.example.naver_map_test;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
+import android.location.LocationManager;
 import android.media.Image;
 import android.os.Bundle;
 import android.text.Layout;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -26,13 +39,21 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.conn.util.InetAddressUtils;
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.normal.TedPermission;
 import com.naver.maps.map.LocationTrackingMode;
 import com.naver.maps.map.NaverMap;
 import com.naver.maps.map.OnMapReadyCallback;
 import com.naver.maps.map.UiSettings;
 import com.naver.maps.map.overlay.LocationOverlay;
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.List;
 
 import nl.joery.animatedbottombar.AnimatedBottomBar;
 import retrofit2.Call;
@@ -42,14 +63,18 @@ import retrofit2.Retrofit;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String ACTIVITY_NAME = "MainActivity";
+
     FragmentManager fragmentManager;
     AnimatedBottomBar animatedBottomBar;
-
-    private ActionBar actionBar;
 
     DrawerLayout drawerLayout;
     NavigationView navigationView;
 
+    Fragment fragment = null;
+
+    String carrier;
+    String rate;
 
 
     @Override
@@ -58,8 +83,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Log.e("MainActivity onCreate", "ENTER");
 
+        Intent form_intent = new Intent(MainActivity.this, carrier_form.class);
+        form_intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+
         // 처음 통신사, 등급 입력 창 호출
-        startActivityForResult(new Intent(MainActivity.this, carrier_form.class), 0);
+        startActivityResult.launch(form_intent);
 
 
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
@@ -69,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        actionBar = getSupportActionBar();
+        ActionBar actionBar = getSupportActionBar();
         // 툴바 활성화
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -95,11 +123,9 @@ public class MainActivity extends AppCompatActivity {
         animatedBottomBar.setOnTabSelectListener(new AnimatedBottomBar.OnTabSelectListener() {
             @Override
             public void onTabSelected(int lastIndex, @Nullable AnimatedBottomBar.Tab lastTab, int newIndex, @NonNull AnimatedBottomBar.Tab newTab) {
-                Fragment fragment = null;
 
                 int id = newTab.getId();
                 if (id == R.id.home1) {
-                    System.out.println(id);
                     Log.d("bottom_bar", "Selected index: home1, title: home1");
                     fragment = new fragment_home1();
                 } else if (id == R.id.home2) {
@@ -127,22 +153,81 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-    }
-    // 통신사, 등급 입력 창 결과
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == 0) {
-            if(resultCode == RESULT_OK) {
-                Toast.makeText(MainActivity.this, "result ok!", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(MainActivity.this, "result cancle", Toast.LENGTH_SHORT).show();
+        try {
+            String address = getIpAddress();
+
+
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    // 통신사, 등급 입력 창 결과
+    ActivityResultLauncher<Intent> startActivityResult = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    Log.i("---","---");
+                    Log.w("//===========//","================================================");
+                    Log.i("","\n"+"["+String.valueOf(ACTIVITY_NAME)+" >> registerForActivityResult() :: 인텐트 결과 확인]");
+                    Log.i("","\n"+"[result :: [전체 데이터] :: "+String.valueOf(result)+"]");
+                    Log.w("//===========//","================================================");
+                    Log.i("---","---");
+                    if(result.getResultCode() == Activity.RESULT_OK) {
+                        // -----------------------------------------
+                        // [인텐트 데이터 얻어온다]
+                        Intent intent = result.getData();
+                        // -----------------------------------------
+                        // -----------------------------------------
+                        // [setResult 에서 응답 받은 데이터 확인 실시]
+                        assert intent != null;
+                        carrier = intent.getStringExtra("carrier");
+                        rate = intent.getStringExtra("rate");
+
+                        Log.i("---","---");
+                        Log.w("//===========//","================================================");
+                        Log.i("","\n"+"["+String.valueOf(ACTIVITY_NAME)+" >> registerForActivityResult() :: 인텐트 응답 데이터 확인]");
+                        Log.i("","\n"+"[onActivityResult carrier : "+String.valueOf(carrier)+"]");
+                        Log.i("","\n"+"[onActivityResult rate : "+String.valueOf(rate)+"]");
+                        Log.w("//===========//","================================================");
+                        Log.i("---","---");
+                        // -----------------------------------------
+
+//                        Intent fragment_intent = new Intent();
+//                        fragment_intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                    }
+                }
+            }
+    );
+
+
+    // 실제 device IPv4 주소 가져오는 함수
+    public String getIpAddress() throws SocketException {
+        for(Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
+            NetworkInterface intf = en.nextElement();
+
+
+            for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements();) {
+                InetAddress inetAddress = enumIpAddr.nextElement();
+
+                if(inetAddress.isLoopbackAddress()) {
+                    Log.i("IPAddress", intf.getDisplayName() + "(loopback) | " + inetAddress.getHostAddress());
+                } else {
+                    Log.i("IPAddress", intf.getDisplayName() + " | " + inetAddress.getHostAddress());
+                }
+                if (!inetAddress.isLoopbackAddress() && InetAddressUtils.isIPv4Address(inetAddress.getHostAddress())) {
+                    return inetAddress.getHostAddress();
+                }
             }
         }
+        return null;
     }
 
-    // 입력 화면 구현? 확실하진 않음
+
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -150,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
         Log.e("MainActivity onStart", "ENTER");
     }
 
-    // 중지 되어있던 액티비티가 다시 재 실행 되는 시점에서 이곳 내부구문들을 실행
+
     @Override
     protected void onResume() {
         //다이얼로그 밖의 화면은 흐리게 만들어줌
@@ -159,7 +244,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    // 중지 상태(홈 버튼을 눌러서 바깥으로 잠깐 빠져나갔을 때, 다른 액티비티가 활성화 되어있을 때) 일 때 이곳 내부 구문을 실행
     @Override
     protected void onPause() {
         super.onPause();
@@ -172,7 +256,6 @@ public class MainActivity extends AppCompatActivity {
         Log.e("MainActivity onStop", "ENTER");
     }
 
-    // 화면이 파괴되어서 소멸했을 때의 시점 일 때 이곳 내부구문들을 실행
     @Override
     protected void onDestroy() {
         super.onDestroy();
