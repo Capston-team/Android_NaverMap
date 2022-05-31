@@ -2,6 +2,7 @@ package com.example.naver_map_test;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -44,12 +45,16 @@ import com.naver.maps.map.util.MarkerIcons;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.TimeUnit;
 
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -81,12 +86,17 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
     // Response된 데이터 목록을 저장하는 ArrayList
     private ArrayList<DataModel_response> dataModel_responses = new ArrayList<>();
 
+    // 매장 할인율 배열
+    ArrayList<Integer> discount_rank = new ArrayList<>();
 
     // 마커 색상을 위한 변수들
     Marker[] firstMarker;  // 1순위  빨
     Marker[] secondMarker;  // 2순위 주
     Marker[] thirdMarker; // 3순위 노
     Marker[] fourMarker; // 4순위 초
+
+    String[] markerColor = {"RED", "ORANGE", "YELLOW", "GREEN", "BLUE", "INDIGO", "VIOLET"};
+
 
     // Fragment가 생성되고 최초로 실행되는 함수
     // 다시 불리지는 않음
@@ -121,6 +131,8 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
                              Bundle savedInstanceState) {
         Log.e("Fragment onCreateView", "fragment ENTER");
 
+        /* --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  */
+        // 현재 위치를 찾아주는 함수의 권한을 부여하기 위한 코드
         LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION);
@@ -157,6 +169,8 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
         } else {
             Log.e("getLastknownLocation", "getLastknownLocation is null");
         }
+        /* --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  */
+
 
         View v = inflater.inflate(R.layout.fragment_home1, container, false);
         conv = v.findViewById(R.id.conv);
@@ -168,10 +182,10 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
             Gson gson = new GsonBuilder()
                     .setLenient()
                     .create();
-            // Retrofit 시간 설정
+//             Retrofit 시간 설정
 //            OkHttpClient okHttpClient = new OkHttpClient().newBuilder()  // Retrofit 연결, 통신 시간이 오래 걸리므로 지연시간 부여
 //                    .connectTimeout(1, TimeUnit.SECONDS)   // call 할 경우 연결되는 시간
-//                    .readTimeout(8, TimeUnit.SECONDS)   // 받은 데이터 읽는 역할
+//                    .readTimeout(4, TimeUnit.SECONDS)   // 받은 데이터 읽는 역할
 //                    .writeTimeout(1, TimeUnit.SECONDS)   // 보내는 역할
 //                    .build();
 
@@ -180,15 +194,14 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
 //                    .client(okHttpClient)
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
-
         }
 
 
         // 편의점 버튼이 클릭되면 마커가 찍힌다. 색상별로
         conv.setOnClickListener(view -> {
             Send_request body_send_request = new Send_request(latitude, longitude, "CONV", "KT", "VIP");
-
             try {
+                Instant start = Instant.now();
                 APIInterface apiInterface = retrofit.create(APIInterface.class);
                 Call<List<DataModel_response>> call_request = apiInterface.call_request(body_send_request);
 
@@ -201,44 +214,31 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
 
                             Log.i("---","---");
                             Log.w("//===========//","================================================");
-                            Log.i("","\n"+"["+dataModel_responses+" >> dataModel_responses :: dataModel_response 결과값 확인]");
+                            Log.i("","\n"+"["+dataModel_responses.size()+" >> dataModel_responses Size :: dataModel_response 결과값 확인]");
                             Log.w("//===========//","================================================");
                             Log.i("---","---");
 
-
-                            assert response.body() != null;
-                            dataModel_responses.addAll(response.body());
+                            // 매장별 할인율 List
                             for(int i = 0; i < dataModel_responses.size(); i++) {
-                                String[] Branch =  dataModel_responses.get(i).Branch;
-                                String[] Location = dataModel_responses.get(i).Location;
-                                double[] Latitude = dataModel_responses.get(i).Latitude;
-                                double[] Longitude = dataModel_responses.get(i).Longitude;
-
-
-
-                                System.out.println("Branch : " + Arrays.toString(Branch));
-                                System.out.println("Location : " + Arrays.toString(Location));
-                                System.out.println("Latitude : " + Arrays.toString(Latitude));
-                                System.out.println("Longitude : " + Arrays.toString(Longitude));
-
-                                // 1순위 빨간색
-                                switch (i) {
-                                    case 0:
-                                        setMarker(Latitude, Longitude, "RED", body_send_request.category);
-                                        break;
-                                    case 1:
-                                        setMarker(Latitude, Longitude, "ORANGE", body_send_request.category);
-                                        break;
-                                    case 2:
-                                        setMarker(Latitude, Longitude, "YELLOW", body_send_request.category);
-                                        break;
-                                    case 3:
-                                        break;
-                                }
-
+                                discount_rank.add(dataModel_responses.get(i).getDiscountRate());
                             }
+
+                            for(int i = 1; i < discount_rank.size(); i++) {
+                                List<Double> latitude = dataModel_responses.get(i).getLatitude();
+                                List<Double> longitude = dataModel_responses.get(i).getLongitude();
+                                if(discount_rank.get(i - 1) == discount_rank.get(i)) {
+                                    setMarker(latitude, longitude, markerColor[i - 1], "CONV");
+                                } else {
+                                    setMarker(latitude, longitude, markerColor[i], "CONV");
+                                }
+                            }
+
+
                             dataModel_responses.clear();
                             Log.d("successful response", "onResponse 성공");
+                            Instant finish = Instant.now();
+                            long elapsedTime = Duration.between(start, finish).toMillis();
+                            System.out.println("elapsedTime(ms) : " + elapsedTime);
                         } else {
                             Log.e("fail response", "onResponse 실패 : " + response.body());
                         }
@@ -249,20 +249,18 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
                     public void onFailure(@NonNull Call<List<DataModel_response>> call, @NonNull Throwable t) {
                         Log.e("fail response", "onFailure ->" + t.getMessage());
                     }
+
                 });
             } catch (Exception e) {
                 Log.e("REST API ERROR", "Retrofit REST API ERROR : " + e);
             }
-
         });
-
         cafe.setOnClickListener(view -> {
-            Send_request body_send_request = new Send_request(latitude, longitude, "CAFE", "KT", "GOLD");
 
         });
 
         meal.setOnClickListener(view -> {
-            Send_request body_send_request = new Send_request(latitude, longitude, "CAFE", "KT", "GOLD");
+
 
         });
 //        return inflater.inflate(R.layout.fragment_home1, container, false);
@@ -333,13 +331,12 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
         uiSettings.setCompassEnabled(false);
         uiSettings.setScaleBarEnabled(false);
         uiSettings.setLocationButtonEnabled(true);
-
     }
 
-    public void setMarker(double[] latitude, double[] longitude, String color, String category) {
+    public void setMarker(List<Double> latitude, List<Double> longitude, String color, String category) {
         Vector<LatLng> markersPosition = new Vector<>();
-        for (int i = 0; i < latitude.length; i++) {
-            markersPosition.add(new LatLng(latitude[i], longitude[i]));
+        for (int i = 0; i < latitude.size(); i++) {
+            markersPosition.add(new LatLng(latitude.get(i), longitude.get(i)));
         }
 
         for(LatLng markerPosition : markersPosition) {

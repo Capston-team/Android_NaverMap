@@ -8,40 +8,55 @@ import com.google.gson.annotations.SerializedName;
 
 public class DataModel_response {
 
-    @Expose
     @SerializedName("Branch")
-    public String[] Branch;
-
     @Expose
+    private List<String> branch = null;
     @SerializedName("Location")
-    public String[] Location;
-
     @Expose
+    private List<String> location = null;
     @SerializedName("Latitude")
-    public double[] Latitude;
-
     @Expose
+    private List<Double> latitude = null;
     @SerializedName("Longitude")
-    public double[] Longitude;
-
     @Expose
+    private List<Double> longitude = null;
     @SerializedName("Branch_name")
+    @Expose
     private String branchName;
+    @SerializedName("Discount_rate")
+    @Expose
+    private Integer discountRate;
 
-    public double[] getLongitude() {
-        return Longitude;
+    public List<String> getBranch() {
+        return branch;
     }
 
-    public double[] getLatitude() {
-        return Latitude;
+    public void setBranch(List<String> branch) {
+        this.branch = branch;
     }
 
-    public String[] getBranch() {
-        return Branch;
+    public List<String> getLocation() {
+        return location;
     }
 
-    public String[] getLocation() {
-        return Location;
+    public void setLocation(List<String> location) {
+        this.location = location;
+    }
+
+    public List<Double> getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(List<Double> latitude) {
+        this.latitude = latitude;
+    }
+
+    public List<Double> getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(List<Double> longitude) {
+        this.longitude = longitude;
     }
 
     public String getBranchName() {
@@ -50,5 +65,13 @@ public class DataModel_response {
 
     public void setBranchName(String branchName) {
         this.branchName = branchName;
+    }
+
+    public Integer getDiscountRate() {
+        return discountRate;
+    }
+
+    public void setDiscountRate(Integer discountRate) {
+        this.discountRate = discountRate;
     }
 }

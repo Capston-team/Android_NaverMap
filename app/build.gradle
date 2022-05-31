@@ -46,7 +46,9 @@ dependencies {
     // Map Permission
     implementation 'io.github.ParkSangGwon:tedpermission-normal:3.3.0'
 
-
+    //SlidingPanel Lib
+    implementation 'com.sothree.slidinguppanel:library:3.4.0'
+    
     implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'com.google.android.material:material:1.6.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
