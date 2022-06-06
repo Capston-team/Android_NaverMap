@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/home1"
+        android:title="Map"
+        android:icon="@drawable/ic_map" />
+    <item
+        android:id="@+id/home2"
+        android:title="Event"
+        android:icon="@drawable/ic_event" />
+    <item
+        android:id="@+id/home3"
+        android:title="Gift"
+        android:icon="@drawable/ic_giftcard" />
+
+
+</menu>
