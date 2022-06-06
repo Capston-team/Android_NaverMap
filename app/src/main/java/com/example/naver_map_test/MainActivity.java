@@ -1,9 +1,5 @@
 package com.example.naver_map_test;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -46,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
     String carrier;
     String rate;
+
 
 
     // git merge conflict 테스트 주석
