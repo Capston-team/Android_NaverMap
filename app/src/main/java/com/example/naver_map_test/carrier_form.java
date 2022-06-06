@@ -63,20 +63,17 @@ public class carrier_form extends AppCompatActivity {
 
         AutoCompleteTextView rate_autoCompleteTextView = findViewById(R.id.filled_exposed2);
 
-        autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                carrier = autoCompleteTextView.getText().toString();
-                if(autoCompleteTextView.getText().toString().equals("SKT")) {
-                    rate_autoCompleteTextView.setAdapter(skt_adapter);
-                    rate_autoCompleteTextView.setOnItemClickListener((adapterView1, view1, i1, l1) -> rate = rate_autoCompleteTextView.getText().toString());
-                } else if(autoCompleteTextView.getText().toString().equals("KT")) {
-                    rate_autoCompleteTextView.setAdapter(kt_adapter);
-                    rate_autoCompleteTextView.setOnItemClickListener((adapterView12, view12, i12, l12) -> rate = rate_autoCompleteTextView.getText().toString());
-                } else {
-                    rate_autoCompleteTextView.setAdapter(lg_adapter);
-                    rate_autoCompleteTextView.setOnItemClickListener((adapterView13, view13, i13, l13) -> rate = rate_autoCompleteTextView.getText().toString());
-                }
+        autoCompleteTextView.setOnItemClickListener((adapterView, view, i, l) -> {
+            carrier = autoCompleteTextView.getText().toString();
+            if(autoCompleteTextView.getText().toString().equals("SKT")) {
+                rate_autoCompleteTextView.setAdapter(skt_adapter);
+                rate_autoCompleteTextView.setOnItemClickListener((adapterView1, view1, i1, l1) -> rate = rate_autoCompleteTextView.getText().toString());
+            } else if(autoCompleteTextView.getText().toString().equals("KT")) {
+                rate_autoCompleteTextView.setAdapter(kt_adapter);
+                rate_autoCompleteTextView.setOnItemClickListener((adapterView12, view12, i12, l12) -> rate = rate_autoCompleteTextView.getText().toString());
+            } else {
+                rate_autoCompleteTextView.setAdapter(lg_adapter);
+                rate_autoCompleteTextView.setOnItemClickListener((adapterView13, view13, i13, l13) -> rate = rate_autoCompleteTextView.getText().toString());
             }
         });
 
@@ -84,9 +81,14 @@ public class carrier_form extends AppCompatActivity {
         confirm.setOnClickListener(view -> {
             if(carrier != null && rate != null) {
 //                Toast.makeText(carrier_form.this, "carrier : " + carrier + " " + "rate : " + rate, Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent();
-                intent.putExtra("carrier", carrier);
-                intent.putExtra("rate", rate);
+//                Intent intent = new Intent();
+//                intent.putExtra("carrier", carrier);
+//                intent.putExtra("rate", rate);
+                Intent intent = new Intent(this, MainActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("carrier", carrier);
+                bundle.putString("rate", rate);
+                intent.putExtras(bundle);
                 setResult(RESULT_OK, intent);
                 finish();
             } else {
