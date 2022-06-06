@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     // git merge conflict 테스트 주석
+    // branch merge 테스트
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
