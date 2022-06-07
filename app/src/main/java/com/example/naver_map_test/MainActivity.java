@@ -187,12 +187,15 @@ public class MainActivity extends AppCompatActivity {
 //                Log.i("","\n"+"[onActivityResult rate : "+String.valueOf(rate)+"]");
 //                Log.w("//===========//","================================================");
 //                Log.i("---","---");
-
-                Bundle fragBundle = new Bundle();
-                fragment_home1 fragment_home1 = (fragment_home1) getSupportFragmentManager().findFragmentByTag("MapFrag");
-                fragBundle.putString("carrier", carrier);
-                fragBundle.putString("rate", rate);
-
+                fragment_home1 MapFrag = (fragment_home1) getSupportFragmentManager().findFragmentByTag("MapFrag");
+//                Log.i("---","---");
+//                Log.w("//===========//","================================================");
+//                Log.i("","\n"+"["+String.valueOf(ACTIVITY_NAME)+" >> MapFrag :: MapFrag null 확인");
+//                Log.w("//===========//","================================================");
+//                Log.i("---","---");
+//
+                assert MapFrag != null;
+                MapFrag.setUserInfo(carrier, rate);
             }
         }
     }

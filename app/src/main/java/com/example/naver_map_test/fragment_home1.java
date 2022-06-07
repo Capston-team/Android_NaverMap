@@ -85,6 +85,8 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
     // 마커 색상을 저장한 배열
     String[] markerColor = {"RED", "ORANGE", "YELLOW", "GREEN", "BLUE", "INDIGO", "VIOLET"};
 
+    String carrier;
+    String rate;
 
     // Fragment가 생성되고 최초로 실행되는 함수
     @Override
@@ -121,7 +123,6 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
         cafe = v.findViewById(R.id.cafe);
         meal = v.findViewById(R.id.meal);
         oil = v.findViewById(R.id.oil);
-
 
         Log.e("Fragment onCreateView", "fragment ENTER");
 
@@ -190,7 +191,18 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
 
         // 편의점 버튼이 클릭되면 마커가 찍힌다. 색상별로
         conv.setOnClickListener(view -> {
+
+//            HashMap<String, String> userInfo = setUserInfo(carrier, rate);
+//
+//            Log.i("---","---");
+//            Log.w("//===========//","================================================");
+//            Log.i("","\n"+"["+ userInfo.get("carrier") +" >> userInfo :: carrier 확인]");
+//            Log.i("","\n"+"["+ userInfo.get("rate") +" >> userInfo :: rate 확인]");
+//            Log.w("//===========//","================================================");
+//            Log.i("---","---");
+
             Send_request body_send_request = new Send_request(latitude, longitude, "CONV", "KT", "VIP");
+
             fragment_home1.this.setMarkerWithLocation(body_send_request);
 
         });
@@ -206,26 +218,21 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
         return v;
     }
 
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        if(requestCode == 101) {
-//            if (resultCode == -1) {
-//                assert data != null;
-//                Bundle bundle = data.getExtras();
-//                String carrier = bundle.getString("carrier");
-//                String rate = bundle.getString("rate");
-//                Log.i("---","---");
-//                Log.w("//===========//","================================================");
-//                Log.i("","\n"+"["+String.valueOf(FRAGMENT1)+" >> Fragment >> onActivityResult() :: 인텐트 응답 데이터 확인]");
-//                Log.i("","\n"+"[onActivityResult carrier : "+String.valueOf(carrier)+"]");
-//                Log.i("","\n"+"[onActivityResult rate : "+String.valueOf(rate)+"]");
-//                Log.w("//===========//","================================================");
-//                Log.i("---","---");
-//            }
-//        }
-//    }
+    public HashMap<String, String> setUserInfo(String carrier, String rate) {
+
+        Log.i("---","---");
+        Log.w("//===========//","================================================");
+        Log.i("","\n"+"["+ carrier +" >> setUserInfo :: carrier 확인]");
+        Log.i("","\n"+"["+ rate +" >> setUserInfo :: rate 확인]");
+        Log.w("//===========//","================================================");
+        Log.i("---","---");
+
+        HashMap<String, String> userInfo = new HashMap<>();
+        userInfo.put("carrier", carrier);
+        userInfo.put("rate", rate);
+
+        return userInfo;
+    }
 
     @UiThread
     @Override
