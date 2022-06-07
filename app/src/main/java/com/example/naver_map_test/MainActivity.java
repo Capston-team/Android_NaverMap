@@ -85,10 +85,6 @@ public class MainActivity extends AppCompatActivity {
             animatedBottomBar.selectTabById(R.id.home1, true);
             fragmentManager = getSupportFragmentManager();
             MapFrag = new fragment_home1();
-            Bundle extra = new Bundle();
-            extra.putString("carrier", "test1");
-            extra.putString("rate", "test2");
-            MapFrag.setArguments(extra);
             fragmentManager.beginTransaction().add(R.id.menu_frame_layout, MapFrag,"MapFrag")
                     .addToBackStack(null)
                     .commit();
@@ -111,8 +107,6 @@ public class MainActivity extends AppCompatActivity {
 
         // 처음 통신사, 등급 입력 창 호출
 //        startActivityResult.launch(form_intent);
-
-
 
 
         animatedBottomBar.setOnTabSelectListener(new AnimatedBottomBar.OnTabSelectListener() {
@@ -193,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
 //                Log.i("","\n"+"["+String.valueOf(ACTIVITY_NAME)+" >> MapFrag :: MapFrag null 확인");
 //                Log.w("//===========//","================================================");
 //                Log.i("---","---");
-//
+
                 assert MapFrag != null;
                 MapFrag.setUserInfo(carrier, rate);
             }

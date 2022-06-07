@@ -1,6 +1,7 @@
 package com.example.naver_map_test;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -80,15 +81,11 @@ public class carrier_form extends AppCompatActivity {
 
         confirm.setOnClickListener(view -> {
             if(carrier != null && rate != null) {
-//                Toast.makeText(carrier_form.this, "carrier : " + carrier + " " + "rate : " + rate, Toast.LENGTH_SHORT).show();
-//                Intent intent = new Intent();
-//                intent.putExtra("carrier", carrier);
-//                intent.putExtra("rate", rate);
                 Intent intent = new Intent(this, MainActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putString("carrier", carrier);
-                bundle.putString("rate", rate);
-                intent.putExtras(bundle);
+                intent.putExtra("carrier", carrier);
+                intent.putExtra("rate", rate);
+
+
                 setResult(RESULT_OK, intent);
                 finish();
             } else {
