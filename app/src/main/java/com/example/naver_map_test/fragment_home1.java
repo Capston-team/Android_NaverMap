@@ -1,7 +1,9 @@
 package com.example.naver_map_test;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -10,6 +12,10 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.annotation.UiThread;
@@ -46,6 +52,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicReference;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -124,6 +131,12 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
         meal = v.findViewById(R.id.meal);
         oil = v.findViewById(R.id.oil);
 
+        Intent form_intent = new Intent(getActivity(), carrier_form.class);
+        form_intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        // 처음 통신사, 등급 입력 창 호출
+        startActivityResult.launch(form_intent);
+
+
         Log.e("Fragment onCreateView", "fragment ENTER");
 
         /* --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  */
@@ -163,7 +176,6 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
             latitude = loc_Current.getLatitude();
             longitude = loc_Current.getLongitude();
             Log.d("Test", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
-
         } else {   // 만약 LocationListener가 위도, 경도를 가져오지 못할경우
             Log.e("getLastknownLocation", "getLastknownLocation is null");
         }
@@ -188,51 +200,73 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
                     .build();
         }
 
-
-        // 편의점 버튼이 클릭되면 마커가 찍힌다. 색상별로
-        conv.setOnClickListener(view -> {
-
-//            HashMap<String, String> userInfo = setUserInfo(carrier, rate);
-//
-//            Log.i("---","---");
-//            Log.w("//===========//","================================================");
-//            Log.i("","\n"+"["+ userInfo.get("carrier") +" >> userInfo :: carrier 확인]");
-//            Log.i("","\n"+"["+ userInfo.get("rate") +" >> userInfo :: rate 확인]");
-//            Log.w("//===========//","================================================");
-//            Log.i("---","---");
-
-            Send_request body_send_request = new Send_request(latitude, longitude, "CONV", "KT", "VIP");
-
-            fragment_home1.this.setMarkerWithLocation(body_send_request);
-
-        });
-        cafe.setOnClickListener(view -> {
-            Send_request body_send_request = new Send_request(latitude, longitude, "CAFE", "KT", "VIP");
-            setMarkerWithLocation(body_send_request);
-        });
-
-        meal.setOnClickListener(view -> {
-            Send_request body_send_request = new Send_request(latitude, longitude, "MEAL", "KT", "VIP");
-            setMarkerWithLocation(body_send_request);
-        });
         return v;
     }
 
-    public HashMap<String, String> setUserInfo(String carrier, String rate) {
-
+    public void onHandlerResult(String carrier, String rate) {
         Log.i("---","---");
         Log.w("//===========//","================================================");
-        Log.i("","\n"+"["+ carrier +" >> setUserInfo :: carrier 확인]");
-        Log.i("","\n"+"["+ rate +" >> setUserInfo :: rate 확인]");
+        Log.i("","\n"+"["+ carrier +" >> onHandlerResult :: carrier 확인]");
+        Log.i("","\n"+"["+ rate +" >> onHandlerResult :: rate 확인]");
         Log.w("//===========//","================================================");
         Log.i("---","---");
 
-        HashMap<String, String> userInfo = new HashMap<>();
-        userInfo.put("carrier", carrier);
-        userInfo.put("rate", rate);
 
-        return userInfo;
+        conv.setOnClickListener(view -> {
+           Send_request sendRequest = new Send_request(latitude, longitude, "CONV", carrier, rate);
+           setMarkerWithLocation(sendRequest);
+        });
+
+        cafe.setOnClickListener(view -> {
+            Send_request sendRequest = new Send_request(latitude, longitude, "CAFE", carrier, rate);
+            setMarkerWithLocation(sendRequest);
+        });
+
+        meal.setOnClickListener(view -> {
+            Send_request sendRequest = new Send_request(latitude, longitude, "MEAL", carrier, rate);
+            setMarkerWithLocation(sendRequest);
+        });
+
+
     }
+
+    //     통신사, 등급 입력 창 결과
+    ActivityResultLauncher<Intent> startActivityResult = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+//                    Log.i("---","---");
+//                    Log.w("//===========//","================================================");
+//                    Log.i("","\n"+"["+String.valueOf(FRAGMENT1)+" >> registerForActivityResult() :: 인텐트 결과 확인]");
+//                    Log.i("","\n"+"[result :: [전체 데이터] :: "+String.valueOf(result)+"]");
+//                    Log.w("//===========//","================================================");
+//                    Log.i("---","---");
+                    if(result.getResultCode() == Activity.RESULT_OK) {
+                        // -----------------------------------------
+                        // [인텐트 데이터 얻어온다]
+                        Intent intent = result.getData();
+                        // ----------------------------------------------------------------------------------
+                        // ----------------------------------------------------------------------------------
+                        // [setResult 에서 응답 받은 데이터 확인 실시]
+                        assert intent != null;
+                        carrier = intent.getStringExtra("carrier");
+                        rate = intent.getStringExtra("rate");
+
+                        Log.i("---","---");
+                        Log.w("//===========//","================================================");
+                        Log.i("","\n"+"["+String.valueOf(FRAGMENT1)+" >> registerForActivityResult() :: 인텐트 응답 데이터 확인]");
+                        Log.i("","\n"+"[onActivityResult carrier : "+String.valueOf(carrier)+"]");
+                        Log.i("","\n"+"[onActivityResult rate : "+String.valueOf(rate)+"]");
+                        Log.w("//===========//","================================================");
+                        Log.i("---","---");
+                        // ----------------------------------------------------------------------------------
+                        onHandlerResult(carrier, rate);
+                    }
+                }
+            }
+    );
+
 
     @UiThread
     @Override

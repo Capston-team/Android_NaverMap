@@ -1,5 +1,9 @@
 package com.example.naver_map_test;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -10,6 +14,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -36,26 +41,12 @@ public class MainActivity extends AppCompatActivity {
     DrawerLayout drawerLayout;
     NavigationView navigationView;
 
-    Fragment fragment = null;
-
     private Fragment MapFrag, EventFrag, BarcodeFrag;
-
-    String carrier;
-    String rate;
-
-
-
-    // git merge conflict 테스트 주석
-    // branch merge 테스트
-    // 맥북에 있는 코드 수정 push 테스트
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        Intent form_intent = new Intent(MainActivity.this, carrier_form.class);
-        form_intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
         layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
@@ -79,8 +70,6 @@ public class MainActivity extends AppCompatActivity {
 
         animatedBottomBar = findViewById(R.id.bottom_bar);
 
-        startActivityForResult(form_intent, 101);
-
         if (savedInstanceState == null) {
             animatedBottomBar.selectTabById(R.id.home1, true);
             fragmentManager = getSupportFragmentManager();
@@ -92,21 +81,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         Log.e("MainActivity onCreate", "ENTER");
-//        Intent intent = getIntent();
-//
-//        String carrier = intent.getStringExtra("carrier");
-//        String rate = intent.getStringExtra("rate");
-//
-//        Log.i("---","---");
-//        Log.w("//===========//","================================================");
-//        Log.i("","\n"+"["+String.valueOf(ACTIVITY_NAME)+" >> registerForActivityResult() :: 인텐트 응답 데이터 확인]");
-//        Log.i("","\n"+"[onActivityResult carrier : "+String.valueOf(carrier)+"]");
-//        Log.i("","\n"+"[onActivityResult rate : "+String.valueOf(rate)+"]");
-//        Log.w("//===========//","================================================");
-//        Log.i("---","---");
-
-        // 처음 통신사, 등급 입력 창 호출
-//        startActivityResult.launch(form_intent);
 
 
         animatedBottomBar.setOnTabSelectListener(new AnimatedBottomBar.OnTabSelectListener() {
@@ -161,80 +135,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        Log.e("onActivityResult : ", "onActivityResult ENTER");
-
-        if(requestCode == 101) {
-            if (resultCode == RESULT_OK) {
-                assert data != null;
-                Bundle bundle = data.getExtras();
-                String carrier = bundle.getString("carrier");
-                String rate = bundle.getString("rate");
-//                Log.i("---","---");
-//                Log.w("//===========//","================================================");
-//                Log.i("","\n"+"["+String.valueOf(ACTIVITY_NAME)+" >> onActivityResult() :: Bundle 응답 데이터 확인]");
-//                Log.i("","\n"+"[onActivityResult carrier : "+String.valueOf(carrier)+"]");
-//                Log.i("","\n"+"[onActivityResult rate : "+String.valueOf(rate)+"]");
-//                Log.w("//===========//","================================================");
-//                Log.i("---","---");
-                fragment_home1 MapFrag = (fragment_home1) getSupportFragmentManager().findFragmentByTag("MapFrag");
-//                Log.i("---","---");
-//                Log.w("//===========//","================================================");
-//                Log.i("","\n"+"["+String.valueOf(ACTIVITY_NAME)+" >> MapFrag :: MapFrag null 확인");
-//                Log.w("//===========//","================================================");
-//                Log.i("---","---");
-
-                assert MapFrag != null;
-                MapFrag.setUserInfo(carrier, rate);
-            }
-        }
-    }
-
-    // 통신사, 등급 입력 창 결과
-//    ActivityResultLauncher<Intent> startActivityResult = registerForActivityResult(
-//            new ActivityResultContracts.StartActivityForResult(),
-//            new ActivityResultCallback<ActivityResult>() {
-//                @Override
-//                public void onActivityResult(ActivityResult result) {
-//                    Log.i("---","---");
-//                    Log.w("//===========//","================================================");
-//                    Log.i("","\n"+"["+String.valueOf(ACTIVITY_NAME)+" >> registerForActivityResult() :: 인텐트 결과 확인]");
-//                    Log.i("","\n"+"[result :: [전체 데이터] :: "+String.valueOf(result)+"]");
-//                    Log.w("//===========//","================================================");
-//                    Log.i("---","---");
-//                    if(result.getResultCode() == Activity.RESULT_OK) {
-//                        // -----------------------------------------
-//                        // [인텐트 데이터 얻어온다]
-//                        Intent intent = result.getData();
-//                        // ----------------------------------------------------------------------------------
-//                        // ----------------------------------------------------------------------------------
-//                        // [setResult 에서 응답 받은 데이터 확인 실시]
-//                        assert intent != null;
-//                        carrier = intent.getStringExtra("carrier");
-//                        rate = intent.getStringExtra("rate");
-//
-//                        Log.i("---","---");
-//                        Log.w("//===========//","================================================");
-//                        Log.i("","\n"+"["+String.valueOf(ACTIVITY_NAME)+" >> registerForActivityResult() :: 인텐트 응답 데이터 확인]");
-//                        Log.i("","\n"+"[onActivityResult carrier : "+String.valueOf(carrier)+"]");
-//                        Log.i("","\n"+"[onActivityResult rate : "+String.valueOf(rate)+"]");
-//                        Log.w("//===========//","================================================");
-//                        Log.i("---","---");
-//                        // ----------------------------------------------------------------------------------
-//                       Bundle bundle = new Bundle();
-//                       bundle.putString("carrier", carrier);
-//                       bundle.putString("rate", rate);
-//                       fragment_home1 fragment_home1 = new fragment_home1();
-//                       fragment_home1.setArguments(bundle);
-//                    }
-//                }
-//            }
-//    );
-
 
     // 실제 device IPv4 주소 가져오는 함수
     public String getIpAddress() throws SocketException {

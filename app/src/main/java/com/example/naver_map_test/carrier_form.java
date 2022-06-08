@@ -81,11 +81,9 @@ public class carrier_form extends AppCompatActivity {
 
         confirm.setOnClickListener(view -> {
             if(carrier != null && rate != null) {
-                Intent intent = new Intent(this, MainActivity.class);
+                Intent intent = new Intent(this, fragment_home1.class);
                 intent.putExtra("carrier", carrier);
                 intent.putExtra("rate", rate);
-
-
                 setResult(RESULT_OK, intent);
                 finish();
             } else {
