@@ -211,7 +211,6 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
         Log.w("//===========//","================================================");
         Log.i("---","---");
 
-
         conv.setOnClickListener(view -> {
            Send_request sendRequest = new Send_request(latitude, longitude, "CONV", carrier, rate);
            setMarkerWithLocation(sendRequest);
