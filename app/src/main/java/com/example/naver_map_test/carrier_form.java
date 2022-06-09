@@ -30,6 +30,8 @@ public class carrier_form extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_carrier_form);
 
+        Log.e("carrier_form : ", "carrierForm");
+
         confirm = (Button) findViewById(R.id.confirm);
 
         String[] types = new String[]{"SKT", "KT", "LG"};
@@ -81,6 +83,10 @@ public class carrier_form extends AppCompatActivity {
 
         confirm.setOnClickListener(view -> {
             if(carrier != null && rate != null) {
+
+                PreferenceUtil.setCarrierPreferences(getApplicationContext(), "carrier", carrier);
+                PreferenceUtil.setRatePreferences(getApplicationContext(), "rate", rate);
+
                 Intent intent = new Intent(this, fragment_home1.class);
                 intent.putExtra("carrier", carrier);
                 intent.putExtra("rate", rate);
