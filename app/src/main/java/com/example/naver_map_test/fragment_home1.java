@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.annotation.UiThread;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -61,6 +62,8 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class fragment_home1 extends Fragment implements OnMapReadyCallback {
+
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1000;
 
     //지도 제어를 위한 mapView 변수
     // private MapView mapView;     // View를 사용하여 naver map을 출력했다면
@@ -117,7 +120,90 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
 
         // 햄버거 메뉴
         setHasOptionsMenu(true);
+
+        int COARSE_PERMISSION = ContextCompat.checkSelfPermission(getContext().getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION);
+        int FINE_PERMISSION = ContextCompat.checkSelfPermission(getContext().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
+        int CAMERA_PERMISSION = ContextCompat.checkSelfPermission(getContext().getApplicationContext(), Manifest.permission.CAMERA);
+
+        // 만약 3개의 권한 중 하나를 허용하지 않았다면 requestCode를 1000으로 할당
+        if (COARSE_PERMISSION == PackageManager.PERMISSION_DENIED
+                || FINE_PERMISSION == PackageManager.PERMISSION_DENIED
+                || CAMERA_PERMISSION == PackageManager.PERMISSION_DENIED) {
+            requestPermissions(new String[]
+                            {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA},
+                    1000);
+        }
     }
+    /* --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  */
+
+    /*
+    현재 위치를 받아오기 위한 위치 권한 함수
+    */
+    @Override
+    @SuppressWarnings("deprecation")
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grandResults) {
+
+        if (requestCode == 1000) {
+            boolean check_result = true;
+
+            // 모든 퍼미션을 허용했는지 체크
+            for (int result : grandResults) {
+                if (result != PackageManager.PERMISSION_GRANTED) {  //grandResult == DENIED
+                    check_result = false;
+                    break;
+                }
+            }
+
+            // 권한 체크에 동의를 하지 않으면 안드로이드 종료
+            if (check_result) {
+                // 허용했을 경우
+                LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+                if (ActivityCompat.checkSelfPermission(getContext().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext().getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
+                lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 20000, 10, locationListener);
+
+//                 GPS_PROVIDER는 정확도가 높지만 야외에서만 가능
+//                 실내에서는 NETWORK_PROVIDER를 사용하여 WIFI 같은 네트워크를 이용해 위치를 추정한다.
+
+                Location loc_Current = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+                if(loc_Current == null) {
+                    loc_Current = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                }
+
+                Log.d("Location", "loc_Current :  " + loc_Current);
+                // LocationListener가 성공적으로 위치를 가져올 경우
+                if(loc_Current != null) {
+                    latitude = loc_Current.getLatitude();
+                    longitude = loc_Current.getLongitude();
+                    Log.d("onRequestPermissionsResult", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
+                } else {   // 만약 LocationListener가 위도, 경도를 가져오지 못할경우
+                    Log.e("getLastknownLocation", "getLastknownLocation is null");
+                }
+
+            } else {
+                // 종료코드
+                Toast.makeText(getContext().getApplicationContext(), "check permission denied", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        if (locationSource.onRequestPermissionsResult(requestCode, permissions, grandResults)) {
+            if (!locationSource.isActivated()) {
+                naverMap.setLocationTrackingMode(LocationTrackingMode.None);
+            }
+            return;
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grandResults);
+    }
+    /* --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  */
 
     // onDestroyView()가 불리고 다시 Fragment가 보여진다면 불려지는 화면
     @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -137,7 +223,6 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
         if(carrier != null && rate != null) {
             onHandlerResult(carrier, rate);
         } else {
-
             Intent form_intent = new Intent(getActivity(), carrier_form.class);
             form_intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             // 처음 통신사, 등급 입력 창 호출
@@ -145,56 +230,8 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
 
         }
 
-        Log.e("carrier, rate : ", carrier + "  " + rate);
-
 
         Log.e("Fragment onCreateView", "fragment ENTER");
-
-        /* --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  */
-        // 현재 위치를 찾아주는 함수의 권한을 부여하기 위한 코드
-        LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION);
-            // 권한 설정 check Listener
-            PermissionListener permissionListener = new PermissionListener() {
-                @Override
-                public void onPermissionGranted() {
-                    Log.i("Current Location Permission", "Current Location Granted");
-                }
-
-                @Override
-                public void onPermissionDenied(List<String> deniedPermissions) {
-                    Toast.makeText(requireActivity(), "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
-                }
-            };
-
-            TedPermission.create()
-                    .setPermissionListener(permissionListener)
-                    .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
-                    .setPermissions(Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
-                    .check();
-        } else {  // 위치 권한 설정을 거부한 경우
-
-        }
-
-        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 20000, 10, locationListener);
-
-        // GPS_PROVIDER는 정확도가 높지만 야외에서만 가능
-        // 실내에서는 NETWORK_PROVIDER를 사용하여 WIFI 같은 네트워크를 이용해 위치를 추정한다.
-        Location loc_Current = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        Log.d("Location", "loc_Current :  " + loc_Current);
-        // LocationListener가 성공적으로 위치를 가져올 경우
-        if(loc_Current != null) {
-            latitude = loc_Current.getLatitude();
-            longitude = loc_Current.getLongitude();
-            Log.d("Test", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
-        } else {   // 만약 LocationListener가 위도, 경도를 가져오지 못할경우
-            Log.e("getLastknownLocation", "getLastknownLocation is null");
-        }
-
-
-        /* --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  */
-
 
         if (retrofit == null) {
             Gson gson = new GsonBuilder()
@@ -217,31 +254,6 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
         return v;
     }
 
-    public void onHandlerResult(String carrier, String rate) {
-        Log.i("---","---");
-        Log.w("//===========//","================================================");
-        Log.i("","\n"+"["+ carrier +" >> onHandlerResult :: carrier 확인]");
-        Log.i("","\n"+"["+ rate +" >> onHandlerResult :: rate 확인]");
-        Log.w("//===========//","================================================");
-        Log.i("---","---");
-
-        conv.setOnClickListener(view -> {
-           Send_request sendRequest = new Send_request(latitude, longitude, "CONV", carrier, rate);
-           setMarkerWithLocation(sendRequest);
-        });
-
-        cafe.setOnClickListener(view -> {
-            Send_request sendRequest = new Send_request(latitude, longitude, "CAFE", carrier, rate);
-            setMarkerWithLocation(sendRequest);
-        });
-
-        meal.setOnClickListener(view -> {
-            Send_request sendRequest = new Send_request(latitude, longitude, "MEAL", carrier, rate);
-            setMarkerWithLocation(sendRequest);
-        });
-
-
-    }
 
     //     통신사, 등급 입력 창 결과
     ActivityResultLauncher<Intent> startActivityResult = registerForActivityResult(
@@ -280,7 +292,31 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
             }
     );
 
+    public void onHandlerResult(String carrier, String rate) {
+        Log.i("---","---");
+        Log.w("//===========//","================================================");
+        Log.i("","\n"+"["+ carrier +" >> onHandlerResult :: carrier 확인]");
+        Log.i("","\n"+"["+ rate +" >> onHandlerResult :: rate 확인]");
+        Log.w("//===========//","================================================");
+        Log.i("---","---");
 
+        conv.setOnClickListener(view -> {
+            Send_request sendRequest = new Send_request(latitude, longitude, "CONV", carrier, rate);
+            setMarkerWithLocation(sendRequest);
+        });
+
+        cafe.setOnClickListener(view -> {
+            Send_request sendRequest = new Send_request(latitude, longitude, "CAFE", carrier, rate);
+            setMarkerWithLocation(sendRequest);
+        });
+
+        meal.setOnClickListener(view -> {
+            Send_request sendRequest = new Send_request(latitude, longitude, "MEAL", carrier, rate);
+            setMarkerWithLocation(sendRequest);
+        });
+
+
+    }
 
 
     @UiThread
@@ -292,7 +328,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
 //        CameraUpdate cameraUpdate = CameraUpdate.scrollTo(initialPosition);
 //        naverMap.moveCamera(cameraUpdate);
 
-        naverMap.setCameraPosition(getCameraPosition(latitude, longitude));
+//        naverMap.setCameraPosition(getCameraPosition(latitude, longitude));
 
         naverMap.setLayerGroupEnabled(NaverMap.LAYER_GROUP_BUILDING, true);
 
@@ -465,24 +501,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
         public void onLocationChanged(@NonNull Location location) {
             longitude = location.getLongitude();
             latitude = location.getLatitude();
-            Log.d("Test", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
+            Log.d("locationListener", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
         }
     };
-
-
-    /*
-      현재 위치를 받아오기 위한 위치 권한 함수
-    */
-    @Override
-    @SuppressWarnings("deprecation")
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] granResults) {
-
-        if (locationSource.onRequestPermissionsResult(requestCode, permissions, granResults)) {
-            if (!locationSource.isActivated()) {
-                naverMap.setLocationTrackingMode(LocationTrackingMode.None);
-            }
-            return;
-        }
-        super.onRequestPermissionsResult(requestCode, permissions, granResults);
-    }
 }
