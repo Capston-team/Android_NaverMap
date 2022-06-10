@@ -132,10 +132,21 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
         meal = v.findViewById(R.id.meal);
         oil = v.findViewById(R.id.oil);
 
-        Intent form_intent = new Intent(getActivity(), carrier_form.class);
-        form_intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        // 처음 통신사, 등급 입력 창 호출
-        startActivityResult.launch(form_intent);
+        String carrier = PreferenceUtil.getCarrierPreferences(getActivity().getApplicationContext(), "carrier");
+        String rate = PreferenceUtil.getRatePreferences(getActivity().getApplicationContext(), "rate");
+
+        if(carrier != null && rate != null) {
+            onHandlerResult(carrier, rate);
+        } else {
+
+            Intent form_intent = new Intent(getActivity(), carrier_form.class);
+            form_intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            // 처음 통신사, 등급 입력 창 호출
+            startActivityResult.launch(form_intent);
+
+        }
+
+        Log.e("carrier, rate : ", carrier + "  " + rate);
 
 
         Log.e("Fragment onCreateView", "fragment ENTER");
@@ -163,15 +174,16 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
                     .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
                     .setPermissions(Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
                     .check();
+        } else {  // 위치 권한 설정을 거부한 경우
+
         }
 
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 20000, 10, locationListener);
+
         // GPS_PROVIDER는 정확도가 높지만 야외에서만 가능
         // 실내에서는 NETWORK_PROVIDER를 사용하여 WIFI 같은 네트워크를 이용해 위치를 추정한다.
         Location loc_Current = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         Log.d("Location", "loc_Current :  " + loc_Current);
-
-
         // LocationListener가 성공적으로 위치를 가져올 경우
         if(loc_Current != null) {
             latitude = loc_Current.getLatitude();
@@ -180,6 +192,8 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
         } else {   // 만약 LocationListener가 위도, 경도를 가져오지 못할경우
             Log.e("getLastknownLocation", "getLastknownLocation is null");
         }
+
+
         /* --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  */
 
 
@@ -211,7 +225,6 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
         Log.i("","\n"+"["+ rate +" >> onHandlerResult :: rate 확인]");
         Log.w("//===========//","================================================");
         Log.i("---","---");
-
 
         conv.setOnClickListener(view -> {
            Send_request sendRequest = new Send_request(latitude, longitude, "CONV", carrier, rate);
@@ -267,6 +280,8 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
                 }
             }
     );
+
+
 
 
     @UiThread

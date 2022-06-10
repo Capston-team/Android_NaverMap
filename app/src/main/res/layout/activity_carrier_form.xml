@@ -1,59 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="16dp"
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
     tools:context=".carrier_form">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
-        android:layout_width="match_parent"
+
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="80dp"
-        android:hint="통신사"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:text="현재 해당되는 통신사를 선택해 주세요."
+        android:textColor="@color/white"
+        android:layout_marginBottom="10sp"/>
 
-        <AutoCompleteTextView
-            android:id="@+id/filled_exposed"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="none">
-        </AutoCompleteTextView>
-    </com.google.android.material.textfield.TextInputLayout>
+    <Spinner
+        android:id="@+id/spinner_tel"
+        android:layout_width="250dp"
+        android:layout_height="54dp"
+        android:layout_margin="10dp"
+        android:contentDescription="Enter telecom" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/Text_input"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
-        android:layout_width="match_parent"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="80dp"
-        android:hint="등급"
-        app:layout_constraintBottom_toTopOf="@+id/confirm"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout">
-
-        <AutoCompleteTextView
-            android:id="@+id/filled_exposed2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="none">
-        </AutoCompleteTextView>
-    </com.google.android.material.textfield.TextInputLayout>
-
+        android:text="현재 등급을 입력해 주세요."
+        android:textColor="@color/white"
+        android:layout_marginTop="30sp"/>
+    <Spinner
+        android:id="@+id/spinner_rank"
+        android:layout_width="250dp"
+        android:layout_height="48dp"
+        android:layout_margin="10dp"
+        android:contentDescription="Enter rank"
+        />
     <Button
+        android:id="@+id/confirm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/confirm"
         android:text="확인"
-        android:layout_margin="50dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Text_input" />
+        android:layout_marginTop="10sp"
+        />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
