@@ -45,6 +45,7 @@ import com.naver.maps.map.overlay.LocationOverlay;
 import com.naver.maps.map.overlay.Marker;
 import com.naver.maps.map.util.FusedLocationSource;
 import com.naver.maps.map.util.MarkerIcons;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.time.Duration;
 import java.time.Instant;
