@@ -2,9 +2,7 @@ package com.example.naver_map_test;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -13,19 +11,20 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class carrier_form extends AppCompatActivity {
 
     Spinner spinner_tel, spinner_rank;
     Button confirm;
 
-    String[] telecom = {"-- 통신사 입력 --","SKT", "KT", "LG"};
-    String[] rank = new String[5];
+    String[] telecom = {"SKT", "KT", "LG"};
+    List<String> rank = new ArrayList<String>();
 
     String selTel, selRank;
 
@@ -43,54 +42,63 @@ public class carrier_form extends AppCompatActivity {
 
         setContentView(R.layout.activity_carrier_form);
 
+        // view 찾는 코드
         confirm = findViewById(R.id.confirm);
-
         spinner_tel = findViewById(R.id.spinner_tel);
         spinner_rank = findViewById(R.id.spinner_rank);
 
 
 
+        // 통신사 Adapter
         ArrayAdapter<String> adapterTel = new ArrayAdapter<String>(
                 this, android.R.layout.simple_spinner_item, telecom
         );
         adapterTel.setDropDownViewResource(android.R.layout.simple_spinner_item);
+        // Adaper를 view에 연결
         spinner_tel.setAdapter(adapterTel);
 
+        // 등급 Adapter
         ArrayAdapter<String> adapterRank = new ArrayAdapter<String>(
                 this, android.R.layout.simple_spinner_item, rank
         );
         adapterRank.setDropDownViewResource(android.R.layout.simple_spinner_item);
 
 
+        // 통신사 Spinner 리스너
         spinner_tel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if(i!=0) spinner_rank.setAdapter(adapterRank);
-                rank[0] = "-- 등급 입력 --";
-                selTel=telecom[i];
+            public void onItemSelected(AdapterView<?> adapterView, View view, int index, long l) {
+                selTel=telecom[index];
+                tel_i=index;
 
-                tel_i=i;
+                Log.e("index", String.valueOf(index));
+                if(!rank.isEmpty()) {
+                    rank.clear();
+                }
 
-                switch (i){
+                switch (index){
+                    // SKT
+                    case 0:
+                        rank.add("VIP");
+                        rank.add("GOLD");
+                        rank.add("SILVER");
+                        break;
+                    // KT
                     case 1:
-                        rank[1]="VIP";
-                        rank[2]="GOLD";
-                        rank[3]="SILVER";
-                        rank[4]="-";
+                        rank.add("VVIP");
+                        rank.add("VIP");
+                        rank.add("GOLD");
+                        rank.add("일반");
                         break;
+
+                    // LG
                     case 2:
-                        rank[1]="VVIP";
-                        rank[2]="VIP";
-                        rank[3]="GOLD";
-                        rank[4]="일반";
-                        break;
-                    case 3:
-                        rank[1]="VVIP";
-                        rank[2]="VIP";
-                        rank[3]="다이아몬드";
-                        rank[4]="-";
+                        rank.add("VVIP");
+                        rank.add("VIP");
+                        rank.add("DIAMOND");
                         break;
                 }
+                spinner_rank.setAdapter(adapterRank);
             }
 
             @Override
@@ -100,10 +108,11 @@ public class carrier_form extends AppCompatActivity {
         });
 
 
+        // 등급 Spinner 리스너
         spinner_rank.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                selRank=rank[i];
+                selRank=rank.get(i);
                 rank_i =i;
             }
 
@@ -117,7 +126,7 @@ public class carrier_form extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 PreferenceUtil.setCarrierPreferences(getApplicationContext(), "carrier", telecom[tel_i]);
-                PreferenceUtil.setRatePreferences(getApplicationContext(), "rate", rank[rank_i]);
+                PreferenceUtil.setRatePreferences(getApplicationContext(), "rate", rank.get(rank_i));
                 if(selTel=="-- 통신사 입력 --" || selRank == "-- 등급 입력 --"){
                     Toast.makeText(carrier_form.this, "통신사 및 등급을 선택하세요.", Toast.LENGTH_LONG).show();
                     return;
@@ -126,7 +135,7 @@ public class carrier_form extends AppCompatActivity {
 
                 Intent intent=new Intent();
                 intent.putExtra("carrier", telecom[tel_i]);
-                intent.putExtra("rate", rank[rank_i]);
+                intent.putExtra("rate", rank.get(rank_i));
                 setResult(RESULT_OK, intent);
                 finish();
             }
