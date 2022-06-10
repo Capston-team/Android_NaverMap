@@ -9,13 +9,27 @@
     android:layout_height="wrap_content"
     tools:context=".carrier_form">
 
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="현재 해당되는 통신사를 선택해 주세요."
+        android:textColor="@color/white"
+        android:layout_marginBottom="10sp"/>
+
     <Spinner
         android:id="@+id/spinner_tel"
         android:layout_width="250dp"
-        android:layout_height="48dp"
+        android:layout_height="54dp"
         android:layout_margin="10dp"
-        android:contentDescription="Enter telecom"
-        />
+        android:contentDescription="Enter telecom" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="현재 등급을 입력해 주세요."
+        android:textColor="@color/white"
+        android:layout_marginTop="30sp"/>
     <Spinner
         android:id="@+id/spinner_rank"
         android:layout_width="250dp"
@@ -28,6 +42,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="확인"
+        android:layout_marginTop="10sp"
         />
 
 </LinearLayout>

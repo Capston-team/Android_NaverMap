@@ -9,14 +9,14 @@ public class PreferenceUtil {
         SharedPreferences preferences = context.getSharedPreferences("preferences", context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(carrierKey, carrierValue);
-        editor.commit();
+        editor.apply();
     }
 
     public static void setRatePreferences(Context context, String rateKey, String rateValue) {
         SharedPreferences preferences = context.getSharedPreferences("preferences", context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(rateKey, rateValue);
-        editor.commit();
+        editor.apply();
     }
 
     public static String getCarrierPreferences(Context context, String carrierKey) {

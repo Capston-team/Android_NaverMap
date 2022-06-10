@@ -46,6 +46,7 @@ import com.naver.maps.map.overlay.LocationOverlay;
 import com.naver.maps.map.overlay.Marker;
 import com.naver.maps.map.util.FusedLocationSource;
 import com.naver.maps.map.util.MarkerIcons;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -132,78 +133,10 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
             requestPermissions(new String[]
                             {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA},
                     1000);
+        } else{
+            Toast.makeText(getContext().getApplicationContext(), "Permission All Allowed", Toast.LENGTH_SHORT).show();
         }
     }
-    /* --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  */
-
-    /*
-    현재 위치를 받아오기 위한 위치 권한 함수
-    */
-    @Override
-    @SuppressWarnings("deprecation")
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grandResults) {
-
-        if (requestCode == 1000) {
-            boolean check_result = true;
-
-            // 모든 퍼미션을 허용했는지 체크
-            for (int result : grandResults) {
-                if (result != PackageManager.PERMISSION_GRANTED) {  //grandResult == DENIED
-                    check_result = false;
-                    break;
-                }
-            }
-
-            // 권한 체크에 동의를 하지 않으면 안드로이드 종료
-            if (check_result) {
-                // 허용했을 경우
-                LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-                if (ActivityCompat.checkSelfPermission(getContext().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext().getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    return;
-                }
-                lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 20000, 10, locationListener);
-
-//                 GPS_PROVIDER는 정확도가 높지만 야외에서만 가능
-//                 실내에서는 NETWORK_PROVIDER를 사용하여 WIFI 같은 네트워크를 이용해 위치를 추정한다.
-
-                Location loc_Current = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-                if(loc_Current == null) {
-                    loc_Current = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                }
-
-                Log.d("Location", "loc_Current :  " + loc_Current);
-                // LocationListener가 성공적으로 위치를 가져올 경우
-                if(loc_Current != null) {
-                    latitude = loc_Current.getLatitude();
-                    longitude = loc_Current.getLongitude();
-                    Log.d("onRequestPermissionsResult", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
-                } else {   // 만약 LocationListener가 위도, 경도를 가져오지 못할경우
-                    Log.e("getLastknownLocation", "getLastknownLocation is null");
-                }
-
-            } else {
-                // 종료코드
-                Toast.makeText(getContext().getApplicationContext(), "check permission denied", Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        if (locationSource.onRequestPermissionsResult(requestCode, permissions, grandResults)) {
-            if (!locationSource.isActivated()) {
-                naverMap.setLocationTrackingMode(LocationTrackingMode.None);
-            }
-            return;
-        }
-        super.onRequestPermissionsResult(requestCode, permissions, grandResults);
-    }
-    /* --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  */
 
     // onDestroyView()가 불리고 다시 Fragment가 보여진다면 불려지는 화면
     @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -217,18 +150,18 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
         meal = v.findViewById(R.id.meal);
         oil = v.findViewById(R.id.oil);
 
-        String carrier = PreferenceUtil.getCarrierPreferences(getActivity().getApplicationContext(), "carrier");
-        String rate = PreferenceUtil.getRatePreferences(getActivity().getApplicationContext(), "rate");
+//        String carrier = PreferenceUtil.getCarrierPreferences(getActivity().getApplicationContext(), "carrier");
+//        String rate = PreferenceUtil.getRatePreferences(getActivity().getApplicationContext(), "rate");
 
-        if(carrier != null && rate != null) {
-            onHandlerResult(carrier, rate);
-        } else {
+//        if(carrier != null && rate != null) {
+//            onHandlerResult(carrier, rate);
+//        } else {
             Intent form_intent = new Intent(getActivity(), carrier_form.class);
             form_intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             // 처음 통신사, 등급 입력 창 호출
             startActivityResult.launch(form_intent);
 
-        }
+//        }
 
 
         Log.e("Fragment onCreateView", "fragment ENTER");
@@ -328,7 +261,8 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
 //        CameraUpdate cameraUpdate = CameraUpdate.scrollTo(initialPosition);
 //        naverMap.moveCamera(cameraUpdate);
 
-//        naverMap.setCameraPosition(getCameraPosition(latitude, longitude));
+        Log.e("onMapReady",latitude + " " + longitude);
+        naverMap.setCameraPosition(getCameraPosition(latitude, longitude));
 
         naverMap.setLayerGroupEnabled(NaverMap.LAYER_GROUP_BUILDING, true);
 
@@ -504,4 +438,75 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
             Log.d("locationListener", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
         }
     };
+
+    /* --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  */
+
+    /*
+        현재 위치를 받아오기 위한 위치 권한 함수
+    */
+    @Override
+    @SuppressWarnings("deprecation")
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grandResults) {
+
+        if (requestCode == 1000) {
+            boolean check_result = true;
+
+            // 모든 퍼미션을 허용했는지 체크
+            for (int result : grandResults) {
+                if (result != PackageManager.PERMISSION_GRANTED) {  //grandResult == DENIED
+                    check_result = false;
+                    break;
+                }
+            }
+
+            // 권한 체크에 동의를 하지 않으면 안드로이드 종료
+            if (check_result) {
+                // 허용했을 경우
+                LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+                if (ActivityCompat.checkSelfPermission(getContext().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext().getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
+                lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 20000, 10, locationListener);
+
+//                 GPS_PROVIDER는 정확도가 높지만 야외에서만 가능
+//                 실내에서는 NETWORK_PROVIDER를 사용하여 WIFI 같은 네트워크를 이용해 위치를 추정한다.
+
+                Location loc_Current = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+                if(loc_Current == null) {
+                    loc_Current = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                }
+
+                Log.d("Location", "loc_Current :  " + loc_Current);
+                // LocationListener가 성공적으로 위치를 가져올 경우
+                if(loc_Current != null) {
+                    latitude = loc_Current.getLatitude();
+                    longitude = loc_Current.getLongitude();
+                    Log.d("onRequestPermissionsResult", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
+                } else {   // 만약 LocationListener가 위도, 경도를 가져오지 못할경우
+                    Log.e("getLastknownLocation", "getLastknownLocation is null");
+                }
+
+            } else {
+                // 종료코드
+                Toast.makeText(getContext().getApplicationContext(), "check permission denied", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        if (locationSource.onRequestPermissionsResult(requestCode, permissions, grandResults)) {
+            if (!locationSource.isActivated()) {
+                naverMap.setLocationTrackingMode(LocationTrackingMode.None);
+            }
+            return;
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grandResults);
+    }
+    /* --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  */
 }
