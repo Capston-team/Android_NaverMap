@@ -23,18 +23,18 @@ public class CustomAdapter extends RecyclerView.Adapter<Holder> {
     }
     public void setStoreList(ArrayList<StoreItem> list){
         this.storeList = list;
-        notifyDataSetChanged();
+//        notifyDataSetChanged();
     }
     @Override
     public void onBindViewHolder(@NonNull Holder holder, int position) {
         holder.onBind(storeList.get(position));
     }
-
     @Override
     public int getItemCount() {
         return storeList.size();
     }
 }
+
 class Holder extends RecyclerView.ViewHolder{
     LinearLayout layout_text;
     ImageView profile;
@@ -56,10 +56,7 @@ class Holder extends RecyclerView.ViewHolder{
         message.setText(item.getMessage());
 
 
-        layout_text.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-            }
+        layout_text.setOnClickListener(view -> {
         });
     }
 }
