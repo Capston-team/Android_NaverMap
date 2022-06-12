@@ -65,8 +65,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
 
 
-    //지도 제어를 위한 mapView 변수
-    // private MapView mapView;     // View를 사용하여 naver map을 출력했다면
     private static NaverMap naverMap;  // Fragment를 이용하여 naver map을 출력 했다면
     private static final String FRAGMENT1 = "FRAGMENT_HOME1";
 
@@ -79,12 +77,8 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
     Button meal;
     Button oil;
 
-
-
-    CompassView compassView;
     Button btnList;
-
-
+    CompassView compassView;
 
     // 현재 위도 경도 받아야함
     double latitude;
@@ -120,9 +114,9 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
         // 햄버거 메뉴
         setHasOptionsMenu(true);
 
-        int COARSE_PERMISSION = ContextCompat.checkSelfPermission(getContext().getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION);
-        int FINE_PERMISSION = ContextCompat.checkSelfPermission(getContext().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
-        int CAMERA_PERMISSION = ContextCompat.checkSelfPermission(getContext().getApplicationContext(), Manifest.permission.CAMERA);
+        int COARSE_PERMISSION = ContextCompat.checkSelfPermission(requireContext().getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION);
+        int FINE_PERMISSION = ContextCompat.checkSelfPermission(requireContext().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
+        int CAMERA_PERMISSION = ContextCompat.checkSelfPermission(requireContext().getApplicationContext(), Manifest.permission.CAMERA);
 
         // 만약 3개의 권한 중 하나를 허용하지 않았다면 requestCode를 1000으로 할당
         if (COARSE_PERMISSION == PackageManager.PERMISSION_DENIED
@@ -135,8 +129,10 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
             try {
                 LocationManager lm = (LocationManager) requireActivity().getSystemService(Context.LOCATION_SERVICE);
                 lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 20000, 10, locationListener);
-//                 GPS_PROVIDER는 정확도가 높지만 야외에서만 가능
-//                 실내에서는 NETWORK_PROVIDER를 사용하여 WIFI 같은 네트워크를 이용해 위치를 추정한다.
+
+
+//              GPS_PROVIDER는 정확도가 높지만 야외에서만 가능
+//              실내에서는 NETWORK_PROVIDER를 사용하여 WIFI 같은 네트워크를 이용해 위치를 추정한다.
                 Location loc_Current = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
                 if(loc_Current == null) {
@@ -147,19 +143,25 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
                 if(loc_Current != null) {
                     latitude = loc_Current.getLatitude();
                     longitude = loc_Current.getLongitude();
-                    updateCamerePosition(naverMap, latitude, longitude);
+
+                    updateCameraPosition(naverMap, latitude, longitude);
+
                     Log.d("onRequestPermissionsResult", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
                 } else {   // 만약 LocationListener가 위도, 경도를 가져오지 못할경우
                     Log.e("getLastknownLocation", "getLastknownLocation is null");
                 }
-
-
             } catch (Exception e) {
                 Log.e("Unknown Error", "LocationManager Error");
             }
         }
     }
 
+    public void updateCameraPosition(NaverMap naverMap, double latitude, double longitude) {
+        LatLng initialPosition = new LatLng(latitude, longitude);
+        CameraUpdate cameraUpdate = CameraUpdate.scrollTo(initialPosition);
+        naverMap.moveCamera(cameraUpdate);
+        naverMap.setCameraPosition(getCameraPosition(latitude, longitude));
+    }
     // onDestroyView()가 불리고 다시 Fragment가 보여진다면 불려지는 화면
     @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
@@ -169,6 +171,14 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
         FragmentManager fm = getChildFragmentManager();
         MapFragment mapFragment = (MapFragment) fm.findFragmentById(R.id.map);
 
+        View v = inflater.inflate(R.layout.fragment_home1, container, false);
+        btnList = v.findViewById((R.id.btnList));
+        conv = v.findViewById(R.id.conv);
+        cafe = v.findViewById(R.id.cafe);
+        meal = v.findViewById(R.id.meal);
+        oil = v.findViewById(R.id.oil);
+        compassView = v.findViewById(R.id.Compass);
+
         if (mapFragment == null) {
             mapFragment = MapFragment.newInstance();
             fm.beginTransaction().add(R.id.map, mapFragment).commit();
@@ -176,24 +186,10 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
         // onMapReady 함수를 인자로 callback함
         mapFragment.getMapAsync(this);
 
-
-        View v = inflater.inflate(R.layout.fragment_home1, container, false);
-
-        btnList = v.findViewById((R.id.btnList));
-        btnList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final BottomList bottomSheetFragment = new BottomList();
-                bottomSheetFragment.show(getParentFragmentManager(), bottomSheetFragment.getTag());
-            }
+        btnList.setOnClickListener(view -> {
+            final BottomList bottomSheetFragment = new BottomList();
+            bottomSheetFragment.show(getParentFragmentManager(), bottomSheetFragment.getTag());
         });
-        conv = v.findViewById(R.id.conv);
-        cafe = v.findViewById(R.id.cafe);
-        meal = v.findViewById(R.id.meal);
-        oil = v.findViewById(R.id.oil);
-
-        compassView = v.findViewById(R.id.Compass);
-
 
         String carrier = PreferenceUtil.getCarrierPreferences(requireActivity().getApplicationContext(), "carrier");
         String rate = PreferenceUtil.getRatePreferences(requireActivity().getApplicationContext(), "rate");
@@ -228,7 +224,6 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
                     .build();
         }
 
-
         return v;
     }
 
@@ -239,19 +234,9 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
             new ActivityResultCallback<ActivityResult>() {
                 @Override
                 public void onActivityResult(ActivityResult result) {
-//                    Log.i("---","---");
-//                    Log.w("//===========//","================================================");
-//                    Log.i("","\n"+"["+String.valueOf(FRAGMENT1)+" >> registerForActivityResult() :: 인텐트 결과 확인]");
-//                    Log.i("","\n"+"[result :: [전체 데이터] :: "+String.valueOf(result)+"]");
-//                    Log.w("//===========//","================================================");
-//                    Log.i("---","---");
                     if(result.getResultCode() == Activity.RESULT_OK) {
-                        // -----------------------------------------
-                        // [인텐트 데이터 얻어온다]
+
                         Intent intent = result.getData();
-                        // ----------------------------------------------------------------------------------
-                        // ----------------------------------------------------------------------------------
-                        // [setResult 에서 응답 받은 데이터 확인 실시]
                         assert intent != null;
                         carrier = intent.getStringExtra("carrier");
                         rate = intent.getStringExtra("rate");
@@ -263,7 +248,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
                         Log.i("","\n"+"[onActivityResult rate : "+String.valueOf(rate)+"]");
                         Log.w("//===========//","================================================");
                         Log.i("---","---");
-                        // ----------------------------------------------------------------------------------
+
                         onHandlerResult(carrier, rate);
                     }
                 }
@@ -271,29 +256,18 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
     );
 
     public void onHandlerResult(String carrier, String rate) {
-        Log.i("---","---");
-        Log.w("//===========//","================================================");
-        Log.i("","\n"+"["+ carrier +" >> onHandlerResult :: carrier 확인]");
-        Log.i("","\n"+"["+ rate +" >> onHandlerResult :: rate 확인]");
-        Log.w("//===========//","================================================");
-        Log.i("---","---");
-
         conv.setOnClickListener(view -> {
             Send_request sendRequest = new Send_request(latitude, longitude, "CONV", carrier, rate);
             setMarkerWithLocation(sendRequest);
         });
-
         cafe.setOnClickListener(view -> {
             Send_request sendRequest = new Send_request(latitude, longitude, "CAFE", carrier, rate);
             setMarkerWithLocation(sendRequest);
         });
-
         meal.setOnClickListener(view -> {
             Send_request sendRequest = new Send_request(latitude, longitude, "MEAL", carrier, rate);
             setMarkerWithLocation(sendRequest);
         });
-
-
     }
 
 
@@ -302,7 +276,6 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
     public void onMapReady(@NonNull NaverMap naverMap) {
         fragment_home1.naverMap = naverMap;
         Log.e("Fragment onMapReady", "MAP ENTER");
-
 
         // 지도의 레이아웃 설정
         naverMap.setLayerGroupEnabled(NaverMap.LAYER_GROUP_BUILDING, true);
@@ -344,8 +317,6 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
 
     // 이동 시 위도, 경도 설정 함수
     public void setLocationMode(@NonNull NaverMap naverMap) {
-//        Log.e("setLocationMode", "setLocationMode ENTER");
-
         naverMap.addOnLocationChangeListener(location -> {
 //            카메라 고정
 //            CameraUpdate cameraUpdate = CameraUpdate.scrollTo(new LatLng(location.getLatitude(), location.getLongitude()));
@@ -370,9 +341,9 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
     public void setMarkerWithLocation(Send_request send_request) {
         try {
             Instant start = Instant.now();
+
             APIInterface apiInterface = retrofit.create(APIInterface.class);
             Call<List<DataModel_response>> call_request = apiInterface.call_request(send_request);
-
             call_request.clone().enqueue(new Callback<List<DataModel_response>>() {
                 @Override
                 public void onResponse(@NonNull Call<List<DataModel_response>> call, @NonNull Response<List<DataModel_response>> response) {
@@ -477,14 +448,13 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
         marker.setHeight(height);
     }
 
-    // 이미 마커가 찍혀 있다면 확인해서 지우는 함수
     private void checkRemoveMarker() {
         if (activeMarkers != null) {
             for (Marker activeMarker : activeMarkers) {
                 activeMarker.setMap(null);
             }
         }
-        activeMarkers = new Vector<Marker>();
+        activeMarkers = new Vector<>();
     }
     /* --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  */
 
@@ -521,8 +491,8 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
             }
             if (check_result) {
                 // 허용했을 경우
-                LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-                if (ActivityCompat.checkSelfPermission(getContext().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext().getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                LocationManager lm = (LocationManager) requireActivity().getSystemService(Context.LOCATION_SERVICE);
+                if (ActivityCompat.checkSelfPermission(requireContext().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext().getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
                     //    ActivityCompat#requestPermissions
                     // here to request the missing permissions, and then overriding
@@ -556,7 +526,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
 
             } else {
                 // 종료코드
-                Toast.makeText(getContext().getApplicationContext(), "권한 설정을 허용해야 위치를 가져올 수 있습니다.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext().getApplicationContext(), "권한 설정을 허용해야 위치를 가져올 수 있습니다.", Toast.LENGTH_SHORT).show();
             }
         }
 

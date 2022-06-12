@@ -5,7 +5,6 @@ public class StoreItem {
     String title;
     String message;
 
-
     public StoreItem(int resourceId,String title, String message) {
         this.title = title;
         this.message= message;
@@ -14,22 +13,20 @@ public class StoreItem {
     public int getResourceId() {
         return resourceId;
     }
+    public String getTitle() {
+        return title;
+    }
     public String getMessage() {
         return message;
     }
 
-    public String getTitle() {
-        return title;
+    public void setResourceId(int resourceId) {
+        this.resourceId = resourceId;
     }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
     public void setTitle(String title) {
         this.title = title;
     }
-    public void setResourceId(int resourceId) {
-        this.resourceId = resourceId;
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

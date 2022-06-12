@@ -31,44 +31,44 @@ public class DataModel_response {
         return branch;
     }
 
-    public void setBranch(List<String> branch) {
-        this.branch = branch;
-    }
-
     public List<String> getLocation() {
         return location;
-    }
-
-    public void setLocation(List<String> location) {
-        this.location = location;
     }
 
     public List<Double> getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(List<Double> latitude) {
-        this.latitude = latitude;
-    }
-
     public List<Double> getLongitude() {
         return longitude;
-    }
-
-    public void setLongitude(List<Double> longitude) {
-        this.longitude = longitude;
     }
 
     public String getBranchName() {
         return branchName;
     }
 
-    public void setBranchName(String branchName) {
-        this.branchName = branchName;
-    }
-
     public Integer getDiscountRate() {
         return discountRate;
+    }
+
+    public void setBranch(List<String> branch) {
+        this.branch = branch;
+    }
+
+    public void setLocation(List<String> location) {
+        this.location = location;
+    }
+
+    public void setLatitude(List<Double> latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(List<Double> longitude) {
+        this.longitude = longitude;
+    }
+
+    public void setBranchName(String branchName) {
+        this.branchName = branchName;
     }
 
     public void setDiscountRate(Integer discountRate) {

@@ -19,8 +19,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import java.util.ArrayList;
 
 public class BottomList extends BottomSheetDialogFragment {
-    private RecyclerView mRecyclerView;
-    private CustomAdapter mRecyclerAdapter;
     private ArrayList<StoreItem> mfriendItems;
 
     @Override
@@ -39,10 +37,10 @@ public class BottomList extends BottomSheetDialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.bottom_sheet_layout, container, false);
 
-        mRecyclerView = view.findViewById(R.id.recyclerView);
+        RecyclerView mRecyclerView = view.findViewById(R.id.recyclerView);
 
         /* initiate adapter */
-        mRecyclerAdapter = new CustomAdapter();
+        CustomAdapter mRecyclerAdapter = new CustomAdapter();
 
         /* initiate recyclerview */
         mRecyclerView.setAdapter(mRecyclerAdapter);

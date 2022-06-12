@@ -47,10 +47,8 @@ public class carrier_form extends AppCompatActivity {
         spinner_tel = findViewById(R.id.spinner_tel);
         spinner_rank = findViewById(R.id.spinner_rank);
 
-
-
         // 통신사 Adapter
-        ArrayAdapter<String> adapterTel = new ArrayAdapter<String>(
+        ArrayAdapter<String> adapterTel = new ArrayAdapter<>(
                 this, android.R.layout.simple_spinner_item, telecom
         );
         adapterTel.setDropDownViewResource(android.R.layout.simple_spinner_item);
@@ -58,11 +56,10 @@ public class carrier_form extends AppCompatActivity {
         spinner_tel.setAdapter(adapterTel);
 
         // 등급 Adapter
-        ArrayAdapter<String> adapterRank = new ArrayAdapter<String>(
+        ArrayAdapter<String> adapterRank = new ArrayAdapter<>(
                 this, android.R.layout.simple_spinner_item, rank
         );
         adapterRank.setDropDownViewResource(android.R.layout.simple_spinner_item);
-
 
         // 통신사 Spinner 리스너
         spinner_tel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -100,7 +97,6 @@ public class carrier_form extends AppCompatActivity {
                 }
                 spinner_rank.setAdapter(adapterRank);
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
 
@@ -115,37 +111,29 @@ public class carrier_form extends AppCompatActivity {
                 selRank=rank.get(i);
                 rank_i =i;
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
 
             }
         });
 
-        confirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                PreferenceUtil.setCarrierPreferences(getApplicationContext(), "carrier", telecom[tel_i]);
-                PreferenceUtil.setRatePreferences(getApplicationContext(), "rate", rank.get(rank_i));
-                if(selTel=="-- 통신사 입력 --" || selRank == "-- 등급 입력 --"){
-                    Toast.makeText(carrier_form.this, "통신사 및 등급을 선택하세요.", Toast.LENGTH_LONG).show();
-                    return;
-                }
+        confirm.setOnClickListener(view -> {
+            PreferenceUtil.setCarrierPreferences(getApplicationContext(), "carrier", telecom[tel_i]);
+            PreferenceUtil.setRatePreferences(getApplicationContext(), "rate", rank.get(rank_i));
 
+//            if(selTel.equals("-- 통신사 입력 --") || selRank.equals("-- 등급 입력 --")){
+//                Toast.makeText(carrier_form.this, "통신사 및 등급을 선택하세요.", Toast.LENGTH_LONG).show();
+//                return;
+//            }
 
-                Intent intent=new Intent();
-                intent.putExtra("carrier", telecom[tel_i]);
-                intent.putExtra("rate", rank.get(rank_i));
-                setResult(RESULT_OK, intent);
-                finish();
-            }
+            Intent intent=new Intent();
+            intent.putExtra("carrier", telecom[tel_i]);
+            intent.putExtra("rate", rank.get(rank_i));
+            setResult(RESULT_OK, intent);
+            finish();
         });
-
-        //
-
-
-
     }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if(event.getAction()== MotionEvent.ACTION_OUTSIDE){
