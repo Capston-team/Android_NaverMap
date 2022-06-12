@@ -31,6 +31,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.gun0912.tedpermission.PermissionListener;
@@ -62,7 +63,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class fragment_home1 extends Fragment implements OnMapReadyCallback {
+public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1000;
 
@@ -80,6 +81,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
     Button meal;
     Button oil;
 
+    Button btnList;
     // 현재 위도 경도 받아야함
     double latitude;
     double longitude;
@@ -105,19 +107,11 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
         super.onCreate(savedInstanceState);
         Log.e("Fragment onCreate", "fragment ENTER");
 
-        FragmentManager fm = getChildFragmentManager();
-        MapFragment mapFragment = (MapFragment) fm.findFragmentById(R.id.map);
-
-        if (mapFragment == null) {
-            mapFragment = MapFragment.newInstance();
-            fm.beginTransaction().add(R.id.map, mapFragment).commit();
-        }
-        // onMapReady 함수를 인자로 callback함
-        mapFragment.getMapAsync(this);
 
         // 현재 위치를 받아오는 함수
         int LOCATION_PERMISSION_REQUEST_CODE = 1000;
         locationSource = new FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE);
+
 
         // 햄버거 메뉴
         setHasOptionsMenu(true);
@@ -144,7 +138,27 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        FragmentManager fm = getChildFragmentManager();
+        MapFragment mapFragment = (MapFragment) fm.findFragmentById(R.id.map);
+
+        if (mapFragment == null) {
+            mapFragment = MapFragment.newInstance();
+            fm.beginTransaction().add(R.id.map, mapFragment).commit();
+        }
+        // onMapReady 함수를 인자로 callback함
+        mapFragment.getMapAsync(this);
+
+
         View v = inflater.inflate(R.layout.fragment_home1, container, false);
+
+        btnList = v.findViewById((R.id.btnList));
+        btnList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final BottomList bottomSheetFragment = new BottomList();
+                bottomSheetFragment.show(getParentFragmentManager(), bottomSheetFragment.getTag());
+            }
+        });
         conv = v.findViewById(R.id.conv);
         cafe = v.findViewById(R.id.cafe);
         meal = v.findViewById(R.id.meal);
@@ -183,6 +197,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
         }
+
 
         return v;
     }

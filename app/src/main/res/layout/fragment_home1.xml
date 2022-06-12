@@ -11,10 +11,9 @@
       android:name="com.naver.maps.map.MapFragment"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toTopOf="parent" />
+      app:layout_constraintTop_toTopOf="parent"/>
 
   <HorizontalScrollView
       android:id="@+id/category_list"
@@ -96,4 +95,25 @@
           />
     </LinearLayout>
   </HorizontalScrollView>
+
+  <androidx.appcompat.widget.AppCompatButton
+      android:id="@+id/btnList"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="20dp"
+      android:layout_weight="1"
+      android:background="@drawable/round_button"
+      android:elevation="20dp"
+      android:minWidth="0dp"
+      android:minHeight="0dp"
+      android:paddingLeft="16dp"
+      android:paddingTop="8dp"
+      android:paddingRight="16dp"
+      android:paddingBottom="8dp"
+      android:text="목록 열기"
+      app:layout_constraintBottom_toBottomOf="@+id/map"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

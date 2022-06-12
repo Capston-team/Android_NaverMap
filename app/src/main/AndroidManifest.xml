@@ -15,7 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Naver_map_test"
         android:usesCleartextTraffic="true">
-
+        <activity
+            android:name=".ShopActivity"
+            android:exported="false" />
 
         <meta-data
             android:name="com.naver.maps.map.CLIENT_ID"
@@ -24,12 +26,13 @@
         <activity
             android:name=".carrier_form"
             android:exported="true"
-            android:theme="@style/Theme.AppCompat.Dialog"/>
+            android:theme="@style/Theme.AppCompat.Dialog" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
