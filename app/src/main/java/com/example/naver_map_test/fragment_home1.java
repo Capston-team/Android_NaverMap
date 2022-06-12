@@ -53,6 +53,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Vector;
 
 import retrofit2.Call;
@@ -79,10 +80,11 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
     Button oil;
 
 
+
     CompassView compassView;
-
-
     Button btnList;
+
+
 
     // 현재 위도 경도 받아야함
     double latitude;
@@ -129,6 +131,32 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
             requestPermissions(new String[]
                             {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA},
                     1000);
+        } else {
+            try {
+                LocationManager lm = (LocationManager) requireActivity().getSystemService(Context.LOCATION_SERVICE);
+                lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 20000, 10, locationListener);
+//                 GPS_PROVIDER는 정확도가 높지만 야외에서만 가능
+//                 실내에서는 NETWORK_PROVIDER를 사용하여 WIFI 같은 네트워크를 이용해 위치를 추정한다.
+                Location loc_Current = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+                if(loc_Current == null) {
+                    loc_Current = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                }
+
+                // LocationListener가 성공적으로 위치를 가져올 경우
+                if(loc_Current != null) {
+                    latitude = loc_Current.getLatitude();
+                    longitude = loc_Current.getLongitude();
+                    updateCamerePosition(naverMap, latitude, longitude);
+                    Log.d("onRequestPermissionsResult", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
+                } else {   // 만약 LocationListener가 위도, 경도를 가져오지 못할경우
+                    Log.e("getLastknownLocation", "getLastknownLocation is null");
+                }
+
+
+            } catch (Exception e) {
+                Log.e("Unknown Error", "LocationManager Error");
+            }
         }
     }
 
@@ -274,15 +302,6 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
     public void onMapReady(@NonNull NaverMap naverMap) {
         fragment_home1.naverMap = naverMap;
         Log.e("Fragment onMapReady", "MAP ENTER");
-        LatLng initialPosition = new LatLng(locationPreferenceUtil.getLatitudePreferences(requireContext(), "latitude", 37.5662952),
-                                            locationPreferenceUtil.getLongitudePreferences(requireContext(), "longitude", 126.9779451));
-        CameraUpdate cameraUpdate = CameraUpdate.scrollTo(initialPosition);
-
-        naverMap.moveCamera(cameraUpdate);
-
-        naverMap.setCameraPosition(getCameraPosition(locationPreferenceUtil.getLatitudePreferences(requireContext(), "latitude", 37.5662952),
-                                                     locationPreferenceUtil.getLongitudePreferences(requireContext(), "longitude", 126.9779451))
-        );
 
 
         // 지도의 레이아웃 설정
@@ -301,6 +320,12 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
         setOverlay(naverMap);
     }
 
+    public void updateCamerePosition(NaverMap naverMap, double latitude, double longitude) {
+        LatLng initialPosition = new LatLng(latitude, longitude);
+        CameraUpdate cameraUpdate = CameraUpdate.scrollTo(initialPosition);
+        naverMap.moveCamera(cameraUpdate);
+        naverMap.setCameraPosition(getCameraPosition(latitude, longitude));
+    }
 
     // 초기 지도 위도, 경도 초기화 함수
     public CameraPosition getCameraPosition(double latitude, double longitude) {
@@ -523,8 +548,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
                 if(loc_Current != null) {
                     latitude = loc_Current.getLatitude();
                     longitude = loc_Current.getLongitude();
-                    locationPreferenceUtil.setLatitudePreference(requireContext(), "latitude", latitude);
-                    locationPreferenceUtil.setLongitudePreference(requireContext(), "longitude", longitude);
+                    updateCamerePosition(naverMap, latitude, longitude);
                     Log.d("onRequestPermissionsResult", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
                 } else {   // 만약 LocationListener가 위도, 경도를 가져오지 못할경우
                     Log.e("getLastknownLocation", "getLastknownLocation is null");
