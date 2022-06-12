@@ -33,10 +33,9 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.gun0912.tedpermission.PermissionListener;
-import com.gun0912.tedpermission.normal.TedPermission;
 import com.naver.maps.geometry.LatLng;
 import com.naver.maps.map.CameraPosition;
+import com.naver.maps.map.CameraUpdate;
 import com.naver.maps.map.LocationTrackingMode;
 import com.naver.maps.map.MapFragment;
 import com.naver.maps.map.NaverMap;
@@ -46,15 +45,14 @@ import com.naver.maps.map.overlay.LocationOverlay;
 import com.naver.maps.map.overlay.Marker;
 import com.naver.maps.map.util.FusedLocationSource;
 import com.naver.maps.map.util.MarkerIcons;
-import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+import com.naver.maps.map.widget.CompassView;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
-import java.util.concurrent.atomic.AtomicReference;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -64,7 +62,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class fragment_home1 extends Fragment implements OnMapReadyCallback {
 
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1000;
 
     //지도 제어를 위한 mapView 변수
     // private MapView mapView;     // View를 사용하여 naver map을 출력했다면
@@ -79,6 +76,8 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
     Button cafe;
     Button meal;
     Button oil;
+
+    CompassView compassView;
 
     // 현재 위도 경도 받아야함
     double latitude;
@@ -133,8 +132,6 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
             requestPermissions(new String[]
                             {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA},
                     1000);
-        } else{
-            Toast.makeText(getContext().getApplicationContext(), "Permission All Allowed", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -150,18 +147,20 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
         meal = v.findViewById(R.id.meal);
         oil = v.findViewById(R.id.oil);
 
-//        String carrier = PreferenceUtil.getCarrierPreferences(getActivity().getApplicationContext(), "carrier");
-//        String rate = PreferenceUtil.getRatePreferences(getActivity().getApplicationContext(), "rate");
+        compassView = v.findViewById(R.id.Compass);
 
-//        if(carrier != null && rate != null) {
-//            onHandlerResult(carrier, rate);
-//        } else {
+
+        String carrier = PreferenceUtil.getCarrierPreferences(requireActivity().getApplicationContext(), "carrier");
+        String rate = PreferenceUtil.getRatePreferences(requireActivity().getApplicationContext(), "rate");
+
+        if(carrier != null && rate != null) {
+            onHandlerResult(carrier, rate);
+        } else {
             Intent form_intent = new Intent(getActivity(), carrier_form.class);
             form_intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             // 처음 통신사, 등급 입력 창 호출
             startActivityResult.launch(form_intent);
-
-//        }
+        }
 
 
         Log.e("Fragment onCreateView", "fragment ENTER");
@@ -257,15 +256,21 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
     public void onMapReady(@NonNull NaverMap naverMap) {
         fragment_home1.naverMap = naverMap;
         Log.e("Fragment onMapReady", "MAP ENTER");
-//        LatLng initialPosition = new LatLng(latitude, longitude);
-//        CameraUpdate cameraUpdate = CameraUpdate.scrollTo(initialPosition);
-//        naverMap.moveCamera(cameraUpdate);
+        LatLng initialPosition = new LatLng(locationPreferenceUtil.getLatitudePreferences(requireContext(), "latitude", 37.5662952),
+                                            locationPreferenceUtil.getLongitudePreferences(requireContext(), "longitude", 126.9779451));
+        CameraUpdate cameraUpdate = CameraUpdate.scrollTo(initialPosition);
 
-        Log.e("onMapReady",latitude + " " + longitude);
-        naverMap.setCameraPosition(getCameraPosition(latitude, longitude));
+        naverMap.moveCamera(cameraUpdate);
 
+        naverMap.setCameraPosition(getCameraPosition(locationPreferenceUtil.getLatitudePreferences(requireContext(), "latitude", 37.5662952),
+                                                     locationPreferenceUtil.getLongitudePreferences(requireContext(), "longitude", 126.9779451))
+        );
+
+
+        // 지도의 레이아웃 설정
         naverMap.setLayerGroupEnabled(NaverMap.LAYER_GROUP_BUILDING, true);
 
+        // 위치 추적기능 설정
         naverMap.setLocationSource(locationSource);
 
         // 현재 위치 표시 설정
@@ -279,19 +284,22 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
     }
 
 
+    // 초기 지도 위도, 경도 초기화 함수
     public CameraPosition getCameraPosition(double latitude, double longitude) {
         // 시작시 지도 위치 설정
         return new CameraPosition(
                 new LatLng(latitude, longitude),
-                15
+                16
         );
     }
 
+    // 지도 오버레이 설정
     public void setOverlay(NaverMap naverMap) {
         LocationOverlay locationOverlay = naverMap.getLocationOverlay();
         locationOverlay.setVisible(true);
     }
 
+    // 이동 시 위도, 경도 설정 함수
     public void setLocationMode(@NonNull NaverMap naverMap) {
 //        Log.e("setLocationMode", "setLocationMode ENTER");
 
@@ -302,16 +310,20 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
         });
     }
 
+    // 지도 UI 설정 함수
     public void setMapUi(@NonNull NaverMap naverMap) {
         UiSettings uiSettings = naverMap.getUiSettings();
         uiSettings.setCompassEnabled(false);
         uiSettings.setScaleBarEnabled(false);
         uiSettings.setLocationButtonEnabled(true);
+        uiSettings.setCompassEnabled(true);
+
+        compassView.setMap(naverMap);
     }
 
 
     /* --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  */
-    // 마커에 관련된 코드
+    // retrofit을 통해 설정한 객체를 통한 마커 설정 함수
     public void setMarkerWithLocation(Send_request send_request) {
         try {
             Instant start = Instant.now();
@@ -370,6 +382,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
         }
     }
 
+    // 색상에 따른 마커 설정 함수
     public void setMarker(List<Double> latitude, List<Double> longitude, String color, String category) {
         Vector<LatLng> markersPosition = new Vector<>();
         for (int i = 0; i < latitude.size(); i++) {
@@ -415,11 +428,13 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
         // 아이콘 이미지 설정
     }
 
+    // 마커 사이즈 설정 함수
     public void setMarkerSize(@NonNull Marker marker, int width, int height) {
         marker.setWidth(width);
         marker.setHeight(height);
     }
 
+    // 이미 마커가 찍혀 있다면 확인해서 지우는 함수
     private void checkRemoveMarker() {
         if (activeMarkers != null) {
             for (Marker activeMarker : activeMarkers) {
@@ -442,8 +457,11 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
     /* --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  */
 
     /*
-        현재 위치를 받아오기 위한 위치 권한 함수
+        권한 설정함수
+        ACCESS_COARSE_LOCATION
+        ACCESS_FINE_LOCATION
     */
+
     @Override
     @SuppressWarnings("deprecation")
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grandResults) {
@@ -458,8 +476,6 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
                     break;
                 }
             }
-
-            // 권한 체크에 동의를 하지 않으면 안드로이드 종료
             if (check_result) {
                 // 허용했을 경우
                 LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
@@ -489,6 +505,8 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
                 if(loc_Current != null) {
                     latitude = loc_Current.getLatitude();
                     longitude = loc_Current.getLongitude();
+                    locationPreferenceUtil.setLatitudePreference(requireContext(), "latitude", latitude);
+                    locationPreferenceUtil.setLongitudePreference(requireContext(), "longitude", longitude);
                     Log.d("onRequestPermissionsResult", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
                 } else {   // 만약 LocationListener가 위도, 경도를 가져오지 못할경우
                     Log.e("getLastknownLocation", "getLastknownLocation is null");
@@ -496,10 +514,11 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback {
 
             } else {
                 // 종료코드
-                Toast.makeText(getContext().getApplicationContext(), "check permission denied", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext().getApplicationContext(), "권한 설정을 허용해야 위치를 가져올 수 있습니다.", Toast.LENGTH_SHORT).show();
             }
         }
 
+        // 위치 권한 설정이 안되어 있다면 오버레이를 표시하지 않음.
         if (locationSource.onRequestPermissionsResult(requestCode, permissions, grandResults)) {
             if (!locationSource.isActivated()) {
                 naverMap.setLocationTrackingMode(LocationTrackingMode.None);

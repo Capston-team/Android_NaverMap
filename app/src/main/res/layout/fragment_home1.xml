@@ -96,4 +96,12 @@
           />
     </LinearLayout>
   </HorizontalScrollView>
+
+  <com.naver.maps.map.widget.CompassView
+      android:id="@+id/Compass"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/category_list"
+      android:layout_marginTop="10sp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
