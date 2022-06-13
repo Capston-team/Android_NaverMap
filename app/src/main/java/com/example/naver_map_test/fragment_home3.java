@@ -1,64 +1,166 @@
 package com.example.naver_map_test;
 
+import static android.app.Activity.RESULT_OK;
+
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import android.os.Environment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.Toast;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link fragment_home3#newInstance} factory method to
- * create an instance of this fragment.
- */
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.Writer;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.oned.Code128Writer;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Hashtable;
+
 public class fragment_home3 extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    Button btnAdd;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    ImageView imageViewResult;
+
+    String num; //생성할 바코드 숫자
 
     public fragment_home3() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment fragment_home3.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static fragment_home3 newInstance(String param1, String param2) {
-        fragment_home3 fragment = new fragment_home3();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home3, container, false);
+        View v = inflater.inflate(R.layout.fragment_home3, container, false);
+
+        btnAdd=v.findViewById(R.id.btnAdd);
+        btnAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(v.getContext(), PopupSelectActivity.class);
+                startActivityForResult(intent, 1);
+            }
+        });
+        imageViewResult = v.findViewById(R.id.imageViewResult);
+
+//        imageViewResult.setOnClickListener(view -> {
+//            Bitmap bitmap = Bitmap.createBitmap(200, 400, Bitmap.Config.ARGB_8888);
+//
+//            File root = new File(Environment.getExternalStorageDirectory(), "barcode");
+//
+//            if (!root.exists()) {
+//                root.mkdirs();
+//            }
+//
+//            File mypath = new File(root,"barcode.jpg");
+//
+//            FileOutputStream fos = null;
+//
+//            try {
+//                fos = new FileOutputStream(mypath);
+//                // Use the compress method on the BitMap object to write image to the OutputStream
+//
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+//            try {
+//                fos.flush();
+//
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//            try {
+//                fos.close();
+//
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        });
+        return v;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if(requestCode==1){
+            if(resultCode==RESULT_OK){
+                num=data.getStringExtra("num");
+                try {
+                    //받아온 바코드 숫자로 이미지 생성
+                    String productId = num;
+                    Hashtable<EncodeHintType, ErrorCorrectionLevel> hintMap = new Hashtable<EncodeHintType, ErrorCorrectionLevel>();
+                    hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
+                    Writer codeWriter;
+                    codeWriter = new Code128Writer();
+                    BitMatrix byteMatrix = codeWriter.encode(productId, BarcodeFormat.CODE_128,400, 200, hintMap);
+                    int width = byteMatrix.getWidth();
+                    int height = byteMatrix.getHeight();
+                    Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+                    for (int i = 0; i < width; i++) {
+                        for (int j = 0; j < height; j++) {
+                            bitmap.setPixel(i, j, byteMatrix.get(i, j) ? Color.BLACK : Color.WHITE);
+                        }
+                    }
+                    imageViewResult.setImageBitmap(bitmap);
+
+
+
+                } catch (Exception e) {
+
+                }
+
+            }
+
+
+        }
+
+    }
+    public static void saveImage(Bitmap bitmapImage) {
+
+        File root = new File(Environment.getExternalStorageDirectory(), "barcode");
+
+        if (!root.exists()) {
+            root.mkdirs();
+        }
+
+        File mypath = new File(root,"barcode.jpg");
+
+
+        FileOutputStream fos = null;
+
+        try {
+            fos = new FileOutputStream(mypath);
+            // Use the compress method on the BitMap object to write image to the OutputStream
+            bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                fos.close();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

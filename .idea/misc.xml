@@ -5,9 +5,13 @@
       <map>
         <entry key="..\:/Users/ootr4/AndroidStudioProjects/Android_NaverMap/app/src/main/res/layout/activity_carrier_form.xml" value="0.1" />
         <entry key="..\:/Users/ootr4/AndroidStudioProjects/Android_NaverMap/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/Users/ootr4/AndroidStudioProjects/Android_NaverMap/app/src/main/res/layout/activity_popup_barcode.xml" value="0.1" />
+        <entry key="..\:/Users/ootr4/AndroidStudioProjects/Android_NaverMap/app/src/main/res/layout/activity_popup_select.xml" value="0.1" />
+        <entry key="..\:/Users/ootr4/AndroidStudioProjects/Android_NaverMap/app/src/main/res/layout/activity_scan.xml" value="0.1" />
         <entry key="..\:/Users/ootr4/AndroidStudioProjects/Android_NaverMap/app/src/main/res/layout/activity_shop.xml" value="0.1" />
         <entry key="..\:/Users/ootr4/AndroidStudioProjects/Android_NaverMap/app/src/main/res/layout/bottom_sheet_layout.xml" value="0.1" />
         <entry key="..\:/Users/ootr4/AndroidStudioProjects/Android_NaverMap/app/src/main/res/layout/fragment_home1.xml" value="0.17447916666666666" />
+        <entry key="..\:/Users/ootr4/AndroidStudioProjects/Android_NaverMap/app/src/main/res/layout/fragment_home3.xml" value="0.1" />
         <entry key="..\:/Users/ootr4/AndroidStudioProjects/Android_NaverMap/app/src/main/res/layout/item_recycler.xml" value="0.16666666666666666" />
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.103" />
         <entry key="app/src/main/res/drawable/ic_config.xml" value="0.212" />
