@@ -12,7 +12,8 @@
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:layout_weight="1"
-        app:srcCompat="@drawable/marker_cafe" />
+        app:srcCompat="@drawable/marker_cafe"
+        android:layout_marginHorizontal="15dp"/>
 
     <LinearLayout
         android:id="@+id/LinearLayout2"
@@ -28,7 +29,9 @@
             android:layout_gravity="center"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:text="가게명" />
+            android:text="가게명"
+            android:textStyle="bold"
+            android:textSize="18sp"/>
 
         <TextView
             android:id="@+id/textContent"
@@ -36,6 +39,21 @@
             android:layout_height="wrap_content"
             android:layout_weight="3"
             android:gravity="center_vertical"
-            android:text="할인 내용" />
+            android:text="할인 내용"
+            android:textColor="#FF0000"
+            android:textStyle="bold" />
+
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/textDistance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_weight="1"
+        android:gravity="right"
+        android:text="m 이내"
+        android:textColor="#0027FF"
+        android:textStyle="bold" />
+
 </LinearLayout>
