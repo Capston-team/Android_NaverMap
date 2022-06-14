@@ -4,7 +4,8 @@
     android:id="@+id/LinearLayout"
     android:layout_width="match_parent"
     android:layout_height="115dp"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:background="@drawable/edge_bottom">
 
     <ImageView
         android:id="@+id/imageView"
@@ -31,7 +32,8 @@
             android:gravity="center_vertical"
             android:text="가게명"
             android:textStyle="bold"
-            android:textSize="18sp"/>
+            android:textSize="18sp"
+            android:textColor="@color/black"/>
 
         <TextView
             android:id="@+id/textContent"
@@ -45,15 +47,15 @@
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/textDistance"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_weight="1"
-        android:gravity="right"
-        android:text="m 이내"
-        android:textColor="#0027FF"
-        android:textStyle="bold" />
+<!--    <TextView-->
+<!--        android:id="@+id/textDistance"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_margin="10dp"-->
+<!--        android:layout_weight="1"-->
+<!--        android:gravity="right"-->
+<!--        android:text="m 이내"-->
+<!--        android:textColor="#0027FF"-->
+<!--        android:textStyle="bold" />-->
 
 </LinearLayout>

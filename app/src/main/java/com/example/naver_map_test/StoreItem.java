@@ -6,10 +6,10 @@ public class StoreItem {
     String message;
     String distance;
 
-    public StoreItem(int resourceId,String title, String message, String distance) {
+    public StoreItem(int resourceId,String title, String message) {
         this.title = title;
         this.message= message;
-        this.distance=distance;
+        //this.distance=distance;
         this.resourceId=resourceId;
     }
     public int getResourceId() {
@@ -21,9 +21,9 @@ public class StoreItem {
     public String getMessage() {
         return message;
     }
-    public String getDistance() {
-        return distance;
-    }
+//    public String getDistance() {
+//        return distance;
+//    }
 
     public void setResourceId(int resourceId) {
         this.resourceId = resourceId;
@@ -34,7 +34,7 @@ public class StoreItem {
     public void setMessage(String message) {
         this.message = message;
     }
-    public void setDistance(String distance) {
-        this.distance = distance;
-    }
+//    public void setDistance(String distance) {
+//        this.distance = distance;
+//    }
 }

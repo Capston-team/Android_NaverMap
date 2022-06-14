@@ -59,27 +59,27 @@ class Holder extends RecyclerView.ViewHolder{
         profile = (ImageView) itemView.findViewById(R.id.imageView);
         title = (TextView) itemView.findViewById(R.id.textTitle);
         message = (TextView) itemView.findViewById(R.id.textContent);
-        distance = (TextView) itemView.findViewById(R.id.textDistance);
+       // distance = (TextView) itemView.findViewById(R.id.textDistance);
     }
 
     void onBind(StoreItem item){
         profile.setImageResource(item.getResourceId());
         title.setText(item.getTitle());
         message.setText(item.getMessage());
-        distance.setText(item.getDistance());
+        //distance.setText(item.getDistance());
 
 
-        layout_text.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(mContext, ShopActivity.class);
-                intent.putExtra("title", title.getText());
-                intent.putExtra("message", message.getText());
-                intent.putExtra("distance", distance.getText());
-                intent.putExtra("profile", item.getResourceId());
-
-                mContext.startActivity(intent);
-            }
-        });
+//        layout_text.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent(mContext, ShopActivity.class);
+//                intent.putExtra("title", title.getText());
+//                intent.putExtra("message", message.getText());
+//                intent.putExtra("distance", distance.getText());
+//                intent.putExtra("profile", item.getResourceId());
+//
+//                mContext.startActivity(intent);
+//            }
+//        });
     }
 }

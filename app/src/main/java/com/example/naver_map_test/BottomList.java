@@ -26,7 +26,7 @@ public class BottomList extends BottomSheetDialogFragment {
         super.onCreate(savedInstanceState);
         mfriendItems = new ArrayList<>();
         for(int i=1;i<=10;i++){
-            mfriendItems.add(new StoreItem(R.drawable.marker_cafe,i+"번째 가게",i+"% 할인", i+"m 이내"));
+            mfriendItems.add(new StoreItem(R.drawable.marker_cafe,i+"번째 가게",i+"% 할인"));
         }
 
 

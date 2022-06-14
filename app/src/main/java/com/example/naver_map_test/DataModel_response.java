@@ -10,22 +10,22 @@ public class DataModel_response {
 
     @SerializedName("Branch")
     @Expose
-    private List<String> branch = null;
+    private List<String> branch = null;  //지점명
     @SerializedName("Location")
     @Expose
-    private List<String> location = null;
+    private List<String> location = null; // 주소
     @SerializedName("Latitude")
     @Expose
-    private List<Double> latitude = null;
+    private List<Double> latitude = null; //위도
     @SerializedName("Longitude")
     @Expose
-    private List<Double> longitude = null;
+    private List<Double> longitude = null; // 경도
     @SerializedName("Branch_name")
     @Expose
-    private String branchName;
+    private String branchName; //상호 ex)cu
     @SerializedName("Discount_rate")
     @Expose
-    private Integer discountRate;
+    private Integer discountRate; // 할인율
 
     public List<String> getBranch() {
         return branch;
