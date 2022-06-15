@@ -22,5 +22,5 @@
         android:id="@+id/imageViewResult"
         android:layout_width="match_parent"
         android:layout_height="228dp"
-        app:srcCompat="@drawable/ic_home" />
+         />
 </LinearLayout>

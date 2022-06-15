@@ -34,7 +34,7 @@ public class carrier_form extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setTitle("통신사와 등급을 선택하세요.");
         WindowManager.LayoutParams layoutParams= new WindowManager.LayoutParams();
         layoutParams.flags= WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         layoutParams.dimAmount= 0.5f;

@@ -53,6 +53,7 @@ public class fragment_home3 extends Fragment {
         });
         imageViewResult = v.findViewById(R.id.imageViewResult);
 
+        // 이미지 저장 미완성
 //        imageViewResult.setOnClickListener(view -> {
 //            Bitmap bitmap = Bitmap.createBitmap(200, 400, Bitmap.Config.ARGB_8888);
 //
@@ -121,32 +122,32 @@ public class fragment_home3 extends Fragment {
             }
         }
     }
-    public static void saveImage(Bitmap bitmapImage) {
-
-        File root = new File(Environment.getExternalStorageDirectory(), "barcode");
-
-        if (!root.exists()) {
-            root.mkdirs();
-        }
-
-        File mypath = new File(root,"barcode.jpg");
-
-
-        FileOutputStream fos = null;
-
-        try {
-            fos = new FileOutputStream(mypath);
-            // Use the compress method on the BitMap object to write image to the OutputStream
-            bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                fos.close();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+//    public static void saveImage(Bitmap bitmapImage) {
+//
+//        File root = new File(Environment.getExternalStorageDirectory(), "barcode");
+//
+//        if (!root.exists()) {
+//            root.mkdirs();
+//        }
+//
+//        File mypath = new File(root,"barcode.jpg");
+//
+//
+//        FileOutputStream fos = null;
+//
+//        try {
+//            fos = new FileOutputStream(mypath);
+//            // Use the compress method on the BitMap object to write image to the OutputStream
+//            bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        } finally {
+//            try {
+//                fos.close();
+//
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
 }
