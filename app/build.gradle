@@ -49,12 +49,11 @@ dependencies {
     //SlidingPanel Lib
     implementation 'com.sothree.slidinguppanel:library:3.4.0'
     
-    implementation 'androidx.appcompat:appcompat:1.4.1'
-    implementation 'com.google.android.material:material:1.6.0'
+    implementation 'androidx.appcompat:appcompat:1.4.2'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'com.google.android.material:material:1.6.0'
-    implementation 'com.google.firebase:firebase-crashlytics-buildtools:2.8.1'
+    implementation 'com.google.android.material:material:1.6.1'
+    implementation 'com.google.firebase:firebase-crashlytics-buildtools:2.9.0'
 
     // AnimatedBottombar
     testImplementation 'junit:junit:4.13.2'
@@ -67,5 +66,5 @@ dependencies {
     implementation 'com.journeyapps:zxing-android-embedded:3.5.0'
     implementation "com.google.zxing:core:3.3.0"
 
-    implementation "androidx.recyclerview:recyclerview:1.1.0"
+    implementation "androidx.recyclerview:recyclerview:1.2.1"
 }

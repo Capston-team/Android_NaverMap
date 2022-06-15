@@ -2,19 +2,12 @@ package com.example.naver_map_test;
 
 import static android.app.Activity.RESULT_OK;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-
 import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,15 +15,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
-
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.Writer;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.oned.Code128Writer;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -104,8 +94,10 @@ public class fragment_home3 extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if(requestCode==1){
             if(resultCode==RESULT_OK){
-                num=data.getStringExtra("num");
                 try {
+                    if(data != null) {
+                        num=data.getStringExtra("num");
+                    }
                     //받아온 바코드 숫자로 이미지 생성
                     String productId = num;
                     Hashtable<EncodeHintType, ErrorCorrectionLevel> hintMap = new Hashtable<EncodeHintType, ErrorCorrectionLevel>();
@@ -123,17 +115,11 @@ public class fragment_home3 extends Fragment {
                     }
                     imageViewResult.setImageBitmap(bitmap);
 
-
-
                 } catch (Exception e) {
-
+                    Log.e("fragment_home3", "onActivityResult Callback Error");
                 }
-
             }
-
-
         }
-
     }
     public static void saveImage(Bitmap bitmapImage) {
 

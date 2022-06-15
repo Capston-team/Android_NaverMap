@@ -30,20 +30,14 @@ public class PopupSelectActivity extends AppCompatActivity {
         final Button btn2 = findViewById(R.id.btn2);
 
         //바코드 스캔
-        btn1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(PopupSelectActivity.this, ScanActivity.class);
-                startActivityForResult(intent, 2);
-            }
+        btn1.setOnClickListener(view -> {
+            Intent intent = new Intent(PopupSelectActivity.this, ScanActivity.class);
+            startActivityForResult(intent, 2);
         });
         //바코드 숫자로 등록
-        btn2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(PopupSelectActivity.this, PopupBarcodeActivity.class);
-                startActivityForResult(intent, 3);
-            }
+        btn2.setOnClickListener(view -> {
+            Intent intent = new Intent(PopupSelectActivity.this, PopupBarcodeActivity.class);
+            startActivityForResult(intent, 3);
         });
 
     }

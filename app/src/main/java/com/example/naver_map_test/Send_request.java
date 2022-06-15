@@ -1,7 +1,5 @@
 package com.example.naver_map_test;
 
-import java.util.HashMap;
-
 public class Send_request {
 
     // 현재 위도 경도
