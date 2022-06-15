@@ -370,9 +370,9 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
                             }
 
                             if(before_discount_Rank == dataModel_responses.get(i).getDiscountRate() && i != 0) {
-                                setMarker(latitude, longitude, markerColor[i - 1], send_request.category);
+                                setMarker(latitude, longitude, markerColor[i - 1]);
                             } else {
-                                setMarker(latitude, longitude, markerColor[i], send_request.category);
+                                setMarker(latitude, longitude, markerColor[i]);
                             }
                         }
 
@@ -397,7 +397,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
     }
 
     // 색상에 따른 마커 설정 함수
-    public void setMarker(List<Double> latitude, List<Double> longitude, String color, String category) {
+    public void setMarker(@NonNull List<Double> latitude, List<Double> longitude, String color) {
         Vector<LatLng> markersPosition = new Vector<>();
         for (int i = 0; i < latitude.size(); i++) {
             markersPosition.add(new LatLng(latitude.get(i), longitude.get(i)));
@@ -463,6 +463,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
         public void onLocationChanged(@NonNull Location location) {
             longitude = location.getLongitude();
             latitude = location.getLatitude();
+            updateCameraPosition(naverMap, latitude ,longitude);
             Log.d("locationListener", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
         }
     };
@@ -493,20 +494,12 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
                 // 허용했을 경우
                 LocationManager lm = (LocationManager) requireActivity().getSystemService(Context.LOCATION_SERVICE);
                 if (ActivityCompat.checkSelfPermission(requireContext().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext().getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
                     return;
                 }
                 lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 20000, 10, locationListener);
 
 //                 GPS_PROVIDER는 정확도가 높지만 야외에서만 가능
 //                 실내에서는 NETWORK_PROVIDER를 사용하여 WIFI 같은 네트워크를 이용해 위치를 추정한다.
-
                 Location loc_Current = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
                 if(loc_Current == null) {
