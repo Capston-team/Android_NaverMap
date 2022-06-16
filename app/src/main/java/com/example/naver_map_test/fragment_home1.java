@@ -80,6 +80,8 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
     Button btnList;
     CompassView compassView;
 
+    final BottomList bottomSheetFragment = new BottomList();
+    Bundle resData = new Bundle();
     // 현재 위도 경도 받아야함
     double latitude;
     double longitude;
@@ -187,7 +189,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
         mapFragment.getMapAsync(this);
 
         btnList.setOnClickListener(view -> {
-            final BottomList bottomSheetFragment = new BottomList();
+
             bottomSheetFragment.show(getParentFragmentManager(), bottomSheetFragment.getTag());
         });
 
@@ -335,6 +337,26 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
         compassView.setMap(naverMap);
     }
 
+    //거리 구하기
+    public static int distanceInmeterByHaversine(double x1, double y1, double x2, double y2) {
+        int distance;
+        double radius = 6371; // 지구 반지름(km)
+        double toRadian = Math.PI / 180;
+
+        double deltaLatitude = Math.abs(x1 - x2) * toRadian;
+        double deltaLongitude = Math.abs(y1 - y2) * toRadian;
+
+        double sinDeltaLat = Math.sin(deltaLatitude / 2);
+        double sinDeltaLng = Math.sin(deltaLongitude / 2);
+        double squareRoot = Math.sqrt(
+                sinDeltaLat * sinDeltaLat +
+                        Math.cos(x1 * toRadian) * Math.cos(x2 * toRadian) * sinDeltaLng * sinDeltaLng);
+
+        distance = (int)(2000 * radius * Math.asin(squareRoot));
+
+        if(distance>500) distance =500;
+        return distance;
+    }
 
     /* --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  */
     // retrofit을 통해 설정한 객체를 통한 마커 설정 함수
@@ -352,6 +374,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
                         checkRemoveMarker();
 
                         dataModel_responses = (ArrayList<DataModel_response>) response.body();
+
                         int before_discount_Rank = 0;
                         Log.i("---","---");
                         Log.w("//===========//","================================================");
@@ -360,9 +383,19 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
                         Log.i("---","---");
 
                         for(int i = 0; i < dataModel_responses.size(); i++) {
+                            ArrayList<Integer> dist = new ArrayList<Integer>();
                             // 현재 해당하는 매장의 위도, 경도
-                            List<Double> latitude = dataModel_responses.get(i).getLatitude();
-                            List<Double> longitude = dataModel_responses.get(i).getLongitude();
+                            List<Double> _latitude = dataModel_responses.get(i).getLatitude();
+                            List<Double> _longitude = dataModel_responses.get(i).getLongitude();
+
+                            for(int j=0; j<_latitude.size(); j++) {
+                                dist.add(distanceInmeterByHaversine(_latitude.get(j), _longitude.get(j), latitude, longitude));
+                            }
+                            resData.putIntegerArrayList("ddistance"+i, dist);
+                            resData.putInt("size", dataModel_responses.size());
+                            resData.putStringArrayList("branch" + i, dataModel_responses.get(i).getBranch());
+                            resData.putInt("discount" + i, dataModel_responses.get(i).getDiscountRate());
+                            resData.putString("branchName"+i, dataModel_responses.get(i).getBranchName());
 
                             // i == 0일 경우 전에 있는 할인율은 가져올 수 없기 때문에 if문으로 확인
                             if(i != 0) {
@@ -370,11 +403,12 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
                             }
 
                             if(before_discount_Rank == dataModel_responses.get(i).getDiscountRate() && i != 0) {
-                                setMarker(latitude, longitude, markerColor[i - 1]);
+                                setMarker(_latitude, _longitude, markerColor[i - 1]);
                             } else {
-                                setMarker(latitude, longitude, markerColor[i]);
+                                setMarker(_latitude, _longitude, markerColor[i]);
                             }
                         }
+                        bottomSheetFragment.setArguments(resData);
 
                         dataModel_responses.clear();
                         Log.d("successful response", "onResponse 성공");

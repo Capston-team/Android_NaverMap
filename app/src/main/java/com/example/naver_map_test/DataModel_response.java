@@ -1,7 +1,6 @@
 package com.example.naver_map_test;
 
 import java.util.ArrayList;
-import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -10,16 +9,16 @@ public class DataModel_response {
 
     @SerializedName("Branch")
     @Expose
-    private List<String> branch = null;  //지점명
+    private ArrayList<String> branch = null;  //지점명
     @SerializedName("Location")
     @Expose
-    private List<String> location = null; // 주소
+    private ArrayList<String> location = null; // 주소
     @SerializedName("Latitude")
     @Expose
-    private List<Double> latitude = null; //위도
+    private ArrayList<Double> latitude = null; //위도
     @SerializedName("Longitude")
     @Expose
-    private List<Double> longitude = null; // 경도
+    private ArrayList<Double> longitude = null; // 경도
     @SerializedName("Branch_name")
     @Expose
     private String branchName; //상호 ex)cu
@@ -27,19 +26,19 @@ public class DataModel_response {
     @Expose
     private Integer discountRate; // 할인율
 
-    public List<String> getBranch() {
+    public ArrayList<String> getBranch() {
         return branch;
     }
 
-    public List<String> getLocation() {
+    public ArrayList<String> getLocation() {
         return location;
     }
 
-    public List<Double> getLatitude() {
+    public ArrayList<Double> getLatitude() {
         return latitude;
     }
 
-    public List<Double> getLongitude() {
+    public ArrayList<Double> getLongitude() {
         return longitude;
     }
 
@@ -51,19 +50,19 @@ public class DataModel_response {
         return discountRate;
     }
 
-    public void setBranch(List<String> branch) {
+    public void setBranch(ArrayList<String> branch) {
         this.branch = branch;
     }
 
-    public void setLocation(List<String> location) {
+    public void setLocation(ArrayList<String> location) {
         this.location = location;
     }
 
-    public void setLatitude(List<Double> latitude) {
+    public void setLatitude(ArrayList<Double> latitude) {
         this.latitude = latitude;
     }
 
-    public void setLongitude(List<Double> longitude) {
+    public void setLongitude(ArrayList<Double> longitude) {
         this.longitude = longitude;
     }
 

@@ -9,18 +9,18 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:layout_weight="1"
-        app:srcCompat="@drawable/marker_cafe"
-        android:layout_marginHorizontal="15dp"/>
+        android:layout_marginHorizontal="15dp"
+        android:layout_weight="5.5"
+        app:srcCompat="@drawable/marker_cafe" />
 
     <LinearLayout
         android:id="@+id/LinearLayout2"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="3"
+        android:layout_weight="4"
         android:orientation="vertical">
 
         <TextView
@@ -31,9 +31,9 @@
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:text="가게명"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:textColor="@color/black"/>
+            android:textColor="@color/black"
+            android:textSize="22sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/textContent"
@@ -43,19 +43,20 @@
             android:gravity="center_vertical"
             android:text="할인 내용"
             android:textColor="#FF0000"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
     </LinearLayout>
 
-<!--    <TextView-->
-<!--        android:id="@+id/textDistance"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_margin="10dp"-->
-<!--        android:layout_weight="1"-->
-<!--        android:gravity="right"-->
-<!--        android:text="m 이내"-->
-<!--        android:textColor="#0027FF"-->
-<!--        android:textStyle="bold" />-->
+    <TextView
+        android:id="@+id/textDistance"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp"
+        android:layout_weight="6"
+        android:gravity="center_horizontal"
+        android:text="m 이내"
+        android:textColor="#0027FF"
+        android:textStyle="bold" />
 
 </LinearLayout>

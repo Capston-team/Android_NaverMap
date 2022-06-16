@@ -17,6 +17,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class BottomList extends BottomSheetDialogFragment {
     private ArrayList<StoreItem> mfriendItems;
@@ -24,12 +25,29 @@ public class BottomList extends BottomSheetDialogFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Bundle bundle = getArguments();
+        List<ArrayList<String>> branch = new ArrayList<ArrayList<String>>();
+        List<Integer> discount = new ArrayList<Integer>();
+        List<String> branchName = new ArrayList<String>();
+        List<ArrayList<Integer>> distance = new ArrayList<ArrayList<Integer>>();
+        Log.i("distance", bundle.getIntegerArrayList("ddistance" + 0)+"");
         mfriendItems = new ArrayList<>();
-        for(int i=1;i<=10;i++){
-            mfriendItems.add(new StoreItem(R.drawable.marker_cafe,i+"번째 가게",i+"% 할인"));
+        for (int i = 0; i < bundle.getInt("size"); i++) {
+            branch.add(bundle.getStringArrayList("branch" + i));
+            discount.add(bundle.getInt("discount" + i));
+            branchName.add(bundle.getString("branchName" + i));
+            distance.add(bundle.getIntegerArrayList("ddistance" + i));
+
+
+            for (int j = 0; j < branch.get(i).size(); j++) {
+                Log.i("distance", i+"//"+j);
+                mfriendItems.add(new StoreItem(R.drawable.marker_cafe, branchName.get(i) + " " + branch.get(i).get(j),
+                        "최대 "+discount.get(i).toString()+"% 할인", "약 "+(distance.get(i).get(j)).toString()+"m"));
+                Log.i("distance", i+"//"+j);
+            }
+
+
         }
-
-
     }
 
     @Nullable
