@@ -99,13 +99,13 @@ public class fragment_home3 extends Fragment {
                     if(data != null) {
                         num=data.getStringExtra("num");
                     }
-                    //받아온 바코드 숫자로 이미지 생성
                     String productId = num;
                     Hashtable<EncodeHintType, ErrorCorrectionLevel> hintMap = new Hashtable<EncodeHintType, ErrorCorrectionLevel>();
                     hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
                     Writer codeWriter;
                     codeWriter = new Code128Writer();
-                    BitMatrix byteMatrix = codeWriter.encode(productId, BarcodeFormat.CODE_128,400, 200, hintMap);
+                    BitMatrix byteMatrix = codeWriter.encode(productId, BarcodeFormat.CODE_128,
+                            400, 200, hintMap);
                     int width = byteMatrix.getWidth();
                     int height = byteMatrix.getHeight();
                     Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);

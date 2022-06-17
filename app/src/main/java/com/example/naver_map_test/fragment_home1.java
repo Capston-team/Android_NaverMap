@@ -189,7 +189,6 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
         mapFragment.getMapAsync(this);
 
         btnList.setOnClickListener(view -> {
-
             bottomSheetFragment.show(getParentFragmentManager(), bottomSheetFragment.getTag());
         });
 
@@ -391,7 +390,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
                             for(int j=0; j<_latitude.size(); j++) {
                                 dist.add(distanceInmeterByHaversine(_latitude.get(j), _longitude.get(j), latitude, longitude));
                             }
-                            resData.putIntegerArrayList("ddistance"+i, dist);
+                            resData.putIntegerArrayList("distance"+i, dist);
                             resData.putInt("size", dataModel_responses.size());
                             resData.putStringArrayList("branch" + i, dataModel_responses.get(i).getBranch());
                             resData.putInt("discount" + i, dataModel_responses.get(i).getDiscountRate());

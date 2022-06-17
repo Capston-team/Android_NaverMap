@@ -2,9 +2,6 @@ package com.example.naver_map_test;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.AlertDialog;
-
-import android.content.DialogInterface;
 import android.content.Intent;
 
 import android.os.Bundle;
@@ -55,23 +52,20 @@ public class ScanActivity extends AppCompatActivity {
             public void barcodeResult(BarcodeResult result) {
                 try {
                     String result_data = "";
-                    if(captureFlag == false){ //TODO [최초 1번 스캔된 경우]
+                    if(captureFlag == false){
                         result_data = String.valueOf(result.toString());
                         byte result_byte [];
-                        //TODO Arrays.toString 형식 바이트 문자열 [104,101,108,108,111]
                         if(result_data.contains("[") && result_data.contains("]")
-                                && result_data.contains(",")){ //TODO [바이트 값 형식 문자열인 경우 > 한글로 출력]
+                                && result_data.contains(",")){
                             result_byte = getByteArray(result_data);
                             result_data = new String(result_byte, "utf-8");
-
-                            //바코드 숫자 내보내기
-                            String num = String.valueOf(result_data);
-                            Intent intent = new Intent();
-                            intent.putExtra("barcodeNum", num);
-                            setResult(RESULT_OK, intent);
-                            finish();
                         }
-
+                        //바코드 숫자 내보내기
+                        String num = String.valueOf(result_data);
+                        Intent intent = new Intent();
+                        intent.putExtra("barcodeNum", num);
+                        setResult(RESULT_OK, intent);
+                        finish();
 
                         //TODO [플래그 값을 변경 실시 : 중복 스캔 방지]
                         captureFlag = true;
