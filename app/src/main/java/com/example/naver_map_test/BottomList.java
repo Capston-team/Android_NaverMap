@@ -42,10 +42,15 @@ public class BottomList extends BottomSheetDialogFragment {
                 distance.add(bundle.getIntegerArrayList("distance" + i));
 
                 for (int j = 0; j < branch.get(i).size(); j++) {
-                    int img = setBranchImage(branchName.get(i));
-                    mstoreItems.add(new StoreItem(img, branchName.get(i) + " "
-                            + branch.get(i).get(j), "최대 " + discount.get(i).toString() + "% 할인",
-                            "약 " + (distance.get(i).get(j)).toString() + "m"));
+                    try {
+                         int img = setBranchImage(branchName.get(i));
+//                        int img = R.drawable.cu;
+                        mstoreItems.add(new StoreItem(img, branchName.get(i) + " "
+                                + branch.get(i).get(j), "최대 " + discount.get(i).toString() + "% 할인",
+                                "약 " + (distance.get(i).get(j)).toString() + "m"));
+                    } catch(Exception e) {
+                        Log.e("BottomList Error", e.toString());
+                    }
                 }
             }
         }
