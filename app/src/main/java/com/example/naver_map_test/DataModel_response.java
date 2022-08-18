@@ -19,7 +19,10 @@ public class DataModel_response {
     @SerializedName("Longitude")
     @Expose
     private ArrayList<Double> longitude = null; // 경도
-    @SerializedName("Branch_name")
+//    @SerializedName("convStoreName")
+//    @Expose
+//    private String branchName; //상호 ex)cu
+    @SerializedName("StoreName")
     @Expose
     private String branchName; //상호 ex)cu
     @SerializedName("Discount_rate")
