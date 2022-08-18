@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -66,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
 
+
         animatedBottomBar = findViewById(R.id.bottom_bar);
 
         if (savedInstanceState == null) {
@@ -77,7 +79,9 @@ public class MainActivity extends AppCompatActivity {
                     .commit();
         }
 
+
         Log.e("MainActivity onCreate", "ENTER");
+
 
         animatedBottomBar.setOnTabSelectListener(new AnimatedBottomBar.OnTabSelectListener() {
             @Override
@@ -87,6 +91,11 @@ public class MainActivity extends AppCompatActivity {
                 if(id == R.id.home1) {
                     if(MapFrag == null){
                         MapFrag = new fragment_home1();
+                        Log.i("---","---");
+                        Log.w("//===========//","================================================");
+                        Log.i("","\n"+"["+String.valueOf(ACTIVITY_NAME)+" >>  fragment 호출 시점() ::]");
+                        Log.w("//===========//","================================================");
+                        Log.i("---","---");
                         fragmentManager.beginTransaction().add(R.id.menu_frame_layout, MapFrag, "MapFrag").addToBackStack(null).commit();
                     }
                     if(MapFrag != null) fragmentManager.beginTransaction().show(MapFrag).commit();
@@ -117,6 +126,14 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        try {
+            String address = getIpAddress();
+
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+
     }
 
     // 실제 device IPv4 주소 가져오는 함수
@@ -129,9 +146,9 @@ public class MainActivity extends AppCompatActivity {
                 InetAddress inetAddress = enumIpAddr.nextElement();
 
                 if(inetAddress.isLoopbackAddress()) {
-//                    Log.i("IPAddress", intf.getDisplayName() + "(loopback) | " + inetAddress.getHostAddress());
+                    Log.i("IPAddress", intf.getDisplayName() + "(loopback) | " + inetAddress.getHostAddress());
                 } else {
-//                    Log.i("IPAddress", intf.getDisplayName() + " | " + inetAddress.getHostAddress());
+                    Log.i("IPAddress", intf.getDisplayName() + " | " + inetAddress.getHostAddress());
                 }
                 if (!inetAddress.isLoopbackAddress() && InetAddressUtils.isIPv4Address(inetAddress.getHostAddress())) {
                     return inetAddress.getHostAddress();
@@ -156,11 +173,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Log.e("BackPressed", "backPressed");
         if(drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
-            finish();
             super.onBackPressed();
         }
     }

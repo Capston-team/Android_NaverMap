@@ -126,7 +126,7 @@ public class carrier_form extends AppCompatActivity {
 //                return;
 //            }
 
-            Intent intent = new Intent();
+            Intent intent=new Intent();
             intent.putExtra("carrier", telecom[tel_i]);
             intent.putExtra("rate", rank.get(rank_i));
             setResult(RESULT_OK, intent);
