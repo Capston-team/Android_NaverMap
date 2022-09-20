@@ -15,10 +15,14 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.conn.util.InetAddressUtils;
@@ -30,7 +34,7 @@ import java.util.Enumeration;
 
 import nl.joery.animatedbottombar.AnimatedBottomBar;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements  NavigationView.OnNavigationItemSelectedListener {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String ACTIVITY_NAME = "MainActivity";
 
@@ -52,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         layoutParams.dimAmount = 0.8f;
         getWindow().setAttributes(layoutParams);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         // 툴바 활성화
@@ -63,8 +67,10 @@ public class MainActivity extends AppCompatActivity {
         actionBar.setTitle("");
         actionBar.setHomeButtonEnabled(true);
 
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.navigation_view);
+
+        navigationView.setNavigationItemSelectedListener(this);
 
         animatedBottomBar = findViewById(R.id.bottom_bar);
 
@@ -75,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
             fragmentManager.beginTransaction().add(R.id.menu_frame_layout, MapFrag,"MapFrag")
                     .addToBackStack(null)
                     .commit();
+
         }
 
         Log.e("MainActivity onCreate", "ENTER");
@@ -92,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
                     if(MapFrag != null) fragmentManager.beginTransaction().show(MapFrag).commit();
                     if(EventFrag != null) fragmentManager.beginTransaction().hide(EventFrag).commit();
                     if(BarcodeFrag != null) fragmentManager.beginTransaction().hide(BarcodeFrag).commit();
+
                 } else if (id == R.id.home2) {
                     if(EventFrag == null){
                         EventFrag = new fragment_home2();
@@ -100,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
                     if(MapFrag != null) fragmentManager.beginTransaction().hide(MapFrag).commit();
                     if(EventFrag != null) fragmentManager.beginTransaction().show(EventFrag).commit();
                     if(BarcodeFrag != null) fragmentManager.beginTransaction().hide(BarcodeFrag).commit();
+
                 } else if (id == R.id.home3) {
                     if(BarcodeFrag == null){
                         BarcodeFrag = new fragment_home3();
@@ -108,7 +117,8 @@ public class MainActivity extends AppCompatActivity {
                     if(MapFrag != null) fragmentManager.beginTransaction().hide(MapFrag).commit();
                     if(EventFrag != null) fragmentManager.beginTransaction().hide(EventFrag).commit();
                     if(BarcodeFrag != null) fragmentManager.beginTransaction().show(BarcodeFrag).commit();
-                } else { //
+
+                } else {
                     Log.e("처리되지 않은 Fragment 접근", "처리되지않은 Fragment 접근입니다.");
                 }
             }
@@ -119,26 +129,19 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // 실제 device IPv4 주소 가져오는 함수
-    public String getIpAddress() throws SocketException {
-        for(Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
-            NetworkInterface intf = en.nextElement();
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
 
-
-            for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements();) {
-                InetAddress inetAddress = enumIpAddr.nextElement();
-
-                if(inetAddress.isLoopbackAddress()) {
-//                    Log.i("IPAddress", intf.getDisplayName() + "(loopback) | " + inetAddress.getHostAddress());
-                } else {
-//                    Log.i("IPAddress", intf.getDisplayName() + " | " + inetAddress.getHostAddress());
-                }
-                if (!inetAddress.isLoopbackAddress() && InetAddressUtils.isIPv4Address(inetAddress.getHostAddress())) {
-                    return inetAddress.getHostAddress();
-                }
-            }
+        if(id == R.id.config) {
+            // 이제 여기에 Intent 설정
+            Intent UserSettings = new Intent(MainActivity.this, com.example.naver_map_test.UserSettings.class);
+            startActivity(UserSettings);
         }
-        return null;
+
+        DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
+        drawerLayout.closeDrawer(GravityCompat.START);
+        return true;
     }
 
 
@@ -146,11 +149,11 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
 
-        switch (id) {
-            case android.R.id.home:
-                drawerLayout.openDrawer(GravityCompat.START);
-                return true;
+        if (id == android.R.id.home) {
+            drawerLayout.openDrawer(GravityCompat.START);
+            return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -164,38 +167,4 @@ public class MainActivity extends AppCompatActivity {
             super.onBackPressed();
         }
     }
-
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.e("MainActivity onStart", "ENTER");
-    }
-
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.e("MainActivity onResume", "ENTER");
-
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.e("MainActivity onPause", "ENTER");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.e("MainActivity onStop", "ENTER");
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.e("MainActivity onDestroy", "ENTER");
-    }
-
 }

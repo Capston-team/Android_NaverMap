@@ -21,7 +21,9 @@ import com.naver.maps.map.MapFragment;
 
 import java.util.ArrayList;
 
-
+/**
+ *
+ */
 public class fragment_home2 extends Fragment {
     private RecyclerView eventRecyclerView;
     private Event_RecyclerViewAdapter adapter;
@@ -51,15 +53,25 @@ public class fragment_home2 extends Fragment {
         return v;
     }
 
+    /**
+     * eventItem 이미지 사이즈 크기가 통신사 별로 맞지 않는다.
+     */
     private void populateData() {
-        eventItem eventItem1 = new eventItem("http://static.hubzum.zumst.com/hubzum/2018/02/06/09/962ec338ca3b4153b037168ec92756ac.jpg");
-        eventItem eventItem2 = new eventItem("https://t1.daumcdn.net/cfile/tistory/0138F14A517F77713A");
-        eventItem eventItem3 = new eventItem("https://i.ytimg.com/vi/5-mWvUR7_P0/maxresdefault.jpg");
+        eventItem eventItem1 = new eventItem("https://event.kt.com/images/12340/open_04.jpg");
+        eventItem eventItem2 = new eventItem("https://event.kt.com/images/12334/banner02.jpg");
+        eventItem eventItem3 = new eventItem("https://event.kt.com/images/12315/open_04.jpg");
         eventItem eventItem4 = new eventItem("https://www.tworld.co.kr/uploads/poc/85489/9318/7BE1D65F7E9B428FBFA8460306F64678.jpg");
         eventItem eventItem5 = new eventItem("https://www.tworld.co.kr/uploads/poc/85489/9318/290A0B1886AE4967830AC97C497C4446.jpg");
         eventItem eventItem6 = new eventItem("https://www.tworld.co.kr/uploads/poc/85489/9318/2D2A1075E04147E3BDCB627127F78F3D.jpg");
         eventItem eventItem7 = new eventItem("https://www.tworld.co.kr/uploads/poc/16972/57643/6B9184A9548E4B70AF5E168493848977.jpg");
         eventItem eventItem8 = new eventItem("https://www.tworld.co.kr/uploads/poc/4555/2692/CEF7C002795349BAAEA233045C1FC40D.jpg");
+        eventItem eventItem9 = new eventItem("https://www.tworld.co.kr/uploads/poc/4555/2692/CEF7C002795349BAAEA233045C1FC40D.jpg");
+        eventItem eventItem10 = new eventItem("https://www.tworld.co.kr/uploads/poc/4555/2692/CEF7C002795349BAAEA233045C1FC40D.jpg");
+        eventItem eventItem11 = new eventItem("https://www.tworld.co.kr/uploads/poc/4555/2692/CEF7C002795349BAAEA233045C1FC40D.jpg");
+        eventItem eventItem12 = new eventItem("https://www.tworld.co.kr/uploads/poc/4555/2692/CEF7C002795349BAAEA233045C1FC40D.jpg");
+        eventItem eventItem13 = new eventItem("https://www.tworld.co.kr/uploads/poc/4555/2692/CEF7C002795349BAAEA233045C1FC40D.jpg");
+
+
 
         items.add(eventItem1);
         items.add(eventItem2);
@@ -69,6 +81,12 @@ public class fragment_home2 extends Fragment {
         items.add(eventItem6);
         items.add(eventItem7);
         items.add(eventItem8);
+        items.add(eventItem9);
+        items.add(eventItem10);
+        items.add(eventItem11);
+        items.add(eventItem12);
+        items.add(eventItem13);
+
 
 
     }

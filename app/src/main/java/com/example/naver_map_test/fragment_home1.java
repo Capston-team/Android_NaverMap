@@ -71,7 +71,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
 
-
     private static NaverMap naverMap;  // Fragment를 이용하여 naver map을 출력 했다면
     private static final String FRAGMENT1 = "FRAGMENT_HOME1";
 
@@ -196,12 +195,17 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
             bottomSheetFragment.show(getParentFragmentManager(), bottomSheetFragment.getTag());
         });
 
-
         String carrier = PreferenceUtil.getCarrierPreferences(requireActivity().getApplicationContext(), "carrier");
         String rate = PreferenceUtil.getRatePreferences(requireActivity().getApplicationContext(), "rate");
 
+//        String carrier = PreferenceUtil.getCarrierPreferences(requireActivity().getApplicationContext(), "carrier");
+//        String rate = PreferenceUtil.getRatePreferences(requireActivity().getApplicationContext(), "rate");
+
+        System.out.println("fragment1 - carrier : " + carrier + " fragment1 - rate : " + rate);
+
         if(carrier != null && rate != null) {
-            onHandlerResult(carrier, rate);
+//            onHandlerResult(carrier, rate);
+            onHandlerResult();
         } else {
             Intent form_intent = new Intent(getActivity(), carrier_form.class);
             form_intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -260,7 +264,8 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
                         Log.w("//===========//","================================================");
                         Log.i("---","---");
 
-                        onHandlerResult(carrier, rate);
+//                        onHandlerResult(carrier, rate);
+                        onHandlerResult();
                     }
                 }
             }
@@ -269,6 +274,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
     public void onHandlerResult(String carrier, String rate) {
         conv.setOnClickListener(view -> {
 //            Send_request sendRequest = new Send_request(latitude, longitude, "CONV", carrier, rate);
+
             System.out.println("onHandlerResult latitude : " + latitude);
             setMarkerWithLocation(latitude, longitude, "CONV", carrier, rate);
         });
@@ -278,6 +284,37 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
         });
         meal.setOnClickListener(view -> {
 //            Send_request sendRequest = new Send_request(latitude, longitude, "MEAL", carrier, rate);
+            setMarkerWithLocation(latitude, longitude, "MEAL", carrier, rate);
+        });
+    }
+
+    public void onHandlerResult() {
+        conv.setOnClickListener(view -> {
+            String carrier = PreferenceUtil.getCarrierPreferences(requireContext(), "carrier");
+            String rate = PreferenceUtil.getRatePreferences(requireContext(), "rate");
+
+            System.out.println("onHandlerResult - carrier : " + carrier + " onHandlerResult - rate : " + rate);
+
+            System.out.println("onHandlerResult latitude : " + latitude + " " + "latitude : " + longitude);
+            setMarkerWithLocation(latitude, longitude, "CONV", carrier, rate);
+        });
+        cafe.setOnClickListener(view -> {
+            String carrier = PreferenceUtil.getCarrierPreferences(requireContext(), "carrier");
+            String rate = PreferenceUtil.getRatePreferences(requireContext(), "rate");
+
+            System.out.println("onHandlerResult - carrier : " + carrier + " onHandlerResult - rate : " + rate);
+
+            System.out.println("onHandlerResult latitude : " + latitude + " " + "latitude : " + longitude);
+            setMarkerWithLocation(latitude, longitude, "CAFE", carrier, rate);
+        });
+        meal.setOnClickListener(view -> {
+
+            String carrier = PreferenceUtil.getCarrierPreferences(requireContext(), "carrier");
+            String rate = PreferenceUtil.getRatePreferences(requireContext(), "rate");
+
+            System.out.println("onHandlerResult - carrier : " + carrier + " onHandlerResult - rate : " + rate);
+
+            System.out.println("onHandlerResult latitude : " + latitude + " " + "latitude : " + longitude);
             setMarkerWithLocation(latitude, longitude, "MEAL", carrier, rate);
         });
     }
@@ -395,6 +432,10 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
                             Log.w("//===========//","================================================");
                             Log.i("---","---");
 
+                            if(dataModel_responses.size() == 0) {
+                                resData.putInt("size", 0);
+                            }
+
                             for(int i = 0; i < dataModel_responses.size(); i++) {
                                 ArrayList<Integer> dist = new ArrayList<Integer>();
                                 // 현재 해당하는 매장의 위도, 경도
@@ -421,6 +462,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
                                     setMarker(_latitude, _longitude, markerColor[i]);
                                 }
                             }
+
                             bottomSheetFragment.setArguments(resData);
 
                             dataModel_responses.clear();

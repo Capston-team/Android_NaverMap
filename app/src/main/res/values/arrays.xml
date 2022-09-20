@@ -1,0 +1,42 @@
+<resources>
+    <!-- Reply Preference -->
+    <string-array name="carrier_entries">
+        <item>SKT</item>
+        <item>KT</item>
+        <item>LG</item>
+    </string-array>
+
+    <string-array name="carrier_values">
+        <item>SKT</item>
+        <item>KT</item>
+        <item>LG</item>
+    </string-array>
+
+    <string-array name="defaultValue">
+        <item>VVIP</item>
+        <item>VIP</item>
+        <item>GOLD</item>
+        <item>SILVER</item>
+        <item>NORMAL</item>
+        <item>DIAMOND</item>
+    </string-array>
+
+    <string-array name="SKT">
+        <item>VIP</item>
+        <item>GOLD</item>
+        <item>SILVER</item>
+    </string-array>
+    
+    <string-array name="KT">
+        <item>VVIP</item>
+        <item>VIP</item>
+        <item>GOLD</item>
+        <item>NORMAL</item>
+    </string-array>
+
+    <string-array name="LG">
+        <item>VVIP</item>
+        <item>VIP</item>
+        <item>DIAMOND</item>
+    </string-array>
+</resources>
