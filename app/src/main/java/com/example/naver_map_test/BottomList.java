@@ -26,6 +26,7 @@ public class BottomList extends BottomSheetDialogFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("create bottom", "xxxxxxxxxxxxx");
 
         Bundle bundle = getArguments();
         List<ArrayList<String>> branch = new ArrayList<ArrayList<String>>();

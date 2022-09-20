@@ -445,11 +445,14 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
                                 for(int j=0; j<_latitude.size(); j++) {
                                     dist.add(distanceInmeterByHaversine(_latitude.get(j), _longitude.get(j), latitude, longitude));
                                 }
-                                resData.putIntegerArrayList("distance"+i, dist);
-                                resData.putInt("size", dataModel_responses.size());
-                                resData.putStringArrayList("branch" + i, dataModel_responses.get(i).getBranch());
-                                resData.putInt("discount" + i, dataModel_responses.get(i).getDiscountRate());
-                                resData.putString("branchName"+i, dataModel_responses.get(i).getBranchName());
+
+
+                                    Log.d("create bottom", "x"+dataModel_responses.size());
+                                    resData.putIntegerArrayList("distance" + i, dist);
+                                    resData.putInt("size", dataModel_responses.size());
+                                    resData.putStringArrayList("branch" + i, dataModel_responses.get(i).getBranch());
+                                    resData.putInt("discount" + i, dataModel_responses.get(i).getDiscountRate());
+                                    resData.putString("branchName" + i, dataModel_responses.get(i).getBranchName());
 
                                 // i == 0일 경우 전에 있는 할인율은 가져올 수 없기 때문에 if문으로 확인
                                 if(i != 0) {

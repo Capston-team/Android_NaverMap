@@ -57,6 +57,7 @@ public class fragment_home2 extends Fragment {
      * eventItem 이미지 사이즈 크기가 통신사 별로 맞지 않는다.
      */
     private void populateData() {
+
         eventItem eventItem1 = new eventItem("https://event.kt.com/images/12340/open_04.jpg");
         eventItem eventItem2 = new eventItem("https://event.kt.com/images/12334/banner02.jpg");
         eventItem eventItem3 = new eventItem("https://event.kt.com/images/12315/open_04.jpg");
