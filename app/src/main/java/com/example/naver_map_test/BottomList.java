@@ -35,6 +35,7 @@ public class BottomList extends BottomSheetDialogFragment {
         List<ArrayList<Integer>> distance = new ArrayList<ArrayList<Integer>>();
         mstoreItems = new ArrayList<>();
 
+
         if(bundle!=null){
             for (int i = 0; i < bundle.getInt("size"); i++) {
                 branch.add(bundle.getStringArrayList("branch" + i));

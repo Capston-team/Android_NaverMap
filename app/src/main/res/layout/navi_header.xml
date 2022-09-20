@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:layout_marginBottom="45dp">
 
     <ImageView
         android:id="@+id/iv_image"
@@ -28,5 +29,4 @@
         android:layout_gravity="center"
         android:text="통신사 할인 지도"
         android:textSize="14sp" />
-
 </LinearLayout>
