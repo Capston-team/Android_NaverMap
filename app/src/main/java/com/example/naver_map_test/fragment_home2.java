@@ -52,7 +52,7 @@ public class fragment_home2 extends Fragment {
     }
 
     private void populateData() {
-        eventItem eventItem1 = new eventItem("http://static.hubzum.zumst.com/hubzum/2018/02/06/09/962ec338ca3b4153b037168ec92756ac.jpg");
+        eventItem eventItem1 = new eventItem("https://zone.membership.kt.com/event/2020BlueBottle/img/2209/visual.jpg");
         eventItem eventItem2 = new eventItem("https://t1.daumcdn.net/cfile/tistory/0138F14A517F77713A");
         eventItem eventItem3 = new eventItem("https://i.ytimg.com/vi/5-mWvUR7_P0/maxresdefault.jpg");
         eventItem eventItem4 = new eventItem("https://www.tworld.co.kr/uploads/poc/85489/9318/7BE1D65F7E9B428FBFA8460306F64678.jpg");
