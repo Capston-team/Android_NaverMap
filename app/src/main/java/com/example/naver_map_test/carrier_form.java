@@ -121,6 +121,9 @@ public class carrier_form extends AppCompatActivity {
             PreferenceUtil.setCarrierPreferences(getApplicationContext(), "carrier", telecom[tel_i]);
             PreferenceUtil.setRatePreferences(getApplicationContext(), "rate", rank.get(rank_i));
 
+//            PreferenceUtil.setCarrierPreferences(getApplicationContext(), "carrier", telecom[tel_i]);
+//            PreferenceUtil.setRatePreferences(getApplicationContext(), "rate", rank.get(rank_i));
+
 //            if(selTel.equals("-- 통신사 입력 --") || selRank.equals("-- 등급 입력 --")){
 //                Toast.makeText(carrier_form.this, "통신사 및 등급을 선택하세요.", Toast.LENGTH_LONG).show();
 //                return;
