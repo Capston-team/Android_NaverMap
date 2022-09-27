@@ -1,19 +1,24 @@
 package com.example.naver_map_test;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class BarcodeRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder>{
@@ -29,14 +34,15 @@ public class BarcodeRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder>{
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_barcode, parent, false);
         return new MyViewHolder(ctx, view);
     }
+
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         holder.onBind(barcodeList.get(position));
     }
     public void setBarcodeList(ArrayList<BarcodeItem> list){
         this.barcodeList = list;
-//        notifyDataSetChanged();
     }
+
 //    public void updateAdapter(ArrayList<BarcodeItem> list){
 //        this.barcodeList = list;
 //        // update adapter element like NAME, EMAIL e.t.c. here
@@ -53,7 +59,7 @@ class MyViewHolder extends RecyclerView.ViewHolder{
     LinearLayout layout_barcode;
     ImageView imgaeBarcode;
     TextView brandName;
-
+    ImageButton btnDelete;
     Context mContext;
 
     public MyViewHolder(Context ctx, @NonNull View itemView) {
@@ -64,6 +70,7 @@ class MyViewHolder extends RecyclerView.ViewHolder{
         layout_barcode = (LinearLayout) itemView.findViewById(R.id.layoutBarcode);
         imgaeBarcode = (ImageView) itemView.findViewById(R.id.barcode);
         brandName = (TextView) itemView.findViewById(R.id.brandName);
+        btnDelete = (ImageButton) itemView.findViewById(R.id.btnDelete);
     }
 
     void onBind(BarcodeItem item){
@@ -83,11 +90,30 @@ class MyViewHolder extends RecyclerView.ViewHolder{
                 mContext.startActivity(intent);
             }
         });
-        layout_barcode.setOnLongClickListener(new View.OnLongClickListener() {
+        btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onLongClick(View view) {
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                builder.setTitle("정말로 멤버십 바코드를 삭제하겠습니까?");
+                builder.setNegativeButton("예", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String fileName = item.getBarcodePath();
+                        File file = new File(fileName);
+                        Boolean result = file.delete();
+                        Log.d("Delete Result", result+"");
+                    }
+                });
+                builder.setPositiveButton("아니오", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
 
-                return false;
+                    }
+                });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+
+
             }
         });
     }

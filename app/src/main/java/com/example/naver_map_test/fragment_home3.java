@@ -42,6 +42,7 @@ public class fragment_home3 extends Fragment {
     String num; //생성할 바코드 숫자
     ArrayList<BarcodeItem> mbarcodeItems= new ArrayList<>();;
     BarcodeRecyclerAdapter mRecyclerAdapter;
+    String barcodeName;
 
     public fragment_home3() {
         // Required empty public constructor
@@ -86,7 +87,7 @@ public class fragment_home3 extends Fragment {
         Log.d("wow7", ""+file_list.length);
         for(int k=0; k<file_list.length; k++){
             if(file_list[k].contains("barcode")){
-                mbarcodeItems.add(new BarcodeItem("skt"+k,barcode_path+"/"+file_list[k]));
+                mbarcodeItems.add(new BarcodeItem(file_list[k],barcode_path+"/"+file_list[k]));
             }
         }
 
@@ -107,6 +108,9 @@ public class fragment_home3 extends Fragment {
                 try {
                     if(data != null) {
                         num=data.getStringExtra("num");
+                        barcodeName=data.getStringExtra("barcodeName");
+                        Log.d("barcodeName", barcodeName);
+
                     }
                     String productId = num;
                     Hashtable<EncodeHintType, ErrorCorrectionLevel> hintMap = new Hashtable<EncodeHintType, ErrorCorrectionLevel>();
@@ -131,15 +135,12 @@ public class fragment_home3 extends Fragment {
                             continue;
                         }
                         else{
-                            String filepath = barcode_path + "/barcode"+k+".png";
-                            Log.d("wow_k",""+k);
+                            String filepath = barcode_path + "/barcode"+barcodeName+".png";
                             saveBitmapAsFile(bitmap, filepath);
                             break;
                         }
                     }
-                    mbarcodeItems.add(new BarcodeItem("skt"+k,barcode_path+"/barcode"+k+".png"));
-                    mRecyclerAdapter.notifyDataSetChanged();
-
+                    mbarcodeItems.add(new BarcodeItem(barcodeName,barcode_path+"/barcode"+barcodeName+".png"));
                 } catch (Exception e) {
                     Log.e("fragment_home3", "onActivityResult Callback Error");
                 }
@@ -160,6 +161,12 @@ public class fragment_home3 extends Fragment {
             e.printStackTrace();
             Log.d("wow5",e.toString());
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mRecyclerAdapter.notifyDataSetChanged();
     }
     @Override
     public void onResume() {

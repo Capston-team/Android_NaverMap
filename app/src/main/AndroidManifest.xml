@@ -32,12 +32,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Naver_map_test"
         android:usesCleartextTraffic="true">
-        
+        <activity
+            android:name=".SettingActivity"
+            android:exported="false" />
         <activity
             android:name=".UserSettings"
             android:exported="false"
             android:label="@string/title_activity_user_settings" />
-
         <activity
             android:name=".ScanActivity"
             android:exported="false" />

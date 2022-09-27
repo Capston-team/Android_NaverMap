@@ -14,6 +14,7 @@ import android.widget.EditText;
 
 public class PopupSelectActivity extends AppCompatActivity {
 
+    String barcodeName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,6 +29,9 @@ public class PopupSelectActivity extends AppCompatActivity {
 
         final Button btn1 = findViewById(R.id.btn1);
         final Button btn2 = findViewById(R.id.btn2);
+        final EditText EditTextBarcodeName = findViewById(R.id.barcodeName);
+
+        barcodeName=EditTextBarcodeName.getText().toString();
 
         //바코드 스캔
         btn1.setOnClickListener(view -> {
@@ -50,6 +54,7 @@ public class PopupSelectActivity extends AppCompatActivity {
                 String barcodeNum = data.getStringExtra("barcodeNum");
                 Intent intent=new Intent();
                 intent.putExtra("num", barcodeNum);
+                intent.putExtra("barcodeName", barcodeName);
                 setResult(RESULT_OK, intent);
                 finish();
             }
