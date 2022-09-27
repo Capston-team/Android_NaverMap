@@ -29,12 +29,8 @@ public interface APIInterface {
     );
 
 
-//    @POST("/meal/meal_router")
-//    Call<DataModel_response> getMEALData(@Body Send_request send_request);
-//
-//    @POST("/cafe/cafe_router")
-//    Call<DataModel_response> getCAFEData(@Body Send_request send_request);
-
-
-
+    @GET("/capstone/event")
+    Call<eventDataModel_response> event_request(
+            @Query("carrier") String carrier
+    );
 }

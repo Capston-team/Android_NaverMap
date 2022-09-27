@@ -26,6 +26,8 @@ import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.conn.util.InetAddressUtils;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -33,6 +35,8 @@ import java.net.SocketException;
 import java.util.Enumeration;
 
 import nl.joery.animatedbottombar.AnimatedBottomBar;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity implements  NavigationView.OnNavigationItemSelectedListener {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -45,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
     NavigationView navigationView;
 
     private Fragment MapFrag, EventFrag, BarcodeFrag;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,6 +132,8 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
 
             }
         });
+
+
     }
 
     @Override
