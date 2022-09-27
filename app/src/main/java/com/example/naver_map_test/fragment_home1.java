@@ -271,22 +271,22 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
             }
     );
 
-    public void onHandlerResult(String carrier, String rate) {
-        conv.setOnClickListener(view -> {
-//            Send_request sendRequest = new Send_request(latitude, longitude, "CONV", carrier, rate);
-
-            System.out.println("onHandlerResult latitude : " + latitude);
-            setMarkerWithLocation(latitude, longitude, "CONV", carrier, rate);
-        });
-        cafe.setOnClickListener(view -> {
-//            Send_request sendRequest = new Send_request(latitude, longitude, "CAFE", carrier, rate);
-            setMarkerWithLocation(latitude, longitude, "CAFE", carrier, rate);
-        });
-        meal.setOnClickListener(view -> {
-//            Send_request sendRequest = new Send_request(latitude, longitude, "MEAL", carrier, rate);
-            setMarkerWithLocation(latitude, longitude, "MEAL", carrier, rate);
-        });
-    }
+//    public void onHandlerResult(String carrier, String rate) {
+//        conv.setOnClickListener(view -> {
+////            Send_request sendRequest = new Send_request(latitude, longitude, "CONV", carrier, rate);
+//
+//            System.out.println("onHandlerResult latitude : " + latitude);
+//            setMarkerWithLocation(latitude, longitude, "CONV", carrier, rate);
+//        });
+//        cafe.setOnClickListener(view -> {
+////            Send_request sendRequest = new Send_request(latitude, longitude, "CAFE", carrier, rate);
+//            setMarkerWithLocation(latitude, longitude, "CAFE", carrier, rate);
+//        });
+//        meal.setOnClickListener(view -> {
+////            Send_request sendRequest = new Send_request(latitude, longitude, "MEAL", carrier, rate);
+//            setMarkerWithLocation(latitude, longitude, "MEAL", carrier, rate);
+//        });
+//    }
 
     public void onHandlerResult() {
         conv.setOnClickListener(view -> {
@@ -475,20 +475,20 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
                             System.out.println("setMarkerWithLocation Time(Ms) : " + elapsedTime);
 
                         } else {
-                            Log.e("onResponse status Code", String.valueOf(response.code()));
+                            Log.e("fragment_home1 onResponse status Code", String.valueOf(response.code()));
                         }
                     } else {
-                        Log.e("fail response", "onResponse 실패 : " + response.body());
+                        Log.e("fragment_home1 fail response", "onResponse 실패 : " + response.body());
                     }
                 }
                 @Override
                 public void onFailure(@NonNull Call<List<DataModel_response>> call, @NonNull Throwable t) {
-                    Log.e("fail response", "onFailure ->" + t.getMessage());
+                    Log.e("fragment_home1 fail response", "onFailure ->" + t.getMessage());
                 }
 
             });
         } catch (Exception e) {
-            Log.e("REST API ERROR", "Retrofit REST API ERROR : " + e);
+            Log.e("MAP REST API ERROR", "MAP Retrofit REST API ERROR : " + e);
         }
     }
 
