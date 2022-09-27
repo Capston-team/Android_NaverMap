@@ -17,9 +17,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.naver.maps.map.MapFragment;
 
 import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  *
@@ -31,11 +39,87 @@ public class fragment_home2 extends Fragment {
 
     private boolean isLoading = false;
 
+    Retrofit retrofit;
+    public static final String BASE_URL = "https://where-we-go.herokuapp.com/capstone/event/";
+
+
+    private eventDataModel_response dataModel_response = null;
+
+    ArrayList<String> eventTitle = new ArrayList<>();
+    ArrayList<String> eventDate = new ArrayList<>();
+    ArrayList<String> eventImg = new ArrayList<>();
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if(retrofit == null) {
+
+            Gson gson = new GsonBuilder()
+                    .setLenient()
+                    .create();
+//             Retrofit 시간 설정
+//            OkHttpClient okHttpClient = new OkHttpClient().newBuilder()  // Retrofit 연결, 통신 시간이 오래 걸리므로 지연시간 부여
+//                    .connectTimeout(60, TimeUnit.SECONDS)   // call 할 경우 연결되는 시간
+//                    .readTimeout(60, TimeUnit.SECONDS)   // 받은 데이터 읽는 역할
+//                    .writeTimeout(60, TimeUnit.SECONDS)   // 보내는 역할
+//                    .build();
+
+            retrofit = new Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+//                    .client(okHttpClient)
+                    .addConverterFactory(GsonConverterFactory.create(gson))
+                    .build();
+        }
+
+        try {
+            String carrier = PreferenceUtil.getCarrierPreferences(requireContext(), "carrier");
+
+            APIInterface apiInterface = retrofit.create(APIInterface.class);
+            Call<eventDataModel_response> event_call_request = apiInterface.event_request(carrier);
+            event_call_request.clone().enqueue(new Callback<eventDataModel_response>() {
+                @Override
+                public void onResponse(@NonNull Call<eventDataModel_response> call, @NonNull Response<eventDataModel_response> response) {
+                    if(response.isSuccessful()) {
+                        if(response.code() == 200) {
+
+                            dataModel_response = response.body();
+
+
+                            assert dataModel_response != null;
+                            eventTitle = (ArrayList<String>) dataModel_response.getTitle();
+                            eventDate = (ArrayList<String>) dataModel_response.getDate();
+                            eventImg = (ArrayList<String>) dataModel_response.getImg();
+
+
+                            populateData(eventTitle, eventDate, eventImg);
+                            assert dataModel_response != null;
+                            System.out.println("eventTitle : " + eventTitle);
+                            System.out.println("eventTitle.size() : " + eventTitle.size());
+                            System.out.println("eventDate : " + eventDate);
+                            System.out.println("eventDate.size() : " + eventDate.size());
+
+
+
+
+                        } else {
+                            Log.e("fragment_home2 onResponse status Code", String.valueOf(response.code()));
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<eventDataModel_response> call, Throwable t) {
+                    Log.e("fragment_home2 fail response", "onFailure -> " + t.getMessage());
+                }
+            });
+
+        } catch(Exception e) {
+            Log.e("EVENT REST API ERROR", "EVENT Retrofit REST API ERROR : " + e);
+        }
+
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -46,7 +130,7 @@ public class fragment_home2 extends Fragment {
 
         eventRecyclerView = v.findViewById(R.id.EventRecyclerView);
 
-        populateData();
+
         initAdapter(eventRecyclerView);
         initScrollListener();
 
@@ -56,40 +140,12 @@ public class fragment_home2 extends Fragment {
     /**
      * eventItem 이미지 사이즈 크기가 통신사 별로 맞지 않는다.
      */
-    private void populateData() {
+    private void populateData(ArrayList<String> title, ArrayList<String> date, ArrayList<String> img) {
 
-        eventItem eventItem1 = new eventItem("https://event.kt.com/images/12340/open_04.jpg");
-        eventItem eventItem2 = new eventItem("https://event.kt.com/images/12334/banner02.jpg");
-        eventItem eventItem3 = new eventItem("https://event.kt.com/images/12315/open_04.jpg");
-        eventItem eventItem4 = new eventItem("https://www.tworld.co.kr/uploads/poc/85489/9318/7BE1D65F7E9B428FBFA8460306F64678.jpg");
-        eventItem eventItem5 = new eventItem("https://www.tworld.co.kr/uploads/poc/85489/9318/290A0B1886AE4967830AC97C497C4446.jpg");
-        eventItem eventItem6 = new eventItem("https://www.tworld.co.kr/uploads/poc/85489/9318/2D2A1075E04147E3BDCB627127F78F3D.jpg");
-        eventItem eventItem7 = new eventItem("https://www.tworld.co.kr/uploads/poc/16972/57643/6B9184A9548E4B70AF5E168493848977.jpg");
-        eventItem eventItem8 = new eventItem("https://www.tworld.co.kr/uploads/poc/4555/2692/CEF7C002795349BAAEA233045C1FC40D.jpg");
-        eventItem eventItem9 = new eventItem("https://www.tworld.co.kr/uploads/poc/4555/2692/CEF7C002795349BAAEA233045C1FC40D.jpg");
-        eventItem eventItem10 = new eventItem("https://www.tworld.co.kr/uploads/poc/4555/2692/CEF7C002795349BAAEA233045C1FC40D.jpg");
-        eventItem eventItem11 = new eventItem("https://www.tworld.co.kr/uploads/poc/4555/2692/CEF7C002795349BAAEA233045C1FC40D.jpg");
-        eventItem eventItem12 = new eventItem("https://www.tworld.co.kr/uploads/poc/4555/2692/CEF7C002795349BAAEA233045C1FC40D.jpg");
-        eventItem eventItem13 = new eventItem("https://www.tworld.co.kr/uploads/poc/4555/2692/CEF7C002795349BAAEA233045C1FC40D.jpg");
-
-
-
-        items.add(eventItem1);
-        items.add(eventItem2);
-        items.add(eventItem3);
-        items.add(eventItem4);
-        items.add(eventItem5);
-        items.add(eventItem6);
-        items.add(eventItem7);
-        items.add(eventItem8);
-        items.add(eventItem9);
-        items.add(eventItem10);
-        items.add(eventItem11);
-        items.add(eventItem12);
-        items.add(eventItem13);
-
-
-
+        for(int i = 0; i < title.size(); i++) {
+            eventItem eventItem = new eventItem(title.get(i), date.get(i), img.get(i));
+            items.add(eventItem);
+        }
     }
 
     private void initAdapter(RecyclerView eventRecyclerView) {

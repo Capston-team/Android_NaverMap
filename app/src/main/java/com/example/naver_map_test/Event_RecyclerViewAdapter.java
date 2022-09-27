@@ -74,15 +74,21 @@ public class Event_RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
    private static class ItemViewHolder extends RecyclerView.ViewHolder {
         private final ImageView imageView;
+        private final TextView title;
+        private final TextView date;
 
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.eventBanner);
+            title = itemView.findViewById(R.id.title);
+            date = itemView.findViewById(R.id.date);
         }
 
         public void setItem(eventItem item) {
+            title.setText(item.getTitle());
+            date.setText(item.getDate());
             Glide.with(imageView.getContext())
-                    .load(item.getUrl())
+                    .load(item.getImg())
                     .into(imageView);
         }
    }
