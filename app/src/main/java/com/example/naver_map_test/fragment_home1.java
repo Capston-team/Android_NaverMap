@@ -204,7 +204,6 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
         System.out.println("fragment1 - carrier : " + carrier + " fragment1 - rate : " + rate);
 
         if(carrier != null && rate != null) {
-//            onHandlerResult(carrier, rate);
             onHandlerResult();
         } else {
             Intent form_intent = new Intent(getActivity(), carrier_form.class);
@@ -264,29 +263,11 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
                         Log.w("//===========//","================================================");
                         Log.i("---","---");
 
-//                        onHandlerResult(carrier, rate);
                         onHandlerResult();
                     }
                 }
             }
     );
-
-//    public void onHandlerResult(String carrier, String rate) {
-//        conv.setOnClickListener(view -> {
-////            Send_request sendRequest = new Send_request(latitude, longitude, "CONV", carrier, rate);
-//
-//            System.out.println("onHandlerResult latitude : " + latitude);
-//            setMarkerWithLocation(latitude, longitude, "CONV", carrier, rate);
-//        });
-//        cafe.setOnClickListener(view -> {
-////            Send_request sendRequest = new Send_request(latitude, longitude, "CAFE", carrier, rate);
-//            setMarkerWithLocation(latitude, longitude, "CAFE", carrier, rate);
-//        });
-//        meal.setOnClickListener(view -> {
-////            Send_request sendRequest = new Send_request(latitude, longitude, "MEAL", carrier, rate);
-//            setMarkerWithLocation(latitude, longitude, "MEAL", carrier, rate);
-//        });
-//    }
 
     public void onHandlerResult() {
         conv.setOnClickListener(view -> {
@@ -343,10 +324,12 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
     }
 
     public void updateCamerePosition(NaverMap naverMap, double latitude, double longitude) {
-        LatLng initialPosition = new LatLng(latitude, longitude);
-        CameraUpdate cameraUpdate = CameraUpdate.scrollTo(initialPosition);
-        naverMap.moveCamera(cameraUpdate);
-        naverMap.setCameraPosition(getCameraPosition(latitude, longitude));
+        if(naverMap != null) {
+            LatLng initialPosition = new LatLng(latitude, longitude);
+            CameraUpdate cameraUpdate = CameraUpdate.scrollTo(initialPosition);
+            naverMap.moveCamera(cameraUpdate);
+            naverMap.setCameraPosition(getCameraPosition(latitude, longitude));
+        }
     }
 
     // 초기 지도 위도, 경도 초기화 함수
@@ -559,7 +542,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
         public void onLocationChanged(@NonNull Location location) {
             longitude = location.getLongitude();
             latitude = location.getLatitude();
-            updateCameraPosition(naverMap, latitude ,longitude);
+            // updateCameraPosition(naverMap, latitude ,longitude);
             Log.d("locationListener", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
         }
     };

@@ -44,14 +44,17 @@
         <entry key="app/src/main/res/layout/activity_custom_dialog.xml" value="0.1408514492753623" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_popup_barcode.xml" value="0.21458333333333332" />
+        <entry key="app/src/main/res/layout/activity_popup_select.xml" value="0.13949275362318841" />
         <entry key="app/src/main/res/layout/activity_scan.xml" value="0.20742753623188406" />
         <entry key="app/src/main/res/layout/activity_shop.xml" value="0.2033514492753623" />
         <entry key="app/src/main/res/layout/bottom_sheet_layout.xml" value="0.2033514492753623" />
+        <entry key="app/src/main/res/layout/dialog_progress.xml" value="0.1828125" />
         <entry key="app/src/main/res/layout/drop_down_item.xml" value="0.1408514492753623" />
         <entry key="app/src/main/res/layout/event_item_row.xml" value="0.17350557244174267" />
         <entry key="app/src/main/res/layout/fragment_home1.xml" value="0.24468383789062498" />
         <entry key="app/src/main/res/layout/fragment_home2.xml" value="0.29438405797101447" />
         <entry key="app/src/main/res/layout/fragment_home3.xml" value="0.29438405797101447" />
+        <entry key="app/src/main/res/layout/item_barcode.xml" value="0.1828125" />
         <entry key="app/src/main/res/layout/item_loading.xml" value="0.17350557244174267" />
         <entry key="app/src/main/res/layout/item_recycler.xml" value="0.15353260869565216" />
         <entry key="app/src/main/res/layout/navi_header.xml" value="0.184375" />
@@ -65,7 +68,7 @@
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">
