@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -38,6 +39,8 @@ public class fragment_home2 extends Fragment {
     private final ArrayList<eventItem> items = new ArrayList<>();
 
     private boolean isLoading = false;
+
+    String myTel;
 
     Retrofit retrofit;
     public static final String BASE_URL = "https://where-we-go.herokuapp.com/capstone/event/";
@@ -99,8 +102,7 @@ public class fragment_home2 extends Fragment {
                             System.out.println("eventDate : " + eventDate);
                             System.out.println("eventDate.size() : " + eventDate.size());
 
-
-
+                            adapter.notifyDataSetChanged();
 
                         } else {
                             Log.e("fragment_home2 onResponse status Code", String.valueOf(response.code()));
@@ -118,6 +120,8 @@ public class fragment_home2 extends Fragment {
             Log.e("EVENT REST API ERROR", "EVENT Retrofit REST API ERROR : " + e);
         }
 
+        myTel=PreferenceUtil.getCarrierPreferences(getContext().getApplicationContext(), "carrier");
+
     }
 
 
@@ -129,10 +133,9 @@ public class fragment_home2 extends Fragment {
         Log.e("fragment2", "fragment2 onCreateView");
 
         eventRecyclerView = v.findViewById(R.id.EventRecyclerView);
-
-
         initAdapter(eventRecyclerView);
         initScrollListener();
+
 
         return v;
     }
@@ -146,6 +149,7 @@ public class fragment_home2 extends Fragment {
             eventItem eventItem = new eventItem(title.get(i), date.get(i), img.get(i));
             items.add(eventItem);
         }
+        Log.d("items", items.get(0).getTitle()+"");
     }
 
     private void initAdapter(RecyclerView eventRecyclerView) {
@@ -202,5 +206,18 @@ public class fragment_home2 extends Fragment {
             adapter.notifyDataSetChanged();
             isLoading = false;
         }, 2000);
+    }
+    public void refreshFragment(Fragment fragment, FragmentManager fragmentManager){
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.detach(this).attach(this).commit();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if(myTel != PreferenceUtil.getCarrierPreferences(getContext().getApplicationContext(), "carrier")){
+            refreshFragment(this, getFragmentManager());
+        }
     }
 }

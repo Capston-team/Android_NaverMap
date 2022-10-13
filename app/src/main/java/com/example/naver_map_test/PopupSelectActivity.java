@@ -5,6 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -31,7 +34,23 @@ public class PopupSelectActivity extends AppCompatActivity {
         final Button btn2 = findViewById(R.id.btn2);
         final EditText EditTextBarcodeName = findViewById(R.id.barcodeName);
 
-        barcodeName=EditTextBarcodeName.getText().toString();
+        EditTextBarcodeName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                barcodeName=EditTextBarcodeName.getText().toString();
+            }
+        });
+
 
         //바코드 스캔
         btn1.setOnClickListener(view -> {
@@ -62,12 +81,12 @@ public class PopupSelectActivity extends AppCompatActivity {
     }
 
     //바깥 영역 클릭 방지 와 백 버튼 차단
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if(event.getAction()== MotionEvent.ACTION_OUTSIDE){
-            return false;
-        }
-        return true;
-    }
+//    @Override
+//    public boolean onTouchEvent(MotionEvent event) {
+//        if(event.getAction()== MotionEvent.ACTION_OUTSIDE){
+//            return false;
+//        }
+//        return true;
+//    }
 
 }

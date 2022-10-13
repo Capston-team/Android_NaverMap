@@ -163,10 +163,12 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
     }
 
     public void updateCameraPosition(NaverMap naverMap, double latitude, double longitude) {
-        LatLng initialPosition = new LatLng(latitude, longitude);
-        CameraUpdate cameraUpdate = CameraUpdate.scrollTo(initialPosition);
-        naverMap.moveCamera(cameraUpdate);
-        naverMap.setCameraPosition(getCameraPosition(latitude, longitude));
+        if(naverMap!=null){
+            LatLng initialPosition = new LatLng(latitude, longitude);
+            CameraUpdate cameraUpdate = CameraUpdate.scrollTo(initialPosition);
+            naverMap.moveCamera(cameraUpdate);
+            naverMap.setCameraPosition(getCameraPosition(latitude, longitude));
+        }
     }
     // onDestroyView()가 불리고 다시 Fragment가 보여진다면 불려지는 화면
     @RequiresApi(api = Build.VERSION_CODES.Q)

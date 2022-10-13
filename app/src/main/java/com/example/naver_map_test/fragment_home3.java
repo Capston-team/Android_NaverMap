@@ -50,6 +50,8 @@ public class fragment_home3 extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -64,11 +66,22 @@ public class fragment_home3 extends Fragment {
         /* initiate recyclerview */
         mRecyclerView.setAdapter(mRecyclerAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        int i=1;
 
         mRecyclerAdapter.setBarcodeList(mbarcodeItems);
         Log.d("wow",Integer.toString(mbarcodeItems.size()));
 
+        mRecyclerAdapter.setOnItemClickListener(new BarcodeRecyclerAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View v, int position) {
+
+            }
+
+            @Override
+            public void onDeleteClick(View v, int positon) {
+                mbarcodeItems.remove(positon);
+                mRecyclerAdapter.notifyItemRemoved(positon);
+            }
+        });
 //        imageViewResult = v.findViewById(R.id.imageViewResult);
 
         btnAdd=v.findViewById(R.id.btnAdd);
@@ -87,17 +100,19 @@ public class fragment_home3 extends Fragment {
         Log.d("wow7", ""+file_list.length);
         for(int k=0; k<file_list.length; k++){
             if(file_list[k].contains("barcode")){
-                mbarcodeItems.add(new BarcodeItem(file_list[k],barcode_path+"/"+file_list[k]));
+                //barcodeName = (file_list[k].substring(7)).substring(file_list[k].length()-3, file_list[k].length());
+                //mbarcodeItems.add(new BarcodeItem(barcodeName, barcode_path+"/"+file_list[k]));
             }
         }
+
 
         //File file = new File(barcode_path + "barcode1.png");
         //ContentResolver contentResolver = v.getContext().getContentResolver();
         //contentResolver.delete(barcode_path + "barcode1.png", null, null);
         //Log.d("bool_test", bool+"");
         return v;
-    }
 
+    }
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         File file_barcode_image = getContext().getFilesDir();
@@ -128,18 +143,10 @@ public class fragment_home3 extends Fragment {
                         }
                     }
 
-                    //바코드 이미지 순서대로 저장
+                    //바코드 이미지 저장
                     int k;
-                    for(k=0; k<file_list.length; k++){
-                        if(Arrays.asList(file_list).contains("barcode"+k+".png")){
-                            continue;
-                        }
-                        else{
-                            String filepath = barcode_path + "/barcode"+barcodeName+".png";
-                            saveBitmapAsFile(bitmap, filepath);
-                            break;
-                        }
-                    }
+                    String filepath = barcode_path + "/barcode"+barcodeName+".png";
+                    saveBitmapAsFile(bitmap, filepath);
                     mbarcodeItems.add(new BarcodeItem(barcodeName,barcode_path+"/barcode"+barcodeName+".png"));
                 } catch (Exception e) {
                     Log.e("fragment_home3", "onActivityResult Callback Error");
@@ -172,6 +179,7 @@ public class fragment_home3 extends Fragment {
     public void onResume() {
         super.onResume();
         Log.d("wow2",Integer.toString(mbarcodeItems.size()));
+
     }
     @Override
     public void onPause() {

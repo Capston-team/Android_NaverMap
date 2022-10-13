@@ -40,12 +40,12 @@ public class PopupBarcodeActivity extends AppCompatActivity {
         });
     }
     //바깥 영역 클릭 방지 와 백 버튼 차단
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if(event.getAction()== MotionEvent.ACTION_OUTSIDE){
-            return false;
-        }
-        return true;
-    }
+//    @Override
+//    public boolean onTouchEvent(MotionEvent event) {
+//        if(event.getAction()== MotionEvent.ACTION_OUTSIDE){
+//            return false;
+//        }
+//        return true;
+//    }
 
 }

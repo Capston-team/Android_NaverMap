@@ -21,7 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.io.File;
 import java.util.ArrayList;
 
-public class BarcodeRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder>{
+public class BarcodeRecyclerAdapter extends RecyclerView.Adapter<BarcodeRecyclerAdapter.MyViewHolder>{
     private ArrayList<BarcodeItem> barcodeList;
     Context ctx;
 
@@ -54,68 +54,88 @@ public class BarcodeRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder>{
     public int getItemCount() {
         return barcodeList.size();
     }
-}
-class MyViewHolder extends RecyclerView.ViewHolder{
-    LinearLayout layout_barcode;
-    ImageView imgaeBarcode;
-    TextView brandName;
-    ImageButton btnDelete;
-    Context mContext;
 
-    public MyViewHolder(Context ctx, @NonNull View itemView) {
-        super(itemView);
-
-        mContext=ctx;
-
-        layout_barcode = (LinearLayout) itemView.findViewById(R.id.layoutBarcode);
-        imgaeBarcode = (ImageView) itemView.findViewById(R.id.barcode);
-        brandName = (TextView) itemView.findViewById(R.id.brandName);
-        btnDelete = (ImageButton) itemView.findViewById(R.id.btnDelete);
+    interface OnItemClickListener{
+        void onItemClick(View v, int position);
+        void onDeleteClick(View v, int positon);
+    }
+    //리스너 객체 참조 변수
+    private OnItemClickListener mListener = null;
+    //리스너 객체 참조를 어댑터에 전달 메서드
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.mListener = listener;
     }
 
-    void onBind(BarcodeItem item){
+    class MyViewHolder extends RecyclerView.ViewHolder{
+        LinearLayout layout_barcode;
+        ImageView imgaeBarcode;
+        TextView brandName;
+        ImageButton btnDelete;
+        Context mContext;
 
-        Bitmap bitmap_barcode = BitmapFactory.decodeFile(item.getBarcodePath());
+        public MyViewHolder(Context ctx, @NonNull View itemView) {
+            super(itemView);
 
-        imgaeBarcode.setImageBitmap(bitmap_barcode);
-        brandName.setText(item.getBrandName());
+            mContext=ctx;
 
+            layout_barcode = (LinearLayout) itemView.findViewById(R.id.layoutBarcode);
+            imgaeBarcode = (ImageView) itemView.findViewById(R.id.barcode);
+            brandName = (TextView) itemView.findViewById(R.id.brandName);
+            btnDelete = (ImageButton) itemView.findViewById(R.id.btnDelete);
+        }
 
+        void onBind(BarcodeItem item){
 
-        layout_barcode.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(mContext, BarcodeImageActivity.class);
-                intent.putExtra("imagePath", item.getBarcodePath());
-                mContext.startActivity(intent);
-            }
-        });
-        btnDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                builder.setTitle("정말로 멤버십 바코드를 삭제하겠습니까?");
-                builder.setNegativeButton("예", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        String fileName = item.getBarcodePath();
-                        File file = new File(fileName);
-                        Boolean result = file.delete();
-                        Log.d("Delete Result", result+"");
-                    }
-                });
-                builder.setPositiveButton("아니오", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+            Bitmap bitmap_barcode = BitmapFactory.decodeFile(item.getBarcodePath());
 
-                    }
-                });
-                AlertDialog alertDialog = builder.create();
-                alertDialog.show();
+            imgaeBarcode.setImageBitmap(bitmap_barcode);
+            brandName.setText(item.getBrandName());
 
 
-            }
-        });
+
+            layout_barcode.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(mContext, BarcodeImageActivity.class);
+                    intent.putExtra("imagePath", item.getBarcodePath());
+                    mContext.startActivity(intent);
+                }
+            });
+            btnDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                    builder.setTitle("정말로 멤버십 바코드를 삭제하겠습니까?");
+                    builder.setNegativeButton("예", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            String fileName = item.getBarcodePath();
+                            File file = new File(fileName);
+                            Boolean result = file.delete();
+                            Log.d("Delete Result", result+"");
+
+                            int position = getAdapterPosition ();
+                            if (position!=RecyclerView.NO_POSITION){
+                                if (mListener!=null){
+                                    mListener.onDeleteClick(view,position);
+                                }
+                            }
+                        }
+                    });
+                    builder.setPositiveButton("아니오", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                        }
+                    });
+                    AlertDialog alertDialog = builder.create();
+                    alertDialog.show();
+
+
+                }
+            });
+        }
+
     }
 
 }
