@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
 
         if(id == R.id.config) {
             // 이제 여기에 Intent 설정
-            Intent UserSettings = new Intent(MainActivity.this, com.example.naver_map_test.UserSettings.class);
+            Intent UserSettings = new Intent(MainActivity.this, SettingActivity.class);
             startActivity(UserSettings);
         }
 

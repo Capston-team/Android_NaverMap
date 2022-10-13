@@ -1,5 +1,6 @@
 package com.example.naver_map_test;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,6 +87,7 @@ public class Event_RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
         public void setItem(eventItem item) {
             title.setText(item.getTitle());
+            Log.d("items title", item.getTitle()+"");
             date.setText(item.getDate());
             Glide.with(imageView.getContext())
                     .load(item.getImg())
