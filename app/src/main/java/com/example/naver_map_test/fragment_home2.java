@@ -1,5 +1,7 @@
 package com.example.naver_map_test;
 
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -39,6 +41,10 @@ public class fragment_home2 extends Fragment {
 
     private boolean isLoading = false;
 
+    private int totalRetries = 3;
+    private int retryCount = 0;
+    private static final String TAG = fragment_home2.class.getSimpleName();
+
     Retrofit retrofit;
     public static final String BASE_URL = "https://where-we-go.herokuapp.com/capstone/event/";
 
@@ -52,6 +58,14 @@ public class fragment_home2 extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.e("fragment2", "fragment2 onCreate");
+
+        ProgressBar progressBar = new ProgressBar(requireContext());
+        progressBar.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        progressBar.setCancelable(false);
+
+        progressBar.show();
 
         if(retrofit == null) {
 
@@ -85,22 +99,21 @@ public class fragment_home2 extends Fragment {
 
                             dataModel_response = response.body();
 
-
                             assert dataModel_response != null;
                             eventTitle = (ArrayList<String>) dataModel_response.getTitle();
                             eventDate = (ArrayList<String>) dataModel_response.getDate();
                             eventImg = (ArrayList<String>) dataModel_response.getImg();
 
-
                             populateData(eventTitle, eventDate, eventImg);
+                            adapter.notifyDataSetChanged();
+
+                            progressBar.dismiss();
+
                             assert dataModel_response != null;
                             System.out.println("eventTitle : " + eventTitle);
                             System.out.println("eventTitle.size() : " + eventTitle.size());
                             System.out.println("eventDate : " + eventDate);
                             System.out.println("eventDate.size() : " + eventDate.size());
-
-
-
 
                         } else {
                             Log.e("fragment_home2 onResponse status Code", String.valueOf(response.code()));
@@ -110,10 +123,15 @@ public class fragment_home2 extends Fragment {
 
                 @Override
                 public void onFailure(@NonNull Call<eventDataModel_response> call, Throwable t) {
-                    Log.e("fragment_home2 fail response", "onFailure -> " + t.getMessage());
+                    Log.e(TAG, "onFailure -> " + t.getMessage());
+                    if(retryCount++ < totalRetries) {
+                        Log.v(TAG, "Retrying API Call - (" + retryCount + " / " + totalRetries + ")");
+                        call.clone().enqueue(this);
+                    } else {
+
+                    }
                 }
             });
-
         } catch(Exception e) {
             Log.e("EVENT REST API ERROR", "EVENT Retrofit REST API ERROR : " + e);
         }
@@ -121,18 +139,21 @@ public class fragment_home2 extends Fragment {
     }
 
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.fragment_home2, container, false);
-        Log.e("fragment2", "fragment2 onCreateView");
+        Log.v(TAG, "fragment2 onCreateView");
 
         eventRecyclerView = v.findViewById(R.id.EventRecyclerView);
 
 
         initAdapter(eventRecyclerView);
         initScrollListener();
+
+//        Log.d("onCreateView", "items : " + items.get(0));
 
         return v;
     }
@@ -141,7 +162,6 @@ public class fragment_home2 extends Fragment {
      * eventItem 이미지 사이즈 크기가 통신사 별로 맞지 않는다.
      */
     private void populateData(ArrayList<String> title, ArrayList<String> date, ArrayList<String> img) {
-
         for(int i = 0; i < title.size(); i++) {
             eventItem eventItem = new eventItem(title.get(i), date.get(i), img.get(i));
             items.add(eventItem);
@@ -149,7 +169,7 @@ public class fragment_home2 extends Fragment {
     }
 
     private void initAdapter(RecyclerView eventRecyclerView) {
-        Log.e("initAdapter", "initAdapter");
+        Log.v("initAdapter", "initAdapter");
         adapter = new Event_RecyclerViewAdapter(items);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         eventRecyclerView.setLayoutManager(layoutManager);
@@ -158,7 +178,7 @@ public class fragment_home2 extends Fragment {
     }
 
     private void initScrollListener() {
-        Log.e("initScrollListener", "initScrollListener");
+        Log.v("initScrollListener", "initScrollListener");
         eventRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
