@@ -82,7 +82,6 @@ public class fragment_home3 extends Fragment {
                 mRecyclerAdapter.notifyItemRemoved(positon);
             }
         });
-//        imageViewResult = v.findViewById(R.id.imageViewResult);
 
         btnAdd=v.findViewById(R.id.btnAdd);
         btnAdd.setOnClickListener(new View.OnClickListener() {
@@ -100,8 +99,8 @@ public class fragment_home3 extends Fragment {
         Log.d("wow7", ""+file_list.length);
         for(int k=0; k<file_list.length; k++){
             if(file_list[k].contains("barcode")){
-                //barcodeName = (file_list[k].substring(7)).substring(file_list[k].length()-3, file_list[k].length());
-                //mbarcodeItems.add(new BarcodeItem(barcodeName, barcode_path+"/"+file_list[k]));
+                barcodeName = file_list[k].substring(7,file_list[k].length()-4); //이름에서 barcode.png 제거
+                mbarcodeItems.add(new BarcodeItem(barcodeName, barcode_path+"/"+file_list[k]));
             }
         }
 

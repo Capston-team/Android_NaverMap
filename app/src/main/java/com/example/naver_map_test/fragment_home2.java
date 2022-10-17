@@ -111,7 +111,7 @@ public class fragment_home2 extends Fragment {
 
 
     private void removeData(@NonNull ArrayList<eventItem> items) {
-        for(int i = 0; i < items.size(); i++) {
+        for (int i = 0; i < items.size(); i++) {
             items.clear();
         }
     }
