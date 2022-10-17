@@ -5,6 +5,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -41,7 +42,7 @@ public class fragment_home2 extends Fragment {
     private final ArrayList<eventItem> items = new ArrayList<>();
 
     private boolean isLoading = false;
-
+    ProgressBar progressBar;
 
     String myTel;
 
@@ -65,13 +66,6 @@ public class fragment_home2 extends Fragment {
         super.onCreate(savedInstanceState);
         Log.e("fragment2", "fragment2 onCreate");
 
-        ProgressBar progressBar = new ProgressBar(requireContext());
-        progressBar.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-        progressBar.setCancelable(false);
-
-        progressBar.show();
-
         if(retrofit == null) {
 
             Gson gson = new GsonBuilder()
@@ -90,93 +84,46 @@ public class fragment_home2 extends Fragment {
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
         }
-
-        try {
-            String carrier = PreferenceUtil.getCarrierPreferences(requireContext(), "carrier");
-
-            APIInterface apiInterface = retrofit.create(APIInterface.class);
-            Call<eventDataModel_response> event_call_request = apiInterface.event_request(carrier);
-            event_call_request.clone().enqueue(new Callback<eventDataModel_response>() {
-                @Override
-                public void onResponse(@NonNull Call<eventDataModel_response> call, @NonNull Response<eventDataModel_response> response) {
-                    if(response.isSuccessful()) {
-                        if(response.code() == 200) {
-
-                            dataModel_response = response.body();
-
-                            assert dataModel_response != null;
-                            eventTitle = (ArrayList<String>) dataModel_response.getTitle();
-                            eventDate = (ArrayList<String>) dataModel_response.getDate();
-                            eventImg = (ArrayList<String>) dataModel_response.getImg();
-
-                            populateData(eventTitle, eventDate, eventImg);
-                            adapter.notifyDataSetChanged();
-
-                            progressBar.dismiss();
-
-                            assert dataModel_response != null;
-                            System.out.println("eventTitle : " + eventTitle);
-                            System.out.println("eventTitle.size() : " + eventTitle.size());
-                            System.out.println("eventDate : " + eventDate);
-                            System.out.println("eventDate.size() : " + eventDate.size());
-
-                            adapter.notifyDataSetChanged();
-
-
-                        } else {
-                            Log.e("fragment_home2 onResponse status Code", String.valueOf(response.code()));
-                        }
-                    }
-                }
-
-                @Override
-                public void onFailure(@NonNull Call<eventDataModel_response> call, Throwable t) {
-                    Log.e(TAG, "onFailure -> " + t.getMessage());
-                    if(retryCount++ < totalRetries) {
-                        Log.v(TAG, "Retrying API Call - (" + retryCount + " / " + totalRetries + ")");
-                        call.clone().enqueue(this);
-                    } else {
-
-                    }
-                }
-            });
-        } catch(Exception e) {
-            Log.e("EVENT REST API ERROR", "EVENT Retrofit REST API ERROR : " + e);
-        }
-
-        myTel=PreferenceUtil.getCarrierPreferences(getContext().getApplicationContext(), "carrier");
-
     }
 
-
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.fragment_home2, container, false);
-        Log.v(TAG, "fragment2 onCreateView");
+        Log.e(TAG, "fragment2 onCreateView");
+
+        progressBar = new ProgressBar(requireContext());
+        progressBar.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        progressBar.setCancelable(false);
+        progressBar.show();
+
+        String carrier = PreferenceUtil.getCarrierPreferences(requireContext(), "carrier");
 
         eventRecyclerView = v.findViewById(R.id.EventRecyclerView);
         initAdapter(eventRecyclerView);
         initScrollListener();
 
-
+        getRetrofitResult(retrofit, progressBar, carrier);
+        myTel = PreferenceUtil.getCarrierPreferences(requireContext(), "carrier");
         return v;
     }
 
-    /**
-     * eventItem 이미지 사이즈 크기가 통신사 별로 맞지 않는다.
-     */
-    private void populateData(ArrayList<String> title, ArrayList<String> date, ArrayList<String> img) {
+
+    private void removeData(@NonNull ArrayList<eventItem> items) {
+        for (int i = 0; i < items.size(); i++) {
+            items.clear();
+        }
+    }
+
+    private void populateData(@NonNull ArrayList<String> title, ArrayList<String> date, ArrayList<String> img) {
         for(int i = 0; i < title.size(); i++) {
             eventItem eventItem = new eventItem(title.get(i), date.get(i), img.get(i));
             items.add(eventItem);
         }
-        Log.d("items", items.get(0).getTitle()+"");
     }
 
-    private void initAdapter(RecyclerView eventRecyclerView) {
+    private void initAdapter(@NonNull RecyclerView eventRecyclerView) {
         Log.v("initAdapter", "initAdapter");
         adapter = new Event_RecyclerViewAdapter(items);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -231,17 +178,70 @@ public class fragment_home2 extends Fragment {
             isLoading = false;
         }, 2000);
     }
-    public void refreshFragment(Fragment fragment, FragmentManager fragmentManager){
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.detach(this).attach(this).commit();
+
+    public void getRetrofitResult(Retrofit retrofit, ProgressBar progressBar, String carrier) {
+        try {
+            APIInterface apiInterface = retrofit.create(APIInterface.class);
+            Call<eventDataModel_response> event_call_request = apiInterface.event_request(carrier);
+            event_call_request.clone().enqueue(new Callback<eventDataModel_response>() {
+                @Override
+                public void onResponse(@NonNull Call<eventDataModel_response> call, @NonNull Response<eventDataModel_response> response) {
+                    if(response.isSuccessful()) {
+                        if(response.code() == 200) {
+
+                            dataModel_response = response.body();
+
+                            assert dataModel_response != null;
+                            eventTitle = (ArrayList<String>) dataModel_response.getTitle();
+                            eventDate = (ArrayList<String>) dataModel_response.getDate();
+                            eventImg = (ArrayList<String>) dataModel_response.getImg();
+
+                            populateData(eventTitle, eventDate, eventImg);
+
+                            assert dataModel_response != null;
+                            System.out.println("eventTitle : " + eventTitle);
+                            System.out.println("eventTitle.size() : " + eventTitle.size());
+                            System.out.println("eventDate : " + eventDate);
+                            System.out.println("eventDate.size() : " + eventDate.size());
+
+                            adapter.notifyDataSetChanged();
+                            progressBar.dismiss();
+                        } else {
+                            Log.e("fragment_home2 onResponse status Code", String.valueOf(response.code()));
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<eventDataModel_response> call, Throwable t) {
+
+                    Log.e(TAG, "onFailure -> " + t.getMessage());
+                    if(retryCount++ < totalRetries) {
+                        Log.v(TAG, "Retrying API Call - (" + retryCount + " / " + totalRetries + ")");
+                        call.clone().enqueue(this);
+                    } else {
+                        // 네트워크 에러, retrofit 에러로 데이터 조회가 안될 경우 recycler view가 아닌 다른 viwe를 띄워줘야 함.
+                    }
+                }
+            });
+        } catch(Exception e) {
+            Log.e("EVENT REST API ERROR", "EVENT Retrofit REST API ERROR : " + e);
+        }
+        Log.e("fragment2", "getRetrofitResult");
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        Log.e("fragment2", "onResume");
+        System.out.println("onResume myTel : " + myTel);
+        System.out.println("getCarrierPreferences : " + PreferenceUtil.getCarrierPreferences(getContext().getApplicationContext(), "carrier"));
+        if(!myTel.equals(PreferenceUtil.getCarrierPreferences(getContext().getApplicationContext(), "carrier"))){
+            progressBar.show();
+            items.clear();
+            myTel = PreferenceUtil.getCarrierPreferences(requireContext(), "carrier");
+            getRetrofitResult(retrofit, progressBar, PreferenceUtil.getCarrierPreferences(getContext().getApplicationContext(), "carrier"));
 
-        if(myTel != PreferenceUtil.getCarrierPreferences(getContext().getApplicationContext(), "carrier")){
-            refreshFragment(this, getFragmentManager());
         }
     }
 }
