@@ -55,6 +55,7 @@
         <entry key="app/src/main/res/layout/dialog_progress.xml" value="0.1828125" />
         <entry key="app/src/main/res/layout/drop_down_item.xml" value="0.1408514492753623" />
         <entry key="app/src/main/res/layout/event_item_row.xml" value="0.17350557244174267" />
+        <entry key="app/src/main/res/layout/event_load_fail_layout.xml" value="0.20052083333333334" />
         <entry key="app/src/main/res/layout/fragment_home1.xml" value="0.24468383789062498" />
         <entry key="app/src/main/res/layout/fragment_home2.xml" value="0.29438405797101447" />
         <entry key="app/src/main/res/layout/fragment_home3.xml" value="0.29438405797101447" />
@@ -68,6 +69,7 @@
         <entry key="app/src/main/res/menu/menu.xml" value="0.35833333333333334" />
         <entry key="app/src/main/res/menu/navi_menu.xml" value="0.3546875" />
         <entry key="app/src/main/res/menu/toolbar_menu.xml" value="0.18802083333333333" />
+        <entry key="app/src/main/res/xml/network_security_config.xml" value="0.1" />
         <entry key="app/src/main/res/xml/root_preferences.xml" value="0.23324275362318841" />
       </map>
     </option>
