@@ -24,6 +24,7 @@ public class SettingActivity extends AppCompatActivity {
     Spinner spinnerTel;
     Spinner spinnerRank;
     Button btnConfirm;
+    Button btnBack;
 
     String selTel, selRank;
     int tel_i, rank_i; //저장할 통신사 등급 인덱스
@@ -42,6 +43,7 @@ public class SettingActivity extends AppCompatActivity {
         spinnerRank=findViewById(R.id.spinnerRank);
         btnConfirm=findViewById(R.id.btnConfirm);
         textMyTelRank=findViewById(R.id.currentTel);
+        btnBack=findViewById(R.id.btnBack);
 
         ArrayAdapter<String> adapterTel = new ArrayAdapter<>(
                 this, android.R.layout.simple_spinner_item, telecom
@@ -136,6 +138,12 @@ public class SettingActivity extends AppCompatActivity {
                 PreferenceUtil.setRatePreferences(getApplicationContext(), "rate", changeRank);
 
                 Toast.makeText(getApplicationContext(),"변경이 완료되었습니다.", Toast.LENGTH_LONG).show();
+                onBackPressed();
+            }
+        });
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 onBackPressed();
             }
         });

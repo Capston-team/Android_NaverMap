@@ -65,7 +65,6 @@ public class BarcodeRecyclerAdapter extends RecyclerView.Adapter<BarcodeRecycler
     public void setOnItemClickListener(OnItemClickListener listener) {
         this.mListener = listener;
     }
-
     class MyViewHolder extends RecyclerView.ViewHolder{
         LinearLayout layout_barcode;
         ImageView imgaeBarcode;

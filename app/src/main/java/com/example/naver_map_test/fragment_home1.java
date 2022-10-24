@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -45,6 +46,7 @@ import com.naver.maps.map.OnMapReadyCallback;
 import com.naver.maps.map.UiSettings;
 import com.naver.maps.map.overlay.LocationOverlay;
 import com.naver.maps.map.overlay.Marker;
+import com.naver.maps.map.style.layers.BackgroundLayer;
 import com.naver.maps.map.util.FusedLocationSource;
 import com.naver.maps.map.util.MarkerIcons;
 import com.naver.maps.map.widget.CompassView;
@@ -152,7 +154,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
 
                     updateCameraPosition(naverMap, latitude, longitude);
 
-                    Log.d("onRequestPermissionsResult", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
+                    Log.d("onRequestPermissionsResult권한누르고나옴", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
                 } else {   // 만약 LocationListener가 위도, 경도를 가져오지 못할경우
                     Log.e("getLastknownLocation", "getLastknownLocation is null");
                 }
@@ -276,15 +278,30 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
             String carrier = PreferenceUtil.getCarrierPreferences(requireContext(), "carrier");
             String rate = PreferenceUtil.getRatePreferences(requireContext(), "rate");
 
-            Log.d("onHandlerResult", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
+             Log.d("onHandlerResult", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
+
+            conv.setBackgroundResource(R.drawable.round_button_signiture);
+            conv.setTextColor(Color.parseColor("#FFFFFF"));
+            cafe.setBackgroundResource(R.drawable.round_button);
+            cafe.setTextColor(Color.parseColor("#000000"));
+            meal.setBackgroundResource(R.drawable.round_button);
+            meal.setTextColor(Color.parseColor("#000000"));
+
             System.out.println("onHandlerResult - carrier : " + carrier + " onHandlerResult - rate : " + rate);
 
-            System.out.println("onHandlerResult latitude : " + latitude + " " + "latitude : " + longitude);
+            System.out.println("onHandlerResult latitude : " + latitude + " " + "longitude : " + longitude);
             setMarkerWithLocation(latitude, longitude, "CONV", carrier, rate);
         });
         cafe.setOnClickListener(view -> {
             String carrier = PreferenceUtil.getCarrierPreferences(requireContext(), "carrier");
             String rate = PreferenceUtil.getRatePreferences(requireContext(), "rate");
+
+            cafe.setBackgroundResource(R.drawable.round_button_signiture);
+            cafe.setTextColor(Color.parseColor("#FFFFFF"));
+            conv.setBackgroundResource(R.drawable.round_button);
+            conv.setTextColor(Color.parseColor("#000000"));
+            meal.setBackgroundResource(R.drawable.round_button);
+            meal.setTextColor(Color.parseColor("#000000"));
 
             System.out.println("onHandlerResult - carrier : " + carrier + " onHandlerResult - rate : " + rate);
 
@@ -292,9 +309,15 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
             setMarkerWithLocation(latitude, longitude, "CAFE", carrier, rate);
         });
         meal.setOnClickListener(view -> {
-
             String carrier = PreferenceUtil.getCarrierPreferences(requireContext(), "carrier");
             String rate = PreferenceUtil.getRatePreferences(requireContext(), "rate");
+
+            meal.setBackgroundResource(R.drawable.round_button_signiture);
+            meal.setTextColor(Color.parseColor("#FFFFFF"));
+            cafe.setBackgroundResource(R.drawable.round_button);
+            cafe.setTextColor(Color.parseColor("#000000"));
+            conv.setBackgroundResource(R.drawable.round_button);
+            conv.setTextColor(Color.parseColor("#000000"));
 
             System.out.println("onHandlerResult - carrier : " + carrier + " onHandlerResult - rate : " + rate);
 
@@ -547,6 +570,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
             latitude = location.getLatitude();
             // updateCameraPosition(naverMap, latitude ,longitude);
             Log.d("locationListener", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
+            Log.d("onRequestPermissionsResult3위치바뀌면나옴", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
         }
     };
 
@@ -593,7 +617,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
                     latitude = loc_Current.getLatitude();
                     longitude = loc_Current.getLongitude();
                     updateCamerePosition(naverMap, latitude, longitude);
-                    Log.d("onRequestPermissionsResult", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
+                    Log.d("onRequestPermissionsResult2", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
                 } else {   // 만약 LocationListener가 위도, 경도를 가져오지 못할경우
                     Log.e("getLastknownLocation", "getLastknownLocation is null");
                 }

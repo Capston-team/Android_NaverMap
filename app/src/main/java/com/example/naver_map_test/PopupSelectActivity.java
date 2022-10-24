@@ -73,6 +73,7 @@ public class PopupSelectActivity extends AppCompatActivity {
                 String barcodeNum = data.getStringExtra("barcodeNum");
                 Intent intent=new Intent();
                 intent.putExtra("num", barcodeNum);
+                Log.d("barcodenumselect", barcodeNum);
                 intent.putExtra("barcodeName", barcodeName);
                 setResult(RESULT_OK, intent);
                 finish();
