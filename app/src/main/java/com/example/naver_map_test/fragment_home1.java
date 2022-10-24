@@ -276,6 +276,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
             String carrier = PreferenceUtil.getCarrierPreferences(requireContext(), "carrier");
             String rate = PreferenceUtil.getRatePreferences(requireContext(), "rate");
 
+            Log.d("onHandlerResult", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
             System.out.println("onHandlerResult - carrier : " + carrier + " onHandlerResult - rate : " + rate);
 
             System.out.println("onHandlerResult latitude : " + latitude + " " + "latitude : " + longitude);
