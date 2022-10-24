@@ -6,6 +6,7 @@ import android.content.Intent;
 
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.KeyEvent;
 
 import com.google.zxing.ResultPoint;
@@ -61,7 +62,9 @@ public class ScanActivity extends AppCompatActivity {
                             result_data = new String(result_byte, "utf-8");
                         }
                         //바코드 숫자 내보내기
+
                         String num = String.valueOf(result_data);
+                        Log.d("barcodenumscan", num);
                         Intent intent = new Intent();
                         intent.putExtra("barcodeNum", num);
                         setResult(RESULT_OK, intent);

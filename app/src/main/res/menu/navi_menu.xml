@@ -4,7 +4,7 @@
         <item
             android:id="@+id/config"
             android:title="환경설정"
-            android:icon="@drawable/ic_config"/>
+            android:icon="@drawable/ic_config" />
     </group>
 
 </menu>
