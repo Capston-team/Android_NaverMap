@@ -30,6 +30,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -85,7 +86,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
     Button cafe;
     Button meal;
 
-    Button btnList;
+    LinearLayout btnList;
     CompassView compassView;
 
     final BottomList bottomSheetFragment = new BottomList();
@@ -152,6 +153,8 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
                     latitude = loc_Current.getLatitude();
                     longitude = loc_Current.getLongitude();
 
+                    if(naverMap == null) {Log.d("naverMapisNull", "true");}
+                    else Log.d("naverMapisNull", "false");
                     updateCameraPosition(naverMap, latitude, longitude);
 
                     Log.d("onRequestPermissionsResult권한누르고나옴", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);

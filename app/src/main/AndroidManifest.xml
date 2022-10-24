@@ -45,11 +45,11 @@
         <activity
             android:name=".PopupSelectActivity"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.Dialog" />
+            android:theme="@style/Theme.AppCompat.Light.Dialog"  />
         <activity
             android:name=".PopupBarcodeActivity"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.Dialog" />
+            android:theme="@style/Theme.AppCompat.Light.Dialog"  />
         <activity
             android:name=".BarcodeImageActivity"
             android:exported="false"

@@ -3,15 +3,15 @@
 
     <item
         android:id="@+id/home1"
-        android:title="Map"
+        android:title="지도"
         android:icon="@drawable/ic_map" />
     <item
         android:id="@+id/home2"
-        android:title="Event"
+        android:title="이벤트"
         android:icon="@drawable/ic_event" />
     <item
         android:id="@+id/home3"
-        android:title="Membership"
+        android:title="멤버십"
         android:icon="@drawable/ic_giftcard" />
 
 

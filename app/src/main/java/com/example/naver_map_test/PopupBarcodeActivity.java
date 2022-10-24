@@ -17,7 +17,7 @@ public class PopupBarcodeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setTitle("바코드를 등록하세요.");
         WindowManager.LayoutParams layoutParams= new WindowManager.LayoutParams();
         layoutParams.flags= WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         layoutParams.dimAmount= 0.5f;

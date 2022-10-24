@@ -14,14 +14,26 @@
         android:layout_marginTop="60dp"
         />
 
-    <ImageButton
+<!--    <ImageButton-->
+<!--        android:id="@+id/btnAdd"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_gravity="end|bottom"-->
+<!--        android:src="@drawable/ic_baseline_add_circle_outline_48"-->
+<!--        android:background="@drawable/shadow"-->
+<!--        android:layout_margin="18dp"-->
+<!--        />-->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnAdd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
-        android:src="@drawable/ic_baseline_add_circle_outline_48"
-        android:background="#00ffffff"
-        android:layout_margin="18dp"
+        android:src="@drawable/ic_baseline_add_48"
+        android:layout_margin="16dp"
+        android:backgroundTint="@color/signiture"
+        android:elevation="6dp"
+        app:borderWidth="0dp"
+        app:tint="@android:color/white"
         />
 
 
