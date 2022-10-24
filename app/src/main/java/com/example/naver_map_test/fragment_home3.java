@@ -122,6 +122,7 @@ public class fragment_home3 extends Fragment {
                 try {
                     if(data != null) {
                         num=data.getStringExtra("num");
+                        Log.d("barcodenum3", num);
                         barcodeName=data.getStringExtra("barcodeName");
                         Log.d("barcodeName", barcodeName);
 
@@ -172,13 +173,14 @@ public class fragment_home3 extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        mRecyclerAdapter.notifyDataSetChanged();
+
+        Log.d("onstart","start");
     }
     @Override
     public void onResume() {
         super.onResume();
         Log.d("wow2",Integer.toString(mbarcodeItems.size()));
-
+        mRecyclerAdapter.notifyDataSetChanged();
     }
     @Override
     public void onPause() {

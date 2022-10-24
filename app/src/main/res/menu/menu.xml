@@ -11,7 +11,7 @@
         android:icon="@drawable/ic_event" />
     <item
         android:id="@+id/home3"
-        android:title="Gift"
+        android:title="Membership"
         android:icon="@drawable/ic_giftcard" />
 
 
