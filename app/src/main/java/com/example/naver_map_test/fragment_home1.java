@@ -278,7 +278,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
             String carrier = PreferenceUtil.getCarrierPreferences(requireContext(), "carrier");
             String rate = PreferenceUtil.getRatePreferences(requireContext(), "rate");
 
-            Log.d("onRequestPermissionsResult", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
+             Log.d("onHandlerResult", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
 
             conv.setBackgroundResource(R.drawable.round_button_signiture);
             conv.setTextColor(Color.parseColor("#FFFFFF"));
