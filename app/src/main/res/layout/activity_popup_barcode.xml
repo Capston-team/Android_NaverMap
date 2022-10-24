@@ -20,6 +20,9 @@
     <Button
         android:id="@+id/btnGenerate"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="등록" />
+        android:layout_height="40dp"
+        android:text="등록"
+        android:textColor="@color/white"
+        android:background="@drawable/round_button_signiture"
+        android:textStyle="bold"/>
 </LinearLayout>

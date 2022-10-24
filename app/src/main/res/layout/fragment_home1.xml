@@ -88,7 +88,7 @@
       android:layout_marginTop="10sp"
       android:layout_marginStart="15sp"/>
 
-  <androidx.appcompat.widget.AppCompatButton
+  <LinearLayout
       android:id="@+id/btnList"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
@@ -102,11 +102,25 @@
       android:paddingTop="8dp"
       android:paddingRight="16dp"
       android:paddingBottom="8dp"
-      android:text="목록 열기"
-      android:textColor="#000000"
       app:layout_constraintBottom_toBottomOf="@+id/map"
       app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintStart_toStartOf="parent" />
+      app:layout_constraintStart_toStartOf="parent">
+     <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+         android:src="@drawable/ic_round_format_list_bulleted_24"
+         android:layout_marginRight="5dp"
+         android:layout_marginTop="1dp"
+         android:tint="@color/signiture"
+         />
+
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="목록 열기"
+          android:textColor="@color/black"
+          />
+  </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

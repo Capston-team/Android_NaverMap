@@ -7,10 +7,10 @@
 
     <ImageView
         android:id="@+id/iv_image"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="130dp"
+        android:layout_height="160dp"
         android:layout_gravity="center"
-        android:background="@mipmap/ic_launcher_round"
+        android:background="@drawable/icon2"
         android:layout_marginTop="50dp"
         />
     <TextView
@@ -20,7 +20,8 @@
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
         android:text="어디가지?"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        android:textColor="@color/black"/>
 
     <TextView
         android:id="@+id/tv_info"
@@ -28,5 +29,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="통신사 할인 지도"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        android:textColor="@color/black"/>
 </LinearLayout>

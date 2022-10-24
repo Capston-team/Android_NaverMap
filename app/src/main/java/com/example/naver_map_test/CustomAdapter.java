@@ -69,17 +69,17 @@ class Holder extends RecyclerView.ViewHolder{
         distance.setText(item.getDistance());
 
 
-        layout_text.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(mContext, ShopActivity.class);
-                intent.putExtra("title", title.getText());
-                intent.putExtra("message", message.getText());
-                intent.putExtra("distance", distance.getText());
-                intent.putExtra("profile", item.getResourceId());
-
-                mContext.startActivity(intent);
-            }
-        });
+//        layout_text.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent(mContext, ShopActivity.class);
+//                intent.putExtra("title", title.getText());
+//                intent.putExtra("message", message.getText());
+//                intent.putExtra("distance", distance.getText());
+//                intent.putExtra("profile", item.getResourceId());
+//
+//                mContext.startActivity(intent);
+//            }
+//        });
     }
 }
