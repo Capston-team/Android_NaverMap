@@ -136,16 +136,16 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
         } else {
             try {
                 LocationManager lm = (LocationManager) requireActivity().getSystemService(Context.LOCATION_SERVICE);
-                lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 20000, 10, locationListener);
+//                lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 20000, 10, locationListener);
 
 
 //              GPS_PROVIDER는 정확도가 높지만 야외에서만 가능
 //              실내에서는 NETWORK_PROVIDER를 사용하여 WIFI 같은 네트워크를 이용해 위치를 추정한다.
                 Location loc_Current = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
                 if(loc_Current == null) {
                     loc_Current = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                 }
+
 
                 // LocationListener가 성공적으로 위치를 가져올 경우
                 if(loc_Current != null) {
@@ -154,7 +154,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
 
                     updateCameraPosition(naverMap, latitude, longitude);
 
-                    Log.d("onRequestPermissionsResult권한누르고나옴", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
+                    Log.d("onCreate loc_Current", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
                 } else {   // 만약 LocationListener가 위도, 경도를 가져오지 못할경우
                     Log.e("getLastknownLocation", "getLastknownLocation is null");
                 }
@@ -278,7 +278,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
             String carrier = PreferenceUtil.getCarrierPreferences(requireContext(), "carrier");
             String rate = PreferenceUtil.getRatePreferences(requireContext(), "rate");
 
-             Log.d("onHandlerResult", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
+            Log.d("onHandlerResult", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
 
             conv.setBackgroundResource(R.drawable.round_button_signiture);
             conv.setTextColor(Color.parseColor("#FFFFFF"));
@@ -287,14 +287,13 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
             meal.setBackgroundResource(R.drawable.round_button);
             meal.setTextColor(Color.parseColor("#000000"));
 
-            System.out.println("onHandlerResult - carrier : " + carrier + " onHandlerResult - rate : " + rate);
-
-            System.out.println("onHandlerResult latitude : " + latitude + " " + "longitude : " + longitude);
             setMarkerWithLocation(latitude, longitude, "CONV", carrier, rate);
         });
         cafe.setOnClickListener(view -> {
             String carrier = PreferenceUtil.getCarrierPreferences(requireContext(), "carrier");
             String rate = PreferenceUtil.getRatePreferences(requireContext(), "rate");
+
+            Log.d("onHandlerResult", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
 
             cafe.setBackgroundResource(R.drawable.round_button_signiture);
             cafe.setTextColor(Color.parseColor("#FFFFFF"));
@@ -303,14 +302,13 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
             meal.setBackgroundResource(R.drawable.round_button);
             meal.setTextColor(Color.parseColor("#000000"));
 
-            System.out.println("onHandlerResult - carrier : " + carrier + " onHandlerResult - rate : " + rate);
-
-            System.out.println("onHandlerResult latitude : " + latitude + " " + "latitude : " + longitude);
             setMarkerWithLocation(latitude, longitude, "CAFE", carrier, rate);
         });
         meal.setOnClickListener(view -> {
             String carrier = PreferenceUtil.getCarrierPreferences(requireContext(), "carrier");
             String rate = PreferenceUtil.getRatePreferences(requireContext(), "rate");
+
+            Log.d("onHandlerResult", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
 
             meal.setBackgroundResource(R.drawable.round_button_signiture);
             meal.setTextColor(Color.parseColor("#FFFFFF"));
@@ -319,9 +317,6 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
             conv.setBackgroundResource(R.drawable.round_button);
             conv.setTextColor(Color.parseColor("#000000"));
 
-            System.out.println("onHandlerResult - carrier : " + carrier + " onHandlerResult - rate : " + rate);
-
-            System.out.println("onHandlerResult latitude : " + latitude + " " + "latitude : " + longitude);
             setMarkerWithLocation(latitude, longitude, "MEAL", carrier, rate);
         });
     }
@@ -565,12 +560,12 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
 
     // 현재 위치를 받아오는 함수
     private final LocationListener locationListener = new LocationListener() {
+        @Override
         public void onLocationChanged(@NonNull Location location) {
             longitude = location.getLongitude();
             latitude = location.getLatitude();
             // updateCameraPosition(naverMap, latitude ,longitude);
-            Log.d("locationListener", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
-            Log.d("onRequestPermissionsResult3위치바뀌면나옴", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
+            Log.d("onLocationChanged", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
         }
     };
 
@@ -601,6 +596,8 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
                 if (ActivityCompat.checkSelfPermission(requireContext().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext().getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     return;
                 }
+
+                Log.d("requestLocationUpdates locationListener", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
                 lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 20000, 10, locationListener);
 
 //                 GPS_PROVIDER는 정확도가 높지만 야외에서만 가능
@@ -617,7 +614,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
                     latitude = loc_Current.getLatitude();
                     longitude = loc_Current.getLongitude();
                     updateCamerePosition(naverMap, latitude, longitude);
-                    Log.d("onRequestPermissionsResult2", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
+                    Log.d("onRequestPermissionsResult", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
                 } else {   // 만약 LocationListener가 위도, 경도를 가져오지 못할경우
                     Log.e("getLastknownLocation", "getLastknownLocation is null");
                 }
