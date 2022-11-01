@@ -26,6 +26,7 @@ import com.google.gson.GsonBuilder;
 import com.naver.maps.map.MapFragment;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -199,10 +200,9 @@ public class fragment_home2 extends Fragment {
                             populateData(eventTitle, eventDate, eventImg);
 
                             assert dataModel_response != null;
-                            System.out.println("eventTitle : " + eventTitle);
                             System.out.println("eventTitle.size() : " + eventTitle.size());
-                            System.out.println("eventDate : " + eventDate);
                             System.out.println("eventDate.size() : " + eventDate.size());
+                            System.out.println("eventImg.size() : " + eventImg.size());
 
                             adapter.notifyDataSetChanged();
                             progressBar.dismiss();
@@ -235,13 +235,13 @@ public class fragment_home2 extends Fragment {
     public void onResume() {
         super.onResume();
         Log.e("fragment2", "onResume");
-        System.out.println("onResume myTel : " + myTel);
-        System.out.println("getCarrierPreferences : " + PreferenceUtil.getCarrierPreferences(getContext().getApplicationContext(), "carrier"));
-        if(!myTel.equals(PreferenceUtil.getCarrierPreferences(getContext().getApplicationContext(), "carrier"))){
+//        System.out.println("onResume myTel : " + myTel);
+//        System.out.println("getCarrierPreferences : " + PreferenceUtil.getCarrierPreferences(getContext().getApplicationContext(), "carrier"));
+        if(!myTel.equals(PreferenceUtil.getCarrierPreferences(requireContext(), "carrier"))){
             progressBar.show();
             items.clear();
             myTel = PreferenceUtil.getCarrierPreferences(requireContext(), "carrier");
-            getRetrofitResult(retrofit, progressBar, PreferenceUtil.getCarrierPreferences(getContext().getApplicationContext(), "carrier"));
+            getRetrofitResult(retrofit, progressBar, PreferenceUtil.getCarrierPreferences(requireContext(), "carrier"));
 
         }
     }

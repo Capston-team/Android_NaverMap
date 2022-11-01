@@ -104,6 +104,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
 
     String carrier;
     String rate;
+    String current_carrier;
 
     // Fragment가 생성되고 최초로 실행되는 함수
     @Override
@@ -121,12 +122,12 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
 
         int COARSE_PERMISSION = ContextCompat.checkSelfPermission(requireContext().getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION);
         int FINE_PERMISSION = ContextCompat.checkSelfPermission(requireContext().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
-        int CAMERA_PERMISSION = ContextCompat.checkSelfPermission(requireContext().getApplicationContext(), Manifest.permission.CAMERA);
+//        int CAMERA_PERMISSION = ContextCompat.checkSelfPermission(requireContext().getApplicationContext(), Manifest.permission.CAMERA);
 
         // 만약 3개의 권한 중 하나를 허용하지 않았다면 requestCode를 1000으로 할당
         if (COARSE_PERMISSION == PackageManager.PERMISSION_DENIED
-                || FINE_PERMISSION == PackageManager.PERMISSION_DENIED
-                || CAMERA_PERMISSION == PackageManager.PERMISSION_DENIED) {
+                || FINE_PERMISSION == PackageManager.PERMISSION_DENIED) {
+//                || CAMERA_PERMISSION == PackageManager.PERMISSION_DENIED) {
             requestPermissions(new String[]
                             {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA},
                     1000);
@@ -179,7 +180,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        Log.e("Fragment onCreateView", "fragment1 onCreateView");
         FragmentManager fm = getChildFragmentManager();
         MapFragment mapFragment = (MapFragment) fm.findFragmentById(R.id.map);
 
@@ -209,9 +210,6 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
         String carrier = PreferenceUtil.getCarrierPreferences(requireActivity().getApplicationContext(), "carrier");
         String rate = PreferenceUtil.getRatePreferences(requireActivity().getApplicationContext(), "rate");
 
-//        String carrier = PreferenceUtil.getCarrierPreferences(requireActivity().getApplicationContext(), "carrier");
-//        String rate = PreferenceUtil.getRatePreferences(requireActivity().getApplicationContext(), "rate");
-
         System.out.println("fragment1 - carrier : " + carrier + " fragment1 - rate : " + rate);
 
         if(carrier != null && rate != null) {
@@ -225,7 +223,6 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
 //        }
 
         if (retrofit == null) {
-
             try {
                 String address = getIpAddress();
                 Log.e("address", address);
@@ -250,6 +247,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
                 Log.e("Socket Address Error", "서버가 닫혀 있습니다.");
             }
         }
+        current_carrier = PreferenceUtil.getCarrierPreferences(requireContext(), "carrier");
         Log.e("Fragment onCreateView", "fragment ENTER");
         myTel = PreferenceUtil.getCarrierPreferences(requireContext(), "carrier");
 
@@ -283,10 +281,13 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
 //            }
 //    );
 
+
+
     public void onHandlerResult() {
         conv.setOnClickListener(view -> {
             String carrier = PreferenceUtil.getCarrierPreferences(requireContext(), "carrier");
             String rate = PreferenceUtil.getRatePreferences(requireContext(), "rate");
+
 
             Log.d("onHandlerResult", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
 
@@ -513,6 +514,21 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("fragment1", "---------------------------------------------");
+        Log.d("fragment1", "current_carrier : " + current_carrier);
+        Log.d("fragment1", "Pref : " + PreferenceUtil.getCarrierPreferences(requireContext(), "carrier"));
+        if(!current_carrier.equals(PreferenceUtil.getCarrierPreferences(requireContext(), "carrier"))) {
+            current_carrier = PreferenceUtil.getCarrierPreferences(requireContext(), "carrier");
+            for (Marker activeMarker : activeMarkers) {
+                activeMarker.setMap(null);
+            }
+        }
+        Log.d("fragment1", "---------------------------------------------");
+    }
+
     // 색상에 따른 마커 설정 함수
     public void setMarker(@NonNull List<Double> latitude, List<Double> longitude, String color, String category, String branchName, ArrayList<String> branch) {
         Vector<LatLng> markersPosition = new Vector<>();
@@ -612,7 +628,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
     /*
         권한 설정함수
         ACCESS_COARSE_LOCATION
-        ACCESS_FINE_LOCATION
+        ACCESS_FINE_LOCATIONocationChanged: GPS Location
     */
     @Override
     @SuppressWarnings("deprecation")
@@ -636,7 +652,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
                 }
 
                 Log.d("requestLocationUpdates locationListener", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
-                lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 20000, 10, locationListener);
+                lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
 //                 GPS_PROVIDER는 정확도가 높지만 야외에서만 가능
 //                 실내에서는 NETWORK_PROVIDER를 사용하여 WIFI 같은 네트워크를 이용해 위치를 추정한다.
