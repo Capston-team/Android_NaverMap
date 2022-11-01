@@ -8,6 +8,7 @@
     app:behavior_hideable="false"
     app:behavior_peekHeight="50dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="20dp"
@@ -17,8 +18,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:background="@drawable/edge_bottom"
-        android:gravity="center"
-        ></LinearLayout>
+        android:gravity="center" />
 
 
     <androidx.recyclerview.widget.RecyclerView

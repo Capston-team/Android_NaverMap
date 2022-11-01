@@ -129,23 +129,15 @@ public class SettingActivity extends AppCompatActivity {
             actionBar.setTitle("환경설정");
         }
 
-        btnConfirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String changeRank = spinnerRank.getSelectedItem().toString();
-                String changeTel = spinnerTel.getSelectedItem().toString();
-                PreferenceUtil.setCarrierPreferences(getApplicationContext(), "carrier", changeTel);
-                PreferenceUtil.setRatePreferences(getApplicationContext(), "rate", changeRank);
+        btnConfirm.setOnClickListener(view -> {
+            String changeRank = spinnerRank.getSelectedItem().toString();
+            String changeTel = spinnerTel.getSelectedItem().toString();
+            PreferenceUtil.setCarrierPreferences(getApplicationContext(), "carrier", changeTel);
+            PreferenceUtil.setRatePreferences(getApplicationContext(), "rate", changeRank);
 
-                Toast.makeText(getApplicationContext(),"변경이 완료되었습니다.", Toast.LENGTH_LONG).show();
-                onBackPressed();
-            }
+            Toast.makeText(getApplicationContext(),"변경이 완료되었습니다.", Toast.LENGTH_LONG).show();
+            onBackPressed();
         });
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        });
+        btnBack.setOnClickListener(view -> onBackPressed());
     }
 }
