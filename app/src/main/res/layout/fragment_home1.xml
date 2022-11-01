@@ -114,12 +114,71 @@
          android:tint="@color/signiture"
          />
 
+     <TextView
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:text="목록 열기"
+         android:textColor="@color/black"
+         />
+  </LinearLayout>
+
+  <!-- 마커 클릭 시 나오는 화면-->
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:orientation="horizontal"
+      android:visibility="gone">
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_marginHorizontal="15dp"
+        android:layout_weight="5.5"
+        app:srcCompat="@drawable/marker_cafe" />
+
+    <LinearLayout
+        android:id="@+id/LinearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="4"
+        android:orientation="vertical">
+
       <TextView
-          android:layout_width="wrap_content"
+          android:id="@+id/textTitle"
+          android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:text="목록 열기"
+          android:layout_gravity="center"
+          android:layout_weight="1"
+          android:gravity="center_vertical"
+          android:text="가게명"
           android:textColor="@color/black"
-          />
+          android:textSize="18sp"
+          android:textStyle="bold" />
+
+      <TextView
+          android:id="@+id/textContent"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_weight="3"
+          android:gravity="center_vertical"
+          android:text="할인 내용"
+          android:textColor="#FF0000"
+          android:textSize="14sp" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textDistance"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp"
+        android:layout_weight="6"
+        android:gravity="center_horizontal"
+        android:text="m 이내"
+        android:textColor="#0027FF"
+        android:layout_marginRight="4dp"
+        />
   </LinearLayout>
 
 
