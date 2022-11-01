@@ -221,6 +221,7 @@ public class fragment_home2 extends Fragment {
                         call.clone().enqueue(this);
                     } else {
                         // 네트워크 에러, retrofit 에러로 데이터 조회가 안될 경우 recycler view가 아닌 다른 viwe를 띄워줘야 함.
+
                     }
                 }
             });
