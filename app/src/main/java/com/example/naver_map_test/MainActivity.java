@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
         layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         layoutParams.dimAmount = 0.8f;
-        getWindow().setAttributes(layoutParams);
+        //getWindow().setAttributes(layoutParams);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -79,16 +79,23 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
 
         animatedBottomBar = findViewById(R.id.bottom_bar);
 
-        if (savedInstanceState == null) {
+        String carrier = PreferenceUtil.getCarrierPreferences(this.getApplicationContext(), "carrier");
+        String rate = PreferenceUtil.getRatePreferences(this.getApplicationContext(), "rate");
+
+        if(carrier == null && rate == null) {
+            Intent form_intent = new Intent(this, carrier_form.class);
+            form_intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            // 처음 통신사, 등급 입력 창 호출
+            startActivityForResult(form_intent, 1);
+        }
+        else{
             animatedBottomBar.selectTabById(R.id.home1, true);
             fragmentManager = getSupportFragmentManager();
             MapFrag = new fragment_home1();
             fragmentManager.beginTransaction().add(R.id.menu_frame_layout, MapFrag,"MapFrag")
                     .addToBackStack(null)
                     .commit();
-
         }
-
         Log.e("MainActivity onCreate", "ENTER");
 
         animatedBottomBar.setOnTabSelectListener(new AnimatedBottomBar.OnTabSelectListener() {
@@ -133,7 +140,20 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
             }
         });
     }
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+                animatedBottomBar.selectTabById(R.id.home1, true);
+                fragmentManager = getSupportFragmentManager();
+                MapFrag = new fragment_home1();
+                fragmentManager.beginTransaction().add(R.id.menu_frame_layout, MapFrag,"MapFrag")
+                        .addToBackStack(null)
+                        .commit();
+            }
+        }
+    }
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();

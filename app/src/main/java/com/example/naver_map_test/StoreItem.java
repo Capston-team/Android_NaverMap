@@ -1,14 +1,23 @@
 package com.example.naver_map_test;
 
-public class StoreItem {
+public class StoreItem implements Comparable<StoreItem>{
     int resourceId;
     String title;
-    String message;
-    String distance;
+    int discount;
+    int distance;
 
-    public StoreItem(int resourceId,String title, String message, String distance) {
+    @Override
+    public int compareTo(StoreItem storeItem) {
+        if ( this.getDistance() < storeItem.getDistance()){
+            return -1;
+        }
+        return 0;
+    }
+
+
+    public StoreItem(int resourceId,String title, int discount, int distance) {
         this.title = title;
-        this.message= message;
+        this.discount= discount;
         this.distance=distance;
         this.resourceId=resourceId;
     }
@@ -18,10 +27,10 @@ public class StoreItem {
     public String getTitle() {
         return title;
     }
-    public String getMessage() {
-        return message;
+    public int getdiscount() {
+        return discount;
     }
-    public String getDistance() {
+    public int getDistance() {
         return distance;
     }
 
@@ -31,10 +40,10 @@ public class StoreItem {
     public void setTitle(String title) {
         this.title = title;
     }
-    public void setMessage(String message) {
-        this.message = message;
+    public void setdiscount(int discount) {
+        this.discount = discount;
     }
-    public void setDistance(String distance) {
+    public void setDistance(int distance) {
         this.distance = distance;
     }
 }

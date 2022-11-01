@@ -15,7 +15,8 @@
         android:layout_height="wrap_content"
         android:text="통신사"
         android:layout_marginTop="20dp"
-        android:textColor="@color/white" />
+        android:textColor="@color/black"
+        android:textStyle="bold"/>
 
     <Spinner
         android:id="@+id/spinner_tel"
@@ -29,7 +30,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30sp"
         android:text="등급"
-        android:textColor="@color/white" />
+        android:textColor="@color/black"
+        android:textStyle="bold"/>
     <Spinner
         android:id="@+id/spinner_rank"
         android:layout_width="250dp"
@@ -42,7 +44,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="확인"
-        android:layout_marginTop="10sp"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="@color/signiture"
+        android:background="@drawable/round_button_signiture"
+        android:textColor="@color/white"
+        android:textStyle="bold"
         />
 
 </LinearLayout>

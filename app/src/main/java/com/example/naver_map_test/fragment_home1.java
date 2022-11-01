@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -33,7 +32,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.conn.util.InetAddressUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -47,9 +45,9 @@ import com.naver.maps.map.OnMapReadyCallback;
 import com.naver.maps.map.UiSettings;
 import com.naver.maps.map.overlay.LocationOverlay;
 import com.naver.maps.map.overlay.Marker;
-import com.naver.maps.map.style.layers.BackgroundLayer;
+import com.naver.maps.map.overlay.Overlay;
+import com.naver.maps.map.overlay.OverlayImage;
 import com.naver.maps.map.util.FusedLocationSource;
-import com.naver.maps.map.util.MarkerIcons;
 import com.naver.maps.map.widget.CompassView;
 
 import java.net.InetAddress;
@@ -60,20 +58,17 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.Vector;
-import java.util.concurrent.TimeUnit;
 
-import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
+public class fragment_home1 extends Fragment implements OnMapReadyCallback, Overlay.OnClickListener   {
 
+    String myTel;
     private static NaverMap naverMap;  // Fragment를 이용하여 naver map을 출력 했다면
     private static final String FRAGMENT1 = "FRAGMENT_HOME1";
 
@@ -115,6 +110,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         Log.e("Fragment onCreate", "fragment ENTER");
 
         // 현재 위치를 받아오는 함수
@@ -135,7 +131,9 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
             requestPermissions(new String[]
                             {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA},
                     1000);
+            Log.d("권한 결과", "아직 허용 안됨");
         } else {
+            Log.d("권한 결과", "허용 됨");
             try {
                 LocationManager lm = (LocationManager) requireActivity().getSystemService(Context.LOCATION_SERVICE);
 //                lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 20000, 10, locationListener);
@@ -156,9 +154,10 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
 
                     if(naverMap == null) {Log.d("naverMapisNull", "true");}
                     else Log.d("naverMapisNull", "false");
-                    updateCameraPosition(naverMap, latitude, longitude);
+                    //updateCameraPosition(naverMap, latitude, longitude);
 
                     Log.d("onCreate loc_Current", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
+
                 } else {   // 만약 LocationListener가 위도, 경도를 가져오지 못할경우
                     Log.e("getLastknownLocation", "getLastknownLocation is null");
                 }
@@ -186,11 +185,16 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
         MapFragment mapFragment = (MapFragment) fm.findFragmentById(R.id.map);
 
         View v = inflater.inflate(R.layout.fragment_home1, container, false);
+
+
+
         btnList = v.findViewById((R.id.btnList));
         conv = v.findViewById(R.id.conv);
         cafe = v.findViewById(R.id.cafe);
         meal = v.findViewById(R.id.meal);
         compassView = v.findViewById(R.id.Compass);
+
+        btnList.setVisibility(View.GONE);
 
         if (mapFragment == null) {
             mapFragment = MapFragment.newInstance();
@@ -210,12 +214,13 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
 
         if(carrier != null && rate != null) {
             onHandlerResult();
-        } else {
-            Intent form_intent = new Intent(getActivity(), carrier_form.class);
-            form_intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-            // 처음 통신사, 등급 입력 창 호출
-            startActivityResult.launch(form_intent);
-        }
+          }
+//        else {
+//            Intent form_intent = new Intent(getActivity(), carrier_form.class);
+//            form_intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+//            // 처음 통신사, 등급 입력 창 호출
+//            startActivityResult.launch(form_intent);
+//        }
 
         if (retrofit == null) {
             try {
@@ -244,35 +249,37 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
         }
         current_carrier = PreferenceUtil.getCarrierPreferences(requireContext(), "carrier");
         Log.e("Fragment onCreateView", "fragment ENTER");
+        myTel = PreferenceUtil.getCarrierPreferences(requireContext(), "carrier");
+
         return v;
     }
 
-    //     통신사, 등급 입력 창 결과
-    ActivityResultLauncher<Intent> startActivityResult = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if(result.getResultCode() == Activity.RESULT_OK) {
-
-                        Intent intent = result.getData();
-                        assert intent != null;
-                        carrier = intent.getStringExtra("carrier");
-                        rate = intent.getStringExtra("rate");
-
-                        Log.i("---","---");
-                        Log.w("//===========//","================================================");
-                        Log.i("","\n"+"["+String.valueOf(FRAGMENT1)+" >> registerForActivityResult() :: 인텐트 응답 데이터 확인]");
-                        Log.i("","\n"+"[onActivityResult carrier : "+String.valueOf(carrier)+"]");
-                        Log.i("","\n"+"[onActivityResult rate : "+String.valueOf(rate)+"]");
-                        Log.w("//===========//","================================================");
-                        Log.i("---","---");
-
-                        onHandlerResult();
-                    }
-                }
-            }
-    );
+//    //     통신사, 등급 입력 창 결과
+//    ActivityResultLauncher<Intent> startActivityResult = registerForActivityResult(
+//            new ActivityResultContracts.StartActivityForResult(),
+//            new ActivityResultCallback<ActivityResult>() {
+//                @Override
+//                public void onActivityResult(ActivityResult result) {
+//                    if(result.getResultCode() == Activity.RESULT_OK) {
+//
+//                        Intent intent = result.getData();
+//                        assert intent != null;
+//                        carrier = intent.getStringExtra("carrier");
+//                        rate = intent.getStringExtra("rate");
+//
+//                        Log.i("---","---");
+//                        Log.w("//===========//","================================================");
+//                        Log.i("","\n"+"["+String.valueOf(FRAGMENT1)+" >> registerForActivityResult() :: 인텐트 응답 데이터 확인]");
+//                        Log.i("","\n"+"[onActivityResult carrier : "+String.valueOf(carrier)+"]");
+//                        Log.i("","\n"+"[onActivityResult rate : "+String.valueOf(rate)+"]");
+//                        Log.w("//===========//","================================================");
+//                        Log.i("---","---");
+//
+//                        onHandlerResult();
+//                    }
+//                }
+//            }
+//    );
 
 
 
@@ -284,12 +291,13 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
 
             Log.d("onHandlerResult", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
 
+
             conv.setBackgroundResource(R.drawable.round_button_signiture);
             conv.setTextColor(Color.parseColor("#FFFFFF"));
             cafe.setBackgroundResource(R.drawable.round_button);
             cafe.setTextColor(Color.parseColor("#000000"));
             meal.setBackgroundResource(R.drawable.round_button);
-            meal.setTextColor(Color.parseColor("#000000"));
+            cafe.setTextColor(Color.parseColor("#000000"));
 
             setMarkerWithLocation(latitude, longitude, "CONV", carrier, rate);
         });
@@ -335,17 +343,22 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
         // 지도의 레이아웃 설정
         naverMap.setLayerGroupEnabled(NaverMap.LAYER_GROUP_BUILDING, true);
 
+        updateCameraPosition(naverMap, latitude, longitude);
+
         // 위치 추적기능 설정
         naverMap.setLocationSource(locationSource);
-
         // 현재 위치 표시 설정
         setLocationMode(naverMap);
+
+        //naverMap.setLocationTrackingMode(LocationTrackingMode.Follow);
 
         // Map UI 설정 함수
         setMapUi(naverMap);
 
         // 오버레이 설정
         setOverlay(naverMap);
+
+
     }
 
     public void updateCamerePosition(NaverMap naverMap, double latitude, double longitude) {
@@ -468,14 +481,15 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
                                 }
 
                                 if(before_discount_Rank == dataModel_responses.get(i).getDiscountRate() && i != 0) {
-                                    setMarker(_latitude, _longitude, markerColor[i - 1]);
+                                    setMarker(_latitude, _longitude, markerColor[i - 1],category, dataModel_responses.get(i).getBranchName(), dataModel_responses.get(i).getBranch());
                                 } else {
-                                    setMarker(_latitude, _longitude, markerColor[i]);
+                                    setMarker(_latitude, _longitude, markerColor[i],category, dataModel_responses.get(i).getBranchName(), dataModel_responses.get(i).getBranch());
                                 }
                             }
 
                             bottomSheetFragment.setArguments(resData);
 
+                            btnList.setVisibility(View.VISIBLE);
                             dataModel_responses.clear();
                             Log.d("successful response", "onResponse 성공");
                             Instant finish = Instant.now();
@@ -516,51 +530,69 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
     }
 
     // 색상에 따른 마커 설정 함수
-    public void setMarker(@NonNull List<Double> latitude, List<Double> longitude, String color) {
+    public void setMarker(@NonNull List<Double> latitude, List<Double> longitude, String color, String category, String branchName, ArrayList<String> branch) {
         Vector<LatLng> markersPosition = new Vector<>();
+        Vector<String> markersInfo = new Vector<>();
+        int index =0;
         for (int i = 0; i < latitude.size(); i++) {
             markersPosition.add(new LatLng(latitude.get(i), longitude.get(i)));
+            markersInfo.add(branchName +" "+branch.get(i));
         }
-
+        Log.d("branchandName", branch + " @@ " + branchName);
         for(LatLng markerPosition : markersPosition) {
-            switch (color) {
-                case "RED":
-                    Marker red_marker = new Marker();
-                    red_marker.setPosition(markerPosition);
-                    red_marker.setMap(naverMap);
-                    red_marker.setIcon(MarkerIcons.BLACK);
-                    red_marker.setIconTintColor(Color.rgb(255, 0, 51));
-                    // 마커 사이즈 설정
-                    setMarkerSize(red_marker, 80, 100);
-                    activeMarkers.add(red_marker);
+            Marker marker = new Marker();
+            marker.setPosition(markerPosition);
+            marker.setMap(naverMap);
+            setMarkerSize(marker, 90, 120);
+            marker.setTag(markersInfo.get(index));
+            Log.d("category", category+"");
+            switch(category){
+                case "CONV":
+                    marker.setIcon(OverlayImage.fromResource(R.drawable.conv_mark_icon));
                     break;
-                case "ORANGE":
-                    Marker orange_marker = new Marker();
-                    orange_marker.setPosition(markerPosition);
-                    orange_marker.setMap(naverMap);
-                    orange_marker.setIcon(MarkerIcons.BLACK);
-                    orange_marker.setIconTintColor(Color.rgb(255, 153, 0));
-                    // 마커 사이즈 설정
-                    setMarkerSize(orange_marker, 80, 100);
-                    activeMarkers.add(orange_marker);
+                case "CAFE":
+                    marker.setIcon(OverlayImage.fromResource(R.drawable.coffee_mark_icon));
                     break;
-                case "YELLOW":
-                    Marker yellow_marker = new Marker();
-                    yellow_marker.setPosition(markerPosition);
-                    yellow_marker.setMap(naverMap);
-                    yellow_marker.setIcon(MarkerIcons.BLACK);
-                    yellow_marker.setIconTintColor(Color.YELLOW);
-                    // 마커 사이즈 설정
-                    setMarkerSize(yellow_marker, 80, 100);
-                    activeMarkers.add(yellow_marker);
+                case "MEAL":
+                    marker.setIcon(OverlayImage.fromResource(R.drawable.meal_mark_icon));
                     break;
                 default:
                     break;
             }
+            switch (color) {
+                case "RED":
+                    marker.setIconTintColor(Color.rgb(255, 0, 51));
+                    break;
+                case "ORANGE":
+                    marker.setIconTintColor(Color.rgb(255, 153, 0));
+                    break;
+                case "YELLOW":
+                    marker.setIconTintColor(Color.YELLOW);
+                    break;
+                default:
+                    break;
+            }
+            marker.setOnClickListener(this);
+            activeMarkers.add(marker);
+            index++;
         }
         // 아이콘 이미지 설정
     }
-
+    @Override
+    public boolean onClick(@NonNull Overlay overlay) {
+        if (overlay instanceof Marker) {
+            if(((Marker) overlay).getCaptionText().equals("")){
+                ((Marker) overlay).setCaptionText(overlay.getTag().toString());
+                setMarkerSize((Marker) overlay, 120, 160);
+            }
+            else{
+                ((Marker) overlay).setCaptionText("");
+                setMarkerSize((Marker) overlay, 90, 120);
+            }
+            return true;
+        }
+        return false;
+    }
     // 마커 사이즈 설정 함수
     public void setMarkerSize(@NonNull Marker marker, int width, int height) {
         marker.setWidth(width);
@@ -575,6 +607,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
         }
         activeMarkers = new Vector<>();
     }
+
     /* --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  */
 
     // 현재 위치를 받아오는 함수
@@ -584,7 +617,9 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
             longitude = location.getLongitude();
             latitude = location.getLatitude();
             // updateCameraPosition(naverMap, latitude ,longitude);
+
             Log.d("onLocationChanged", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
+
         }
     };
 
@@ -692,6 +727,22 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback  {
     public void onDestroyView() {
         super.onDestroyView();
         Log.e("Fragment onDestroyView", "ENTER");
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(!myTel.equals(PreferenceUtil.getCarrierPreferences(requireContext(), "carrier"))){
+            checkRemoveMarker();
+            meal.setBackgroundResource(R.drawable.round_button);
+            meal.setTextColor(Color.parseColor("#000000"));
+            cafe.setBackgroundResource(R.drawable.round_button);
+            cafe.setTextColor(Color.parseColor("#000000"));
+            conv.setBackgroundResource(R.drawable.round_button);
+            conv.setTextColor(Color.parseColor("#000000"));
+            btnList.setVisibility(View.GONE);
+            myTel = PreferenceUtil.getCarrierPreferences(requireContext(), "carrier");
+
+        }
     }
 
 }
