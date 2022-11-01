@@ -65,8 +65,8 @@ class Holder extends RecyclerView.ViewHolder{
     void onBind(StoreItem item){
         profile.setImageResource(item.getResourceId());
         title.setText(item.getTitle());
-        message.setText(item.getMessage());
-        distance.setText(item.getDistance());
+        message.setText("최대 "+item.getdiscount()+"% 할인");
+        distance.setText(+item.getDistance()+"m");
 
 
 //        layout_text.setOnClickListener(new View.OnClickListener() {
