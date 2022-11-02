@@ -14,6 +14,8 @@ import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,6 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BottomList extends BottomSheetDialogFragment {
+    private ItemViewModel viewModel;
+
     private ArrayList<StoreItem> mstoreItems;
     private ArrayList<StoreItem> sortedItems;
     int min = 999;
@@ -182,9 +186,30 @@ public class BottomList extends BottomSheetDialogFragment {
             }
         });
 
+        viewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
+        viewModel.getSelectedItem().observe(this, new Observer<ArrayList<StoreItem>>() {
 
+
+            @Override
+            public void onChanged(ArrayList<StoreItem> storeItems) {
+                mstoreItems.clear();
+                for(StoreItem item : storeItems){
+                    mstoreItems.add(new StoreItem(item.getResourceId(), item.getTitle(), item.getdiscount(), item.getDistance()));
+                }
+                for(int i=0; i<mstoreItems.size(); i++)
+                    Log.d("observe", mstoreItems.get(i).getTitle() +"/"+mstoreItems.get(i).getdiscount()+"/"+mstoreItems.get(i).getResourceId()+"/"+mstoreItems.get(i).getDistance());
+
+                mRecyclerAdapter.notifyDataSetChanged();
+                Log.d("observe", "2");
+            }
+        });
 
         return view;
+    }
+    @Override
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
     }
 //    @Override
 //    public Dialog onCreateDialog(Bundle savedInstanceState) {
