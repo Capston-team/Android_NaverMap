@@ -28,15 +28,12 @@ public class PopupBarcodeActivity extends AppCompatActivity {
         final EditText etBarcodeNum = findViewById(R.id.etBarcodeNum);
         final Button btnGenerate = findViewById(R.id.btnGenerate);
 
-        btnGenerate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String num=etBarcodeNum.getText().toString();
-                Intent intent=new Intent();
-                intent.putExtra("barcodeNum", num);
-                setResult(RESULT_OK, intent);
-                finish();
-            }
+        btnGenerate.setOnClickListener(view -> {
+            String num = etBarcodeNum.getText().toString();
+            Intent intent=new Intent();
+            intent.putExtra("barcodeNum", num);
+            setResult(RESULT_OK, intent);
+            finish();
         });
     }
     //바깥 영역 클릭 방지 와 백 버튼 차단
