@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:text="Title"
             android:textSize="20sp"
-            android:layout_marginTop="5sp"
+            android:layout_marginTop="8sp"
             android:layout_marginStart="10sp"
             android:layout_marginEnd="5sp"
             android:layout_marginBottom="5sp"

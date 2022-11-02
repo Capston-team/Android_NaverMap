@@ -294,7 +294,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
             cafe.setBackgroundResource(R.drawable.round_button);
             cafe.setTextColor(Color.parseColor("#000000"));
             meal.setBackgroundResource(R.drawable.round_button);
-            cafe.setTextColor(Color.parseColor("#000000"));
+            meal.setTextColor(Color.parseColor("#000000"));
 
             System.out.println("onHandlerResult - carrier : " + carrier + " onHandlerResult - rate : " + rate);
 
@@ -352,7 +352,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
         // 현재 위치 표시 설정
         setLocationMode(naverMap);
 
-        //naverMap.setLocationTrackingMode(LocationTrackingMode.Follow);
+        naverMap.setLocationTrackingMode(LocationTrackingMode.Follow);
 
         // Map UI 설정 함수
         setMapUi(naverMap);
