@@ -78,7 +78,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
 
     Retrofit retrofit;
 
-//    public static final String BASE_URL = "http://10.0.2.2:4000";
+    //    public static final String BASE_URL = "http://10.0.2.2:4000";
     public static final String BASE_URL = "https://where-we-go.herokuapp.com/capstone/store-address/";
 
     Button conv;
@@ -112,7 +112,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
     public Vector<Marker> activeMarkers;
 
     // 마커 색상을 저장한 배열
-    String[] markerColor = {"RED", "ORANGE", "GREEN", "BLUE", "INDIGO", "VIOLET"};
+    String[] markerColor = {"RED", "ORANGE", "YELLOW", "GREEN", "BLUE", "INDIGO", "VIOLET"};
 
     String carrier;
     String rate;
@@ -180,6 +180,8 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
 
         View v = inflater.inflate(R.layout.fragment_home1, container, false);
 
+
+
         btnList = v.findViewById((R.id.btnList));
         conv = v.findViewById(R.id.conv);
         cafe = v.findViewById(R.id.cafe);
@@ -195,18 +197,22 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
         // onMapReady 함수를 인자로 callback함
         mapFragment.getMapAsync(this);
 
+        btnList.setOnClickListener(view -> {
+            bottomSheetFragment.show(getParentFragmentManager(), bottomSheetFragment.getTag());
+        });
 
-        carrier = PreferenceUtil.getCarrierPreferences(requireContext(), "carrier");
-        rate = PreferenceUtil.getRatePreferences(requireContext(), "rate");
-
+        carrier = PreferenceUtil.getCarrierPreferences(requireActivity().getApplicationContext(), "carrier");
+        rate = PreferenceUtil.getRatePreferences(requireActivity().getApplicationContext(), "rate");
 
         if(carrier != null && rate != null) {
             onHandlerResult();
         }
-
-        btnList.setOnClickListener(view -> {
-            bottomSheetFragment.show(getParentFragmentManager(), bottomSheetFragment.getTag());
-        });
+//        else {
+//            Intent form_intent = new Intent(getActivity(), carrier_form.class);
+//            form_intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+//            // 처음 통신사, 등급 입력 창 호출
+//            startActivityResult.launch(form_intent);
+//        }
 
         if (retrofit == null) {
             try {
@@ -239,6 +245,8 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
 
         return v;
     }
+
+
 
     public void onHandlerResult() {
         conv.setOnClickListener(view -> {
@@ -416,7 +424,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
                             }
 
                             for(int i = 0; i < dataModel_responses.size(); i++) {
-                                ArrayList<Integer> dist = new ArrayList<>();
+                                ArrayList<Integer> dist = new ArrayList<Integer>();
                                 // 현재 해당하는 매장의 위도, 경도
                                 List<Double> _latitude = dataModel_responses.get(i).getLatitude();
                                 List<Double> _longitude = dataModel_responses.get(i).getLongitude();
@@ -438,13 +446,42 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
                                     before_discount_Rank = dataModel_responses.get(i - 1).getDiscountRate();
                                 }
 
-                                if(before_discount_Rank == dataModel_responses.get(i).getDiscountRate() && i != 0) {
+                                if (before_discount_Rank == dataModel_responses.get(i).getDiscountRate() && i != 0) {
                                     setMarker(_latitude, _longitude, markerColor[i - 1], category, dataModel_responses.get(i).getBranchName(), dataModel_responses.get(i).getBranch());
                                 } else {
                                     setMarker(_latitude, _longitude, markerColor[i], category, dataModel_responses.get(i).getBranchName(), dataModel_responses.get(i).getBranch());
                                 }
-                            }
 
+
+
+                                //-----------
+                            }
+                            List<ArrayList<String>> branch = new ArrayList<ArrayList<String>>();
+                            List<Integer> discount = new ArrayList<Integer>();
+                            List<String> branchName = new ArrayList<String>();
+                            List<ArrayList<Integer>> distance = new ArrayList<ArrayList<Integer>>();
+
+                            ArrayList<StoreItem> changedStoreItems = new ArrayList<>();
+                            if (resData != null) {
+                                for (int i = 0; i < resData.getInt("size"); i++) {
+                                    branch.add(resData.getStringArrayList("branch" + i));
+                                    discount.add(resData.getInt("discount" + i));
+                                    branchName.add(resData.getString("branchName" + i));
+                                    distance.add(resData.getIntegerArrayList("distance" + i));
+
+                                    for (int j = 0; j < branch.get(i).size(); j++) {
+                                        try {
+                                            int img = setBranchImage(branchName.get(i));
+                                            changedStoreItems.add(new StoreItem(img, branchName.get(i) + " "
+                                                    + branch.get(i).get(j), discount.get(i),
+                                                    distance.get(i).get(j)));
+                                        } catch (Exception e) {
+                                            Log.e("BottomList Error", e.toString());
+                                        }
+                                    }
+                                }
+                            }
+                            //-----------
                             viewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
                             viewModel.changeSelectedItem(changedStoreItems);
 
@@ -527,11 +564,9 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
                 case "ORANGE":
                     marker.setIconTintColor(Color.rgb(255, 153, 0));
                     break;
-                case "GREEN":
+                case "YELLOW":
                     marker.setIconTintColor(Color.rgb(162, 239, 68));
                     break;
-                case "BLUE":
-                    marker.setIconTintColor(Color.rgb(25, 0, 255));
                 default:
                     break;
             }
@@ -578,7 +613,51 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
         @Override
         public void onLocationChanged(@NonNull Location location) {
 
-            setLocation();
+
+            if (ActivityCompat.checkSelfPermission(requireContext().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext().getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+
+            Log.d("requestLocationUpdates locationListener", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
+
+
+//                 GPS_PROVIDER는 정확도가 높지만 야외에서만 가능
+//                 실내에서는 NETWORK_PROVIDER를 사용하여 WIFI 같은 네트워크를 이용해 위치를 추정한다.
+            Location loc_Current = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+            if(loc_Current == null) {
+                loc_Current = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            }
+
+            Log.d("Location", "loc_Current :  " + loc_Current);
+            // LocationListener가 성공적으로 위치를 가져올 경우
+            if(loc_Current != null) {
+                latitude = loc_Current.getLatitude();
+                longitude = loc_Current.getLongitude();
+                //updateCamerePosition(naverMap, latitude, longitude);
+                Log.d("onRequestPermissionsResult", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
+            } else {   // 만약 LocationListener가 위도, 경도를 가져오지 못할경우
+                Log.e("getLastknownLocation", "getLastknownLocation is null");
+            }
+            switch (selcategory){
+                case 1:
+                    setMarkerWithLocation(latitude,longitude, "CONV", carrier,rate);
+                    Log.v("onLocationChanged", latitude+"/"+longitude+"/"+carrier+"/"+rate);
+                    break;
+                case 2:
+                    setMarkerWithLocation(latitude,longitude, "CAFE", carrier,rate);
+                    Log.v("onLocationChanged", "CAFE");
+                    break;
+                case 3:
+                    setMarkerWithLocation(latitude,longitude, "MEAL", carrier,rate);
+                    Log.v("onLocationChanged", "MEAL");
+                    break;
+            }
+
+            //longitude = location.getLongitude();
+            //latitude = location.getLatitude();
+            // updateCameraPosition(naverMap, latitude ,longitude);
+
             Log.d("onLocationChanged", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
 
         }
