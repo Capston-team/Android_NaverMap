@@ -17,14 +17,12 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.annotation.UiThread;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.ViewModelProvider;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -88,14 +86,6 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
     LinearLayout btnList;
     CompassView compassView;
 
-    ItemViewModel viewModel;
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-
-    }
-
     final BottomList bottomSheetFragment = new BottomList();
     Bundle resData = new Bundle();
     // 현재 위도 경도 받아야함
@@ -119,8 +109,6 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
     String current_carrier;
 
     LocationManager lm;
-
-    int selcategory;
     // Fragment가 생성되고 최초로 실행되는 함수
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -128,7 +116,6 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
 
         Log.e("Fragment onCreate", "fragment ENTER");
 
-        selcategory=0;
         // 현재 위치를 받아오는 함수
         int LOCATION_PERMISSION_REQUEST_CODE = 1000;
         locationSource = new FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE);
@@ -137,7 +124,6 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
         setHasOptionsMenu(true);
 
         lm = (LocationManager) requireActivity().getSystemService(Context.LOCATION_SERVICE);
-
 
         int COARSE_PERMISSION = ContextCompat.checkSelfPermission(requireContext().getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION);
         int FINE_PERMISSION = ContextCompat.checkSelfPermission(requireContext().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
@@ -195,10 +181,8 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
         // onMapReady 함수를 인자로 callback함
         mapFragment.getMapAsync(this);
 
-
         carrier = PreferenceUtil.getCarrierPreferences(requireContext(), "carrier");
         rate = PreferenceUtil.getRatePreferences(requireContext(), "rate");
-
 
         if(carrier != null && rate != null) {
             onHandlerResult();
@@ -248,7 +232,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
 
             Log.d("onHandlerResult", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
 
-            selcategory=1;
+
             conv.setBackgroundResource(R.drawable.round_button_signiture);
             conv.setTextColor(Color.parseColor("#FFFFFF"));
             cafe.setBackgroundResource(R.drawable.round_button);
@@ -264,7 +248,6 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
 
             Log.d("onHandlerResult", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
 
-            selcategory=2;
             cafe.setBackgroundResource(R.drawable.round_button_signiture);
             cafe.setTextColor(Color.parseColor("#FFFFFF"));
             conv.setBackgroundResource(R.drawable.round_button);
@@ -279,7 +262,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
             String rate = PreferenceUtil.getRatePreferences(requireContext(), "rate");
 
             Log.d("onHandlerResult", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
-            selcategory=3;
+
             meal.setBackgroundResource(R.drawable.round_button_signiture);
             meal.setTextColor(Color.parseColor("#FFFFFF"));
             cafe.setBackgroundResource(R.drawable.round_button);
@@ -421,21 +404,21 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
                                 List<Double> _latitude = dataModel_responses.get(i).getLatitude();
                                 List<Double> _longitude = dataModel_responses.get(i).getLongitude();
 
-                                for (int j = 0; j < _latitude.size(); j++) {
+                                for(int j=0; j<_latitude.size(); j++) {
                                     dist.add(distanceInmeterByHaversine(_latitude.get(j), _longitude.get(j), latitude, longitude));
                                 }
 
 
-                                Log.d("create bottom", "x" + dataModel_responses.size());
-                                resData.putIntegerArrayList("distance" + i, dist);
-                                resData.putInt("size", dataModel_responses.size());
-                                resData.putStringArrayList("branch" + i, dataModel_responses.get(i).getBranch());
-                                resData.putInt("discount" + i, dataModel_responses.get(i).getDiscountRate());
-                                resData.putString("branchName" + i, dataModel_responses.get(i).getBranchName());
+                                    Log.d("create bottom", "x"+dataModel_responses.size());
+                                    resData.putIntegerArrayList("distance" + i, dist);
+                                    resData.putInt("size", dataModel_responses.size());
+                                    resData.putStringArrayList("branch" + i, dataModel_responses.get(i).getBranch());
+                                    resData.putInt("discount" + i, dataModel_responses.get(i).getDiscountRate());
+                                    resData.putString("branchName" + i, dataModel_responses.get(i).getBranchName());
 
                                 // i == 0일 경우 전에 있는 할인율은 가져올 수 없기 때문에 if문으로 확인
-                                if (i != 0) {
-                                    before_discount_Rank = dataModel_responses.get(i - 1).getDiscountRate();
+                                if(i != 0) {
+                                    before_discount_Rank =  dataModel_responses.get(i - 1).getDiscountRate();
                                 }
 
                                 if(before_discount_Rank == dataModel_responses.get(i).getDiscountRate() && i != 0) {
@@ -444,9 +427,6 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
                                     setMarker(_latitude, _longitude, markerColor[i], category, dataModel_responses.get(i).getBranchName(), dataModel_responses.get(i).getBranch());
                                 }
                             }
-
-                            viewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
-                            viewModel.changeSelectedItem(changedStoreItems);
 
                             bottomSheetFragment.setArguments(resData);
 
@@ -474,17 +454,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
             Log.e("MAP REST API ERROR", "MAP Retrofit REST API ERROR : " + e);
         }
     }
-    public Integer setBranchImage(String br){
-        int img=0;
-        if(br.equals("CU")) img = R.drawable.cu;
-        else if(br.equals("GS25")) img = R.drawable.gs25;
-        else if(br.equals("SEVEN")) img = R.drawable.seven;
-        else if(br.equals("PB")) img = R.drawable.pb;
-        else if(br.equals("BASKIN31")) img = R.drawable.br;
-        else img=R.drawable.marker_conv;
 
-        return img;
-    }
     // 색상에 따른 마커 설정 함수
     public void setMarker(@NonNull List<Double> latitude, List<Double> longitude, String color, String category, String branchName, ArrayList<String> branch) {
         // HashMap 생각 해볼것
@@ -696,7 +666,6 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
         super.onResume();
         if(!myTel.equals(PreferenceUtil.getCarrierPreferences(requireContext(), "carrier"))){
             checkRemoveMarker();
-            selcategory=0;
             meal.setBackgroundResource(R.drawable.round_button);
             meal.setTextColor(Color.parseColor("#000000"));
             cafe.setBackgroundResource(R.drawable.round_button);
