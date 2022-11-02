@@ -297,7 +297,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
             cafe.setBackgroundResource(R.drawable.round_button);
             cafe.setTextColor(Color.parseColor("#000000"));
             meal.setBackgroundResource(R.drawable.round_button);
-            cafe.setTextColor(Color.parseColor("#000000"));
+            meal.setTextColor(Color.parseColor("#000000"));
 
             setMarkerWithLocation(latitude, longitude, "CONV", carrier, rate);
         });
@@ -350,7 +350,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
         // 현재 위치 표시 설정
         setLocationMode(naverMap);
 
-        //naverMap.setLocationTrackingMode(LocationTrackingMode.Follow);
+        naverMap.setLocationTrackingMode(LocationTrackingMode.Follow);
 
         // Map UI 설정 함수
         setMapUi(naverMap);
@@ -514,20 +514,6 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d("fragment1", "---------------------------------------------");
-        Log.d("fragment1", "current_carrier : " + current_carrier);
-        Log.d("fragment1", "Pref : " + PreferenceUtil.getCarrierPreferences(requireContext(), "carrier"));
-        if(!current_carrier.equals(PreferenceUtil.getCarrierPreferences(requireContext(), "carrier"))) {
-            current_carrier = PreferenceUtil.getCarrierPreferences(requireContext(), "carrier");
-            for (Marker activeMarker : activeMarkers) {
-                activeMarker.setMap(null);
-            }
-        }
-        Log.d("fragment1", "---------------------------------------------");
-    }
 
     // 색상에 따른 마커 설정 함수
     public void setMarker(@NonNull List<Double> latitude, List<Double> longitude, String color, String category, String branchName, ArrayList<String> branch) {
