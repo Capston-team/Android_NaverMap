@@ -139,8 +139,6 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
 
             }
         });
-
-
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
