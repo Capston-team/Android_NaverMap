@@ -4,6 +4,7 @@ package com.example.naver_map_test;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -54,7 +55,7 @@ public class fragment_home1_InstrumentedTest {
         fake_call.clone().enqueue(new Callback<List<DataModel_response_Test>>() {
 
             @Override
-            public void onResponse(Call<List<DataModel_response_Test>> call, Response<List<DataModel_response_Test>> response) {
+            public void onResponse(@NonNull Call<List<DataModel_response_Test>> call, @NonNull Response<List<DataModel_response_Test>> response) {
                 if(response.isSuccessful()) {
                     Log.v("fragment_home1 retrofit 테스트", response.toString());
                     assert response.body() != null;
