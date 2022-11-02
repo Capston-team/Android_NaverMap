@@ -355,7 +355,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
         // 현재 위치 표시 설정
         setLocationMode(naverMap);
 
-        //naverMap.setLocationTrackingMode(LocationTrackingMode.Follow);
+        naverMap.setLocationTrackingMode(LocationTrackingMode.Follow);
 
         // Map UI 설정 함수
         setMapUi(naverMap);

@@ -101,7 +101,9 @@ public class BottomList extends BottomSheetDialogFragment {
         );
         adapterSort.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Adaper를 view에 연결
-
+        for(StoreItem item : mstoreItems){
+            Log.d("mstoreItems1", item.getDistance()+"");
+        }
         spinnerSort.setAdapter(adapterSort);
 
         ArrayList<String> dist = new ArrayList<String>();
@@ -111,20 +113,23 @@ public class BottomList extends BottomSheetDialogFragment {
                 sortedItems = new ArrayList<>();
                 int t=mstoreItems.size();
                 if(i==1){
-                    min=999;
-                    max=0;
                     for(int k=0; k<t; k++){
+                        minIndex=0;
+
+                        min=mstoreItems.get(0).getDistance();
+                        max=mstoreItems.get(0).getdiscount();
                         for(int j =0; j<mstoreItems.size(); j++) {
-                            if(min==mstoreItems.get(j).getDistance()){
+                            if (min > mstoreItems.get(j).getDistance()) {
+                                min = mstoreItems.get(j).getDistance();
+                                minIndex=j;
+                            }
+                            else if(min==mstoreItems.get(j).getDistance()){
                                 if(max<mstoreItems.get(j).getdiscount()){
                                     max=mstoreItems.get(j).getdiscount();
                                     minIndex=j;
                                 }
                             }
-                            else if (min < mstoreItems.get(j).getDistance()) {
-                                min = mstoreItems.get(j).getDistance();
-                                minIndex=j;
-                            }
+
                         }
                         sortedItems.add(new StoreItem(mstoreItems.get(minIndex).getResourceId(), mstoreItems.get(minIndex).getTitle(),
                                 mstoreItems.get(minIndex).getdiscount(), mstoreItems.get(minIndex).getDistance()));
@@ -132,25 +137,33 @@ public class BottomList extends BottomSheetDialogFragment {
                     }
                 }
                 else if(i==0){
-                    min=999;
-                    max=0;
+
+
                     for(int k=0; k<t; k++){
+                        maxIndex=0;
+                        min=mstoreItems.get(0).getDistance();
+                        max=mstoreItems.get(0).getdiscount();
                         for(int j =0; j<mstoreItems.size(); j++) {
-                            if(max==mstoreItems.get(j).getdiscount()){
-                                if(min<mstoreItems.get(j).getDistance()){
+
+                            if (max < mstoreItems.get(j).getdiscount()) {
+                                max = mstoreItems.get(j).getdiscount();
+                                maxIndex=j;
+                            }
+                            else if(max==mstoreItems.get(j).getdiscount()){
+                                if(min>mstoreItems.get(j).getDistance()){
                                     min=mstoreItems.get(j).getDistance();
                                     maxIndex=j;
                                 }
                             }
-                            else if (max < mstoreItems.get(j).getdiscount()) {
-                                max = mstoreItems.get(j).getdiscount();
-                                maxIndex=j;
-                            }
                         }
-                        Log.d("Sort", mstoreItems.get(maxIndex).getdiscount()+"");
+                        Log.d("index", maxIndex+"@"+k);
                         sortedItems.add(new StoreItem(mstoreItems.get(maxIndex).getResourceId(), mstoreItems.get(maxIndex).getTitle(),
                                 mstoreItems.get(maxIndex).getdiscount(), mstoreItems.get(maxIndex).getDistance()));
                         mstoreItems.remove(maxIndex);
+
+                        for(StoreItem item : sortedItems){
+                            Log.d("mstoreItemsSort", item.getDistance()+"");
+                        }
                         Log.d("Sortsize", mstoreItems.size()+"@"+k);
                     }
                 }
