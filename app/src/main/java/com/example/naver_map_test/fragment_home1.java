@@ -57,7 +57,9 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.Vector;
 
 import retrofit2.Call;
@@ -492,11 +494,15 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
         }
     }
 
-
     // 색상에 따른 마커 설정 함수
     public void setMarker(@NonNull List<Double> latitude, List<Double> longitude, String color, String category, String branchName, ArrayList<String> branch) {
+        // HashMap 생각 해볼것
+        // <Key, Value> <markersInfo(List), markersPosition(List)>
+
+
         Vector<LatLng> markersPosition = new Vector<>();
         Vector<String> markersInfo = new Vector<>();
+
         int index =0;
         for (int i = 0; i < latitude.size(); i++) {
             markersPosition.add(new LatLng(latitude.get(i), longitude.get(i)));
@@ -531,7 +537,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
                     marker.setIconTintColor(Color.rgb(255, 153, 0));
                     break;
                 case "YELLOW":
-                    marker.setIconTintColor(Color.YELLOW);
+                    marker.setIconTintColor(Color.rgb(162, 239, 68));
                     break;
                 default:
                     break;
@@ -546,7 +552,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
     public boolean onClick(@NonNull Overlay overlay) {
         if (overlay instanceof Marker) {
             if(((Marker) overlay).getCaptionText().equals("")){
-                ((Marker) overlay).setCaptionText(overlay.getTag().toString());
+                ((Marker) overlay).setCaptionText(Objects.requireNonNull(overlay.getTag()).toString());
                 setMarkerSize((Marker) overlay, 120, 160);
             }
             else{
@@ -628,6 +634,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
         }
         super.onRequestPermissionsResult(requestCode, permissions, grandResults);
     }
+
 
     public String getIpAddress() throws SocketException {
         for(Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
@@ -711,5 +718,4 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
 
         }
     }
-
 }
