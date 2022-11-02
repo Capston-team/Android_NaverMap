@@ -57,7 +57,9 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.Vector;
 
 import retrofit2.Call;
@@ -136,7 +138,8 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
             Log.d("권한 결과", "허용 됨");
             try {
                 LocationManager lm = (LocationManager) requireActivity().getSystemService(Context.LOCATION_SERVICE);
-//                lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 20000, 10, locationListener);
+                // lat long 변수가 초기화 됨
+                lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
 
 
 //              GPS_PROVIDER는 정확도가 높지만 야외에서만 가능
@@ -152,7 +155,9 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
                     latitude = loc_Current.getLatitude();
                     longitude = loc_Current.getLongitude();
 
-                    if(naverMap == null) {Log.d("naverMapisNull", "true");}
+                    if(naverMap == null) {
+                        Log.d("naverMapisNull", "true");
+                    }
                     else Log.d("naverMapisNull", "false");
                     //updateCameraPosition(naverMap, latitude, longitude);
 
@@ -297,7 +302,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
             cafe.setBackgroundResource(R.drawable.round_button);
             cafe.setTextColor(Color.parseColor("#000000"));
             meal.setBackgroundResource(R.drawable.round_button);
-            cafe.setTextColor(Color.parseColor("#000000"));
+            meal.setTextColor(Color.parseColor("#000000"));
 
             setMarkerWithLocation(latitude, longitude, "CONV", carrier, rate);
         });
@@ -514,25 +519,15 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d("fragment1", "---------------------------------------------");
-        Log.d("fragment1", "current_carrier : " + current_carrier);
-        Log.d("fragment1", "Pref : " + PreferenceUtil.getCarrierPreferences(requireContext(), "carrier"));
-        if(!current_carrier.equals(PreferenceUtil.getCarrierPreferences(requireContext(), "carrier"))) {
-            current_carrier = PreferenceUtil.getCarrierPreferences(requireContext(), "carrier");
-            for (Marker activeMarker : activeMarkers) {
-                activeMarker.setMap(null);
-            }
-        }
-        Log.d("fragment1", "---------------------------------------------");
-    }
-
     // 색상에 따른 마커 설정 함수
     public void setMarker(@NonNull List<Double> latitude, List<Double> longitude, String color, String category, String branchName, ArrayList<String> branch) {
+        // HashMap 생각 해볼것
+        // <Key, Value> <markersInfo(List), markersPosition(List)>
+
+
         Vector<LatLng> markersPosition = new Vector<>();
         Vector<String> markersInfo = new Vector<>();
+
         int index =0;
         for (int i = 0; i < latitude.size(); i++) {
             markersPosition.add(new LatLng(latitude.get(i), longitude.get(i)));
@@ -567,7 +562,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
                     marker.setIconTintColor(Color.rgb(255, 153, 0));
                     break;
                 case "YELLOW":
-                    marker.setIconTintColor(Color.YELLOW);
+                    marker.setIconTintColor(Color.rgb(162, 239, 68));
                     break;
                 default:
                     break;
@@ -582,7 +577,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
     public boolean onClick(@NonNull Overlay overlay) {
         if (overlay instanceof Marker) {
             if(((Marker) overlay).getCaptionText().equals("")){
-                ((Marker) overlay).setCaptionText(overlay.getTag().toString());
+                ((Marker) overlay).setCaptionText(Objects.requireNonNull(overlay.getTag()).toString());
                 setMarkerSize((Marker) overlay, 120, 160);
             }
             else{
@@ -689,6 +684,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
         super.onRequestPermissionsResult(requestCode, permissions, grandResults);
     }
 
+
     public String getIpAddress() throws SocketException {
         for(Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
             NetworkInterface intf = en.nextElement();
@@ -744,5 +740,4 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
 
         }
     }
-
 }
