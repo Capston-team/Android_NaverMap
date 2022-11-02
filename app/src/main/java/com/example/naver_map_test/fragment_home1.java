@@ -102,7 +102,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
     public Vector<Marker> activeMarkers;
 
     // 마커 색상을 저장한 배열
-    String[] markerColor = {"RED", "ORANGE", "YELLOW", "GREEN", "BLUE", "INDIGO", "VIOLET"};
+    String[] markerColor = {"RED", "ORANGE", "GREEN", "BLUE", "INDIGO", "VIOLET"};
 
     String carrier;
     String rate;
@@ -166,8 +166,6 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
 
         View v = inflater.inflate(R.layout.fragment_home1, container, false);
 
-
-
         btnList = v.findViewById((R.id.btnList));
         conv = v.findViewById(R.id.conv);
         cafe = v.findViewById(R.id.cafe);
@@ -183,24 +181,16 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
         // onMapReady 함수를 인자로 callback함
         mapFragment.getMapAsync(this);
 
-        btnList.setOnClickListener(view -> {
-            bottomSheetFragment.show(getParentFragmentManager(), bottomSheetFragment.getTag());
-        });
-
-        String carrier = PreferenceUtil.getCarrierPreferences(requireActivity().getApplicationContext(), "carrier");
-        String rate = PreferenceUtil.getRatePreferences(requireActivity().getApplicationContext(), "rate");
-
-        System.out.println("fragment1 - carrier : " + carrier + " fragment1 - rate : " + rate);
+        carrier = PreferenceUtil.getCarrierPreferences(requireContext(), "carrier");
+        rate = PreferenceUtil.getRatePreferences(requireContext(), "rate");
 
         if(carrier != null && rate != null) {
             onHandlerResult();
-          }
-//        else {
-//            Intent form_intent = new Intent(getActivity(), carrier_form.class);
-//            form_intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-//            // 처음 통신사, 등급 입력 창 호출
-//            startActivityResult.launch(form_intent);
-//        }
+        }
+
+        btnList.setOnClickListener(view -> {
+            bottomSheetFragment.show(getParentFragmentManager(), bottomSheetFragment.getTag());
+        });
 
         if (retrofit == null) {
             try {
@@ -233,35 +223,6 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
 
         return v;
     }
-
-//    //     통신사, 등급 입력 창 결과
-//    ActivityResultLauncher<Intent> startActivityResult = registerForActivityResult(
-//            new ActivityResultContracts.StartActivityForResult(),
-//            new ActivityResultCallback<ActivityResult>() {
-//                @Override
-//                public void onActivityResult(ActivityResult result) {
-//                    if(result.getResultCode() == Activity.RESULT_OK) {
-//
-//                        Intent intent = result.getData();
-//                        assert intent != null;
-//                        carrier = intent.getStringExtra("carrier");
-//                        rate = intent.getStringExtra("rate");
-//
-//                        Log.i("---","---");
-//                        Log.w("//===========//","================================================");
-//                        Log.i("","\n"+"["+String.valueOf(FRAGMENT1)+" >> registerForActivityResult() :: 인텐트 응답 데이터 확인]");
-//                        Log.i("","\n"+"[onActivityResult carrier : "+String.valueOf(carrier)+"]");
-//                        Log.i("","\n"+"[onActivityResult rate : "+String.valueOf(rate)+"]");
-//                        Log.w("//===========//","================================================");
-//                        Log.i("---","---");
-//
-//                        onHandlerResult();
-//                    }
-//                }
-//            }
-//    );
-
-
 
     public void onHandlerResult() {
         conv.setOnClickListener(view -> {
@@ -438,7 +399,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
                             }
 
                             for(int i = 0; i < dataModel_responses.size(); i++) {
-                                ArrayList<Integer> dist = new ArrayList<Integer>();
+                                ArrayList<Integer> dist = new ArrayList<>();
                                 // 현재 해당하는 매장의 위도, 경도
                                 List<Double> _latitude = dataModel_responses.get(i).getLatitude();
                                 List<Double> _longitude = dataModel_responses.get(i).getLongitude();
@@ -461,9 +422,9 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
                                 }
 
                                 if(before_discount_Rank == dataModel_responses.get(i).getDiscountRate() && i != 0) {
-                                    setMarker(_latitude, _longitude, markerColor[i - 1],category, dataModel_responses.get(i).getBranchName(), dataModel_responses.get(i).getBranch());
+                                    setMarker(_latitude, _longitude, markerColor[i - 1], category, dataModel_responses.get(i).getBranchName(), dataModel_responses.get(i).getBranch());
                                 } else {
-                                    setMarker(_latitude, _longitude, markerColor[i],category, dataModel_responses.get(i).getBranchName(), dataModel_responses.get(i).getBranch());
+                                    setMarker(_latitude, _longitude, markerColor[i], category, dataModel_responses.get(i).getBranchName(), dataModel_responses.get(i).getBranch());
                                 }
                             }
 
@@ -536,9 +497,11 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
                 case "ORANGE":
                     marker.setIconTintColor(Color.rgb(255, 153, 0));
                     break;
-                case "YELLOW":
+                case "GREEN":
                     marker.setIconTintColor(Color.rgb(162, 239, 68));
                     break;
+                case "BLUE":
+                    marker.setIconTintColor(Color.rgb(25, 0, 255));
                 default:
                     break;
             }
@@ -586,10 +549,6 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
         public void onLocationChanged(@NonNull Location location) {
 
             setLocation();
-            //longitude = location.getLongitude();
-            //latitude = location.getLatitude();
-            // updateCameraPosition(naverMap, latitude ,longitude);
-
             Log.d("onLocationChanged", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
 
         }
