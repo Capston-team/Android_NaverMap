@@ -108,6 +108,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
     String rate;
     String current_carrier;
 
+    LocationManager lm;
     // Fragment가 생성되고 최초로 실행되는 함수
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -121,6 +122,8 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
 
         // 햄버거 메뉴
         setHasOptionsMenu(true);
+
+        lm = (LocationManager) requireActivity().getSystemService(Context.LOCATION_SERVICE);
 
         int COARSE_PERMISSION = ContextCompat.checkSelfPermission(requireContext().getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION);
         int FINE_PERMISSION = ContextCompat.checkSelfPermission(requireContext().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
@@ -137,35 +140,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
         } else {
             Log.d("권한 결과", "허용 됨");
             try {
-                LocationManager lm = (LocationManager) requireActivity().getSystemService(Context.LOCATION_SERVICE);
-                // lat long 변수가 초기화 됨
-                lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-
-
-//              GPS_PROVIDER는 정확도가 높지만 야외에서만 가능
-//              실내에서는 NETWORK_PROVIDER를 사용하여 WIFI 같은 네트워크를 이용해 위치를 추정한다.
-                Location loc_Current = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                if(loc_Current == null) {
-                    loc_Current = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                }
-
-
-                // LocationListener가 성공적으로 위치를 가져올 경우
-                if(loc_Current != null) {
-                    latitude = loc_Current.getLatitude();
-                    longitude = loc_Current.getLongitude();
-
-                    if(naverMap == null) {
-                        Log.d("naverMapisNull", "true");
-                    }
-                    else Log.d("naverMapisNull", "false");
-                    //updateCameraPosition(naverMap, latitude, longitude);
-
-                    Log.d("onCreate loc_Current", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
-
-                } else {   // 만약 LocationListener가 위도, 경도를 가져오지 못할경우
-                    Log.e("getLastknownLocation", "getLastknownLocation is null");
-                }
+                setLocation();
             } catch (Exception e) {
                 Log.e("Unknown Error", "LocationManager Error");
             }
@@ -609,8 +584,10 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
     private final LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(@NonNull Location location) {
-            longitude = location.getLongitude();
-            latitude = location.getLatitude();
+
+            setLocation();
+            //longitude = location.getLongitude();
+            //latitude = location.getLatitude();
             // updateCameraPosition(naverMap, latitude ,longitude);
 
             Log.d("onLocationChanged", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
@@ -641,33 +618,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
             }
             if (check_result) {
                 // 허용했을 경우
-                LocationManager lm = (LocationManager) requireActivity().getSystemService(Context.LOCATION_SERVICE);
-                if (ActivityCompat.checkSelfPermission(requireContext().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext().getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    return;
-                }
-
-                Log.d("requestLocationUpdates locationListener", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
-                lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-
-//                 GPS_PROVIDER는 정확도가 높지만 야외에서만 가능
-//                 실내에서는 NETWORK_PROVIDER를 사용하여 WIFI 같은 네트워크를 이용해 위치를 추정한다.
-                Location loc_Current = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-                if(loc_Current == null) {
-                    loc_Current = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                }
-
-                Log.d("Location", "loc_Current :  " + loc_Current);
-                // LocationListener가 성공적으로 위치를 가져올 경우
-                if(loc_Current != null) {
-                    latitude = loc_Current.getLatitude();
-                    longitude = loc_Current.getLongitude();
-                    updateCamerePosition(naverMap, latitude, longitude);
-                    Log.d("onRequestPermissionsResult", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
-                } else {   // 만약 LocationListener가 위도, 경도를 가져오지 못할경우
-                    Log.e("getLastknownLocation", "getLastknownLocation is null");
-                }
-
+                setLocation();
             } else {
                 // 종료코드
                 Toast.makeText(requireContext().getApplicationContext(), "권한 설정을 허용해야 위치를 가져올 수 있습니다.", Toast.LENGTH_SHORT).show();
@@ -705,7 +656,34 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
         }
         return null;
     }
+    public void setLocation(){
 
+        if (ActivityCompat.checkSelfPermission(requireContext().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext().getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
+        Log.d("requestLocationUpdates locationListener", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
+        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 20000, 50, locationListener);
+
+//                 GPS_PROVIDER는 정확도가 높지만 야외에서만 가능
+//                 실내에서는 NETWORK_PROVIDER를 사용하여 WIFI 같은 네트워크를 이용해 위치를 추정한다.
+        Location loc_Current = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+        if(loc_Current == null) {
+            loc_Current = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        }
+
+        Log.d("Location", "loc_Current :  " + loc_Current);
+        // LocationListener가 성공적으로 위치를 가져올 경우
+        if(loc_Current != null) {
+            latitude = loc_Current.getLatitude();
+            longitude = loc_Current.getLongitude();
+            //updateCamerePosition(naverMap, latitude, longitude);
+            Log.d("onRequestPermissionsResult", "GPS Location changed, Latitude: "+ latitude + ", Longitude: " +longitude);
+        } else {   // 만약 LocationListener가 위도, 경도를 가져오지 못할경우
+            Log.e("getLastknownLocation", "getLastknownLocation is null");
+        }
+    }
     /* --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  */
     @Override
     public void onPause() {
