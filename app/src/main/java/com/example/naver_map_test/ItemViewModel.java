@@ -22,4 +22,3 @@ public class ItemViewModel extends ViewModel{
     }
 
 }
-
