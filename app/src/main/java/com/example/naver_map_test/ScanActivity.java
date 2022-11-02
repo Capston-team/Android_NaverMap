@@ -169,11 +169,11 @@ public class ScanActivity extends AppCompatActivity {
             if(data.length() > 0) {
                 if(check > 0) { //데이터가 한개 초과 저장된 경우
                     for(int j=0; j<=check; j++) { //콤마가 포함된 [기준]으로 문자열을 분리시킨다
-                        ok_result [j] = Byte.valueOf(data.split("[,]")[j]);
+                        ok_result [j] = Byte.parseByte(data.split("[,]")[j]);
                     }
                 }
                 else { //데이터가 한개만 저장된 경우
-                    ok_result [0] = Byte.valueOf(data);
+                    ok_result [0] = Byte.parseByte(data);
                 }
             }
             else {
