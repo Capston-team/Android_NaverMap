@@ -49,16 +49,16 @@ public class fragment_home1_InstrumentedTest {
     }
 
     @Test
-    public void HttpRetrofitUnitTest() throws Exception {
+    public void HttpRetrofitUnitTest() {
         Call<List<DataModel_response_Test>> fake_call = apiInterfaceTest.call_request(latitude, longitude, category, carrier, rate);
         fake_call.clone().enqueue(new Callback<List<DataModel_response_Test>>() {
 
             @Override
             public void onResponse(Call<List<DataModel_response_Test>> call, Response<List<DataModel_response_Test>> response) {
                 if(response.isSuccessful()) {
-                    Log.v("fragment_home1 retrofit 테스트", response.toString());
+                    Log.d("fragment_home1 retrofit 테스트", response.toString());
                     assert response.body() != null;
-                    Log.v("fragment_home1 retrofit 테스트", response.body().toString());
+                    Log.d("fragment_home1 retrofit 테스트", response.body().toString());
                 }
             }
 
@@ -67,7 +67,6 @@ public class fragment_home1_InstrumentedTest {
 
             }
         });
-
     }
 
 

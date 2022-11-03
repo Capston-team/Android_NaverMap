@@ -112,7 +112,7 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
     public Vector<Marker> activeMarkers;
 
     // 마커 색상을 저장한 배열
-    String[] markerColor = {"RED", "ORANGE", "YELLOW", "GREEN", "BLUE", "INDIGO", "VIOLET"};
+    String[] markerColor = {"RED", "ORANGE", "GREEN", "BLUE", "INDIGO", "VIOLET"};
 
     String carrier;
     String rate;
@@ -564,9 +564,11 @@ public class fragment_home1 extends Fragment implements OnMapReadyCallback, Over
                 case "ORANGE":
                     marker.setIconTintColor(Color.rgb(255, 153, 0));
                     break;
-                case "YELLOW":
+                case "GREEN":
                     marker.setIconTintColor(Color.rgb(162, 239, 68));
                     break;
+                case "BLUE":
+                    marker.setIconTintColor(Color.rgb(25, 50, 255));
                 default:
                     break;
             }
