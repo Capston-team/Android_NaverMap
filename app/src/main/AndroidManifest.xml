@@ -33,6 +33,19 @@
         android:theme="@style/Theme.Naver_map_test"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".SplashActivity"
+            android:exported="true"
+            android:theme="@style/SplashTheme">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".SettingActivity"
             android:exported="false" />
         <activity
@@ -41,11 +54,11 @@
         <activity
             android:name=".PopupSelectActivity"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light.Dialog"  />
+            android:theme="@style/Theme.AppCompat.Light.Dialog" />
         <activity
             android:name=".PopupBarcodeActivity"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light.Dialog"  />
+            android:theme="@style/Theme.AppCompat.Light.Dialog" />
         <activity
             android:name=".BarcodeImageActivity"
             android:exported="false"
@@ -65,10 +78,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
         </activity>
     </application>
 
